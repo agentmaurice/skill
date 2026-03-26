@@ -1,0 +1,7 @@
+interface:
+  display_name: "AgentMaurice"
+  short_description: "Operate AgentMaurice through MCP or CLI"
+  default_prompt: "Use $agentmaurice to inspect or change an AgentMaurice deployment safely."
+
+policy:
+  allow_implicit_invocation: true
