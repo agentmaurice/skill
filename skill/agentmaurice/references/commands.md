@@ -134,7 +134,36 @@ Meta-recette roundtrip:
 maurice test meta-roundtrip --target-deployment <id> --bundle /path/to/bundle.json --timeout 180
 ```
 
-## 7. Practical rule
+## 7. Backend verification shortcuts
+
+Recipe backend check:
+```bash
+maurice workspace call workspace_bootstrap_contract
+maurice tools call inception_deployment_doctor --deployment <id> --arg format=ai_contract
+maurice tools call inception_recipe_definitions_list --deployment <id>
+maurice tools call inception_recipe_definitions_get --deployment <id> --arg id=<recipe_id>
+```
+
+Mini-app and OpenUI check:
+```bash
+maurice workspace call workspace_bootstrap_contract
+maurice tools call inception_deployment_doctor --deployment <id> --arg format=ai_contract
+maurice tools call inception_recipe_definitions_list --deployment <id>
+```
+
+Optional direct backend HTTP checks:
+```bash
+curl -H "Authorization: Bearer <deployment_api_key>" \
+  <base_url>/viewer/<deployment_id>
+
+curl -X POST \
+  -H "Authorization: Bearer <deployment_api_key>" \
+  -H "Content-Type: application/json" \
+  <base_url>/recipe/<deployment_id>/<recipe_id>/execute \
+  -d '{"input":{}}'
+```
+
+## 8. Practical rule
 
 For an external AI, the best CLI path is usually:
 ```bash

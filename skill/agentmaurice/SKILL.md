@@ -3,8 +3,9 @@ name: agentmaurice
 description: |
   Control AgentMaurice via the Workspace Control MCP gateway or the `maurice`
   CLI. Trigger this skill whenever a user mentions AgentMaurice, deployments,
-  Calisto workspaces, meta-recettes, recipe definitions, drift, reconcile,
-  capability contracts, External Inception, or the `maurice` CLI.
+  Calisto workspaces, meta-recettes, recipe definitions, mini-apps, OpenUI,
+  drift, reconcile, capability contracts, External Inception, or the
+  `maurice` CLI.
 ---
 
 # AgentMaurice
@@ -19,6 +20,17 @@ Prefer the Workspace Control gateway when it is available. It gives the AI:
 - access to expert Inception tools through `workspace_search` and `workspace_call`
 
 If the MCP gateway is not available, fall back to the `maurice` CLI.
+
+## Backend framing
+
+Treat AgentMaurice as two backend runtimes:
+- `mode=recipe`: workflow backend for execution, polling, logs, and direct tool access
+- `mode=app`: stateful mini-app backend for viewer bootstrap, app instances, events, and interactive UI
+
+Treat OpenUI as a presentation layer for mini-app delivery:
+- `ui_schema` remains the runtime source of truth
+- `presentation.ui_runtime=openui` adds an OpenUI rendering path
+- clients must still keep the native fallback coherent
 
 ## Rule 1: Doctor first
 
@@ -129,6 +141,17 @@ For historical recipe identity drift:
 workspace_recipe_identity_repair(canonical_recipe_id="...")
 ```
 
+For backend verification:
+```text
+1. workspace_bootstrap_contract(session_id="...")
+2. workspace_current_state()
+3. Choose the runtime:
+   - recipe backend: inspect recipe definitions, then verify execution/state
+   - mini-app backend: inspect viewer bootstrap, preview, or app-instance runtime
+4. Prefer the lightest verification that proves the backend works
+5. Do not apply a governed change unless the user explicitly switches from verification to mutation
+```
+
 ## Tool naming rules
 
 Recipe tools are centered on recipe definitions and executions.
@@ -152,10 +175,12 @@ For business feature creation from user intent, prefer the meta-recette workflow
 6. For production-like contexts, modify the specification, not the runtime ad hoc.
 7. Re-check final state after mutations.
 8. Do not mention internal company identifiers to end users.
+9. When the user asks for runtime verification, distinguish clearly between workflow backend checks and mini-app/OpenUI checks.
 
 ## References
 
 Read these only when needed:
+- `references/backend-verification.md` for recipe backend, mini-app backend, and OpenUI verification
 - `references/mcp-tools.md` for current gateway and tool names
 - `references/commands.md` for CLI usage
 - `references/workflows.md` for common end-to-end sequences

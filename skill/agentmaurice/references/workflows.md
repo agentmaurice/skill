@@ -118,7 +118,79 @@ maurice workspace call workspace_feature_prepare --arg goal=create_recipe --arg 
 maurice workspace call workspace_feature_apply --arg approved_plan_hash=<hash>
 ```
 
-## 4. Repair recipe identity drift
+## 4. Verify a recipe backend
+
+Use this when the user wants confidence that AgentMaurice can act as a workflow backend for external callers.
+
+### Via Workspace Control MCP
+
+```text
+1. workspace_bootstrap_contract(session_id="...")
+2. workspace_current_state()
+3. workspace_call(tool_name="inception_deployment_doctor", arguments={"format":"ai_contract"})
+4. workspace_call(tool_name="inception_recipe_definitions_list", arguments={})
+5. workspace_call(tool_name="inception_recipe_definitions_get", arguments={"id":"recipe_x"})
+6. If a run exists or is started, workspace_call(tool_name="inception_recipe_executions_get", arguments={"id":"exec_x"})
+```
+
+### Via CLI and backend endpoint
+
+```bash
+maurice workspace bind <workspace_session_id>
+maurice workspace call workspace_bootstrap_contract
+maurice workspace call workspace_current_state
+maurice tools call inception_deployment_doctor --deployment <id> --arg format=ai_contract
+maurice tools call inception_recipe_definitions_list --deployment <id>
+maurice tools call inception_recipe_definitions_get --deployment <id> --arg id=recipe_x
+
+# Optional direct runtime check
+curl -X POST \
+  -H "Authorization: Bearer <deployment_api_key>" \
+  -H "Content-Type: application/json" \
+  <base_url>/recipe/<deployment_id>/recipe_x/execute \
+  -d '{"input":{}}'
+```
+
+## 5. Verify a mini-app and OpenUI backend
+
+Use this when the user wants confidence that AgentMaurice can act as an interactive backend for external frontends.
+
+### Via Workspace Control MCP
+
+```text
+1. workspace_bootstrap_contract(session_id="...")
+2. workspace_current_state()
+3. workspace_call(tool_name="inception_deployment_doctor", arguments={"format":"ai_contract"})
+4. workspace_call(tool_name="inception_recipe_definitions_list", arguments={})
+5. Use the Doctor preview endpoints if a draft meta-recette is under review
+6. Otherwise verify viewer bootstrap and, if needed, a live app instance
+```
+
+### Via CLI and backend endpoint
+
+```bash
+maurice workspace bind <workspace_session_id>
+maurice workspace call workspace_bootstrap_contract
+maurice workspace call workspace_current_state
+maurice tools call inception_deployment_doctor --deployment <id> --arg format=ai_contract
+maurice tools call inception_recipe_definitions_list --deployment <id>
+
+# Viewer bootstrap
+curl -H "Authorization: Bearer <deployment_api_key>" \
+  <base_url>/viewer/<deployment_id>
+
+# Optional live runtime check
+curl -X POST \
+  -H "Authorization: Bearer <deployment_api_key>" \
+  -H "Content-Type: application/json" \
+  <base_url>/app/<deployment_id>/<recipe_id>/instances \
+  -d '{"tenant_id":"demo","user":{"id":"skill-check"}}'
+```
+
+OpenUI rule:
+- keep the native fallback coherent even when OpenUI delivery is enabled
+
+## 6. Repair recipe identity drift
 
 Use this when a previous buggy update created a rogue active recipe identity.
 
@@ -134,7 +206,7 @@ workspace_recipe_identity_repair(canonical_recipe_id="validation_recipe_x")
 maurice workspace call workspace_recipe_identity_repair --arg canonical_recipe_id=validation_recipe_x
 ```
 
-## 5. Capability-contract inspection
+## 7. Capability-contract inspection
 
 ### Via Workspace Control MCP
 
@@ -153,7 +225,7 @@ maurice workspace capabilities imports
 maurice workspace capabilities validate-imports
 ```
 
-## 6. Multi-deployment audit
+## 8. Multi-deployment audit
 
 ### Via Workspace Control MCP
 
@@ -172,6 +244,6 @@ for DEP in $(jq -r '.result[].id // .data[].id' /tmp/deps.json); do
 done
 ```
 
-## 7. Internal gamemaster exploration
+## 9. Internal gamemaster exploration
 
 Use `maurice ai run` when the user explicitly wants autonomous exploration or synthesis by the internal AgentMaurice model, not when you need a deterministic governed change pipeline.

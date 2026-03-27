@@ -190,8 +190,27 @@ Low-level recipe management is based on recipe definitions:
 
 Runtime and history flows:
 - `inception_recipe_executions_list`
+- `inception_recipe_executions_get`
 
 For user intent like "create an agent", prefer the meta-recette workflow, not raw recipe-definition CRUD.
+
+### Backend verification surfaces
+
+Use these when the user wants proof that AgentMaurice behaves like an external backend.
+
+Workflow backend:
+- recipe definitions via `inception_recipe_definitions_*`
+- execution state via `inception_recipe_executions_get`
+- external HTTP surface under `/recipe/<deploymentId>/...`
+
+Mini-app backend:
+- Doctor contract preview endpoints for `miniapp-preview`
+- external HTTP surface under `/viewer/...` and `/app/...`
+
+OpenUI delivery:
+- discoverable through the Doctor AI contract
+- expected when mini-app presentation uses `ui_runtime=openui`
+- must keep a native fallback path
 
 ### MCP runtimes
 
