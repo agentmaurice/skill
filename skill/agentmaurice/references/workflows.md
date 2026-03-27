@@ -2,7 +2,53 @@
 
 Each workflow starts with the preferred Workspace Control path, then a CLI fallback.
 
-## 1. Deployment diagnostic
+## 1. Turn an idea into a deployed app
+
+Use this when the user gives only a product idea and wants a real application outcome.
+
+Rule:
+- default to a mini-app with OpenUI when the idea sounds interactive
+- ask only blocking questions
+- preview and verify before apply
+- model the application as deployments plus blueprint slices, not as a single artifact by default
+
+### Via Workspace Control MCP
+
+```text
+1. workspace_session_list()
+2. workspace_bootstrap_contract(session_id="...", goal="create_meta_recette|create_recipe")
+3. Read the application brief or description directory
+4. workspace_current_state()
+5. Model the application:
+   - deployments
+   - meta-recette slices
+   - runtime mode for each slice
+6. Choose the first slice:
+   - interactive app slice -> create_meta_recette
+   - workflow backend slice -> create_recipe or create_meta_recette
+7. workspace_feature_prepare(goal="...", intent_markdown="...")
+8. If mode=app, preview and verify the mini-app path
+9. Present the plan
+10. workspace_feature_apply(approved_plan_hash="<hash>")
+11. workspace_current_state()
+12. Return the application map, access details, and next steps
+```
+
+### Via CLI
+
+```bash
+maurice workspace list
+maurice workspace bind <workspace_session_id>
+maurice workspace call workspace_bootstrap_contract --arg goal=create_meta_recette
+maurice workspace call workspace_current_state
+maurice workspace call workspace_feature_prepare --arg goal=create_meta_recette --arg intent_markdown='Build an operations cockpit for onboarding reviews'
+
+# after approval
+maurice workspace call workspace_feature_apply --arg approved_plan_hash=<hash>
+maurice workspace call workspace_current_state
+```
+
+## 2. Deployment diagnostic
 
 ### Via Workspace Control MCP
 
@@ -37,7 +83,7 @@ workspace_call(tool_name="inception_mcpsseservers_redeploy", arguments={"id":"sr
 workspace_call(tool_name="inception_runtime_service_restart", arguments={"deployment_id":"dep_xxx", "operation":"restart"})
 ```
 
-## 2. Governed meta-recette update
+## 3. Governed meta-recette update
 
 ### Via Workspace Control MCP
 
@@ -73,7 +119,7 @@ maurice workspace call workspace_feature_prepare --arg goal=update_meta_recette 
 maurice workspace call workspace_feature_apply --arg approved_plan_hash=<hash>
 ```
 
-## 3. Create or update a recipe from user intent
+## 4. Create or update a recipe from user intent
 
 Rule:
 - prefer `workspace_feature_prepare`
@@ -118,7 +164,7 @@ maurice workspace call workspace_feature_prepare --arg goal=create_recipe --arg 
 maurice workspace call workspace_feature_apply --arg approved_plan_hash=<hash>
 ```
 
-## 4. Verify a recipe backend
+## 5. Verify a recipe backend
 
 Use this when the user wants confidence that AgentMaurice can act as a workflow backend for external callers.
 
@@ -151,7 +197,7 @@ curl -X POST \
   -d '{"input":{}}'
 ```
 
-## 5. Verify a mini-app and OpenUI backend
+## 6. Verify a mini-app and OpenUI backend
 
 Use this when the user wants confidence that AgentMaurice can act as an interactive backend for external frontends.
 
@@ -190,7 +236,7 @@ curl -X POST \
 OpenUI rule:
 - keep the native fallback coherent even when OpenUI delivery is enabled
 
-## 6. Repair recipe identity drift
+## 7. Repair recipe identity drift
 
 Use this when a previous buggy update created a rogue active recipe identity.
 
@@ -206,7 +252,7 @@ workspace_recipe_identity_repair(canonical_recipe_id="validation_recipe_x")
 maurice workspace call workspace_recipe_identity_repair --arg canonical_recipe_id=validation_recipe_x
 ```
 
-## 7. Capability-contract inspection
+## 8. Capability-contract inspection
 
 ### Via Workspace Control MCP
 
@@ -225,7 +271,7 @@ maurice workspace capabilities imports
 maurice workspace capabilities validate-imports
 ```
 
-## 8. Multi-deployment audit
+## 9. Multi-deployment audit
 
 ### Via Workspace Control MCP
 
@@ -244,6 +290,6 @@ for DEP in $(jq -r '.result[].id // .data[].id' /tmp/deps.json); do
 done
 ```
 
-## 9. Internal gamemaster exploration
+## 10. Internal gamemaster exploration
 
 Use `maurice ai run` when the user explicitly wants autonomous exploration or synthesis by the internal AgentMaurice model, not when you need a deterministic governed change pipeline.

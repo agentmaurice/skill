@@ -1,7 +1,7 @@
 interface:
   display_name: "AgentMaurice"
-  short_description: "Operate AgentMaurice backends through MCP or CLI"
-  default_prompt: "Use $agentmaurice to inspect, verify, or change an AgentMaurice workflow or mini-app backend safely."
+  short_description: "Build and operate AgentMaurice apps through MCP or CLI"
+  default_prompt: "Use $agentmaurice to turn an app idea into a deployed AgentMaurice app or backend, choose a frontend starter if needed, verify it, and explain how to access it."
 
 policy:
   allow_implicit_invocation: true

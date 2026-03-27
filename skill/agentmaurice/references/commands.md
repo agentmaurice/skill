@@ -163,7 +163,27 @@ curl -X POST \
   -d '{"input":{}}'
 ```
 
-## 8. Practical rule
+## 8. Idea-to-app shortcut
+
+For an interactive application idea:
+```bash
+maurice workspace list
+maurice workspace bind <workspace_session_id>
+maurice workspace call workspace_bootstrap_contract --arg goal=create_meta_recette
+maurice workspace call workspace_current_state
+maurice workspace call workspace_feature_prepare --arg goal=create_meta_recette --arg intent_markdown='Build a support review dashboard'
+```
+
+For a workflow backend idea:
+```bash
+maurice workspace list
+maurice workspace bind <workspace_session_id>
+maurice workspace call workspace_bootstrap_contract --arg goal=create_recipe
+maurice workspace call workspace_current_state
+maurice workspace call workspace_feature_prepare --arg goal=create_recipe --arg intent_markdown='Build a backend that classifies inbound partner requests'
+```
+
+## 9. Practical rule
 
 For an external AI, the best CLI path is usually:
 ```bash
