@@ -11,6 +11,18 @@ Public repository for an English-language AgentMaurice skill that helps an AI:
 - fall back to the `maurice` CLI
 - run governed meta-recette and recipe workflows
 
+## What You Can Do With It
+
+Use this skill when you want an AI in Claude Code, Codex, or a similar agentic environment to:
+- read an application idea or a repository description
+- map that idea to AgentMaurice deployments and blueprint slices
+- choose whether each slice should be a mini-app or a workflow backend
+- describe end-user authentication such as Firebase, Supabase, or generic OIDC
+- choose a frontend starter such as `agent-maurice-viewer`
+- prepare, preview, verify, and deploy the resulting application
+
+The intended outcome is not only a drafted spec. The intended outcome is a usable AgentMaurice app or backend, plus a clear access and verification plan.
+
 ## What This Repository Contains
 
 - [`skill/agentmaurice`](./skill/agentmaurice): the reusable skill itself
@@ -40,6 +52,13 @@ Use this skill if you want an AI assistant to operate AgentMaurice through:
 
 This repository is aimed at teams who want a portable, publishable skill instead of a private skill buried inside a mono-repo.
 
+It is especially useful if you want a user to be able to say:
+
+```text
+Here is my app idea. Build it on AgentMaurice, choose the right runtime,
+guide me only on blocking questions, and tell me how to access the result.
+```
+
 ## Core Design
 
 The skill follows a few simple rules:
@@ -65,8 +84,22 @@ The skill follows a few simple rules:
 2. Make sure your environment has either:
    - a working AgentMaurice MCP connection
    - or a working `maurice` CLI configuration
-3. If your repository describes an app, start by creating or filling [`templates/agentmaurice.app.md`](./templates/agentmaurice.app.md).
-4. Start with one of the examples in [`examples`](./examples).
+3. If your repository describes an app, create or fill [`templates/agentmaurice.app.md`](./templates/agentmaurice.app.md).
+4. If the app also needs a publishable frontend, describe that separately in the `Frontend Strategy` section of the manifest.
+5. Start with one of the examples in [`examples`](./examples).
+
+## First Prompt
+
+After installing the skill, a good first prompt is:
+
+```text
+Use $agentmaurice to read this repository and build the application described here.
+If `agentmaurice.app.md` exists, use it as the source of truth.
+Treat the app as one or more deployments with one or more meta-recette blueprint slices.
+Ask only blocking questions.
+Preview before apply when a mini-app is involved.
+If a public frontend is needed, propose a client repo plan based on `agent-maurice-viewer`.
+```
 
 ## Recommended First Workflows
 
@@ -74,8 +107,12 @@ The skill follows a few simple rules:
   [`examples/diagnose-deployment.md`](./examples/diagnose-deployment.md)
 - Create an application manifest:
   [`templates/agentmaurice.app.md`](./templates/agentmaurice.app.md)
+- Learn the manifest format:
+  [`docs/agentmaurice-app-format.md`](./docs/agentmaurice-app-format.md)
 - Choose a public client starter:
   [`examples/use-viewer-demo-as-client-app.md`](./examples/use-viewer-demo-as-client-app.md)
+- Plan an embedded frontend integration:
+  [`examples/use-viewer-embed-in-existing-site.md`](./examples/use-viewer-embed-in-existing-site.md)
 - Turn an app idea into a mini-app:
   [`examples/from-idea-to-mini-app.md`](./examples/from-idea-to-mini-app.md)
 - Turn an automation idea into a workflow backend:
@@ -146,4 +183,4 @@ agent-maurice-skill/
 - The examples are repository documentation, not part of the skill payload itself.
 - `agentmaurice.app.md` is the canonical application-description entry point for AI-driven builds.
 - `agent-maurice-viewer` should be treated as a candidate public client starter, not just as an internal demo.
-- the client repo plan should be modeled separately from the AgentMaurice backend topology, even when both are built from the same user idea.
+- The client repo plan should be modeled separately from the AgentMaurice backend topology, even when both are built from the same user idea.
