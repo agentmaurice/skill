@@ -32,7 +32,7 @@ Prefer the Workspace Control gateway when it is available. It gives the AI:
 - governed prepare/apply workflows
 - access to expert Inception tools through `workspace_search` and `workspace_call`
 
-If the MCP gateway is not available, fall back to the `maurice` CLI.
+If the MCP gateway is not available, fall back to the `maurice` CLI from [agentmaurice/mauricecli](https://github.com/agentmaurice/mauricecli).
 
 ## Backend framing
 

@@ -48,6 +48,14 @@ The skill is useful only if at least one of these is available:
 - External Inception MCP access
 - a configured `maurice` CLI
 
+## CLI Install
+
+If you want to use the CLI path, install `maurice` from:
+
+- [agentmaurice/mauricecli](https://github.com/agentmaurice/mauricecli)
+
+The exact installation method depends on that repository's release and packaging strategy. Once installed, the skill expects the `maurice` binary to be available in `PATH`.
+
 ## Recommended MCP Setup
 
 Workspace Control usually looks like this:

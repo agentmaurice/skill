@@ -50,6 +50,8 @@ Use this skill if you want an AI assistant to operate AgentMaurice through:
 - the External Inception MCP gateway
 - the `maurice` CLI
 
+If you want to use the CLI path, install it from [agentmaurice/mauricecli](https://github.com/agentmaurice/mauricecli).
+
 This repository is aimed at teams who want a portable, publishable skill instead of a private skill buried inside a mono-repo.
 
 It is especially useful if you want a user to be able to say:
@@ -83,7 +85,7 @@ The skill follows a few simple rules:
 1. Install the skill folder from [`skill/agentmaurice`](./skill/agentmaurice) into your assistant's skills directory.
 2. Make sure your environment has either:
    - a working AgentMaurice MCP connection
-   - or a working `maurice` CLI configuration
+   - or a working `maurice` CLI configuration from [agentmaurice/mauricecli](https://github.com/agentmaurice/mauricecli)
 3. If your repository describes an app, create or fill [`templates/agentmaurice.app.md`](./templates/agentmaurice.app.md).
 4. If the app also needs a publishable frontend, describe that separately in the `Frontend Strategy` section of the manifest.
 5. Start with one of the examples in [`examples`](./examples).

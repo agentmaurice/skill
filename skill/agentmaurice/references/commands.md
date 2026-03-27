@@ -1,5 +1,8 @@
 # Maurice CLI — Current Command Guide
 
+Install the public CLI from:
+- [agentmaurice/mauricecli](https://github.com/agentmaurice/mauricecli)
+
 Use the CLI in two different ways:
 - `maurice workspace ...` for organization and workspace governed control
 - `maurice tools ...` for low-level deployment-scoped tool calls
