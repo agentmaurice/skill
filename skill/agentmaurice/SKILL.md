@@ -57,6 +57,11 @@ Treat AgentMaurice as two backend runtimes:
 - `mode=recipe`: workflow backend for execution, polling, logs, and direct tool access
 - `mode=app`: stateful mini-app backend for viewer bootstrap, app instances, events, and interactive UI
 
+Important mini-app invariant:
+- a deployment viewer only exposes recipes that are active and in `mode=app`
+- if the deployment only contains `mode=recipe` definitions, viewer bootstrap returns no mini-app for that deployment
+- switching a workflow recipe to mini-app mode requires app runtime fields such as `state_schema`, `initial_state`, `ui_schema`, and `events`
+
 Treat OpenUI as a presentation layer for mini-app delivery:
 - `ui_schema` remains the runtime source of truth
 - `presentation.ui_runtime=openui` adds an OpenUI rendering path
@@ -217,6 +222,10 @@ For backend verification:
 4. Prefer the lightest verification that proves the backend works
 5. Do not apply a governed change unless the user explicitly switches from verification to mutation
 ```
+
+For localhost in this repository:
+- use `chatserver` on `http://127.0.0.1:5000` for governed APIs and meta-recette preview
+- use `recipe-server` on `http://127.0.0.1:5021` for viewer bootstrap and mini-app runtime routes
 
 ## Tool naming rules
 

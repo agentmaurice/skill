@@ -39,9 +39,14 @@ Use this path when you need confidence that a deployment can expose interactive 
 
 Recommended sequence:
 1. Get the Doctor contract.
-2. Confirm that the target recipe is in `mode=app`.
+2. Confirm that the target recipe is active and in `mode=app`.
 3. Verify viewer bootstrap or preview before deep runtime checks.
 4. If needed, create an app instance and send one event.
+
+Mini-app invariant:
+- viewer bootstrap only lists active recipes in `mode=app`
+- if a deployment contains only `mode=recipe` definitions, `GET /viewer/<deploymentId>` or `GET /viewer/s/<slug>` returns no mini-app for that deployment
+- changing a recipe from `mode=recipe` to `mode=app` is not a one-field toggle: the definition must also provide `state_schema`, `initial_state`, `ui_schema`, and `events`
 
 Runtime surface:
 - `GET /viewer/<deploymentId>`
@@ -50,9 +55,19 @@ Runtime surface:
 - `GET /app/instances/<appInstanceId>`
 - `POST /app/instances/<appInstanceId>/events/<eventId>`
 
+Localhost runtime base in this repository:
+- mini-app runtime via `recipe-server`: `http://127.0.0.1:5021`
+- examples:
+  - `http://127.0.0.1:5021/viewer/<deploymentId>`
+  - `http://127.0.0.1:5021/viewer/s/<slug>`
+  - `http://127.0.0.1:5021/app/<deploymentId>/<recipeId>/instances`
+
 Build-time preview surface:
 - `GET /organization/{organizationId}/meta-recette/{metaRecetteId}/miniapp-preview`
 - `POST /organization/{organizationId}/meta-recette/{metaRecetteId}/miniapp-preview/events/{eventId}`
+
+Localhost preview base in this repository:
+- meta-recette preview via `chatserver`: `http://127.0.0.1:5000`
 
 ## 3. OpenUI verification
 
