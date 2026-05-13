@@ -32,6 +32,15 @@ Prefer the Workspace Control gateway when it is available. It gives the AI:
 - governed prepare/apply workflows
 - access to expert Inception tools through `workspace_search` and `workspace_call`
 
+Use External Inception directly when Workspace Control is not connected but a
+deployment-scoped key is available. In code-mode clients such as Claude Code or
+Codex, External Inception exposes only:
+- `inception_search`
+- `inception_call`
+
+Always discover and inspect the exact tool schema with `inception_search`
+before calling it with `inception_call`.
+
 If the MCP gateway is not available, fall back to the `maurice` CLI from [agentmaurice/mauricecli](https://github.com/agentmaurice/mauricecli).
 
 ## Backend framing
@@ -140,7 +149,42 @@ Important session tools are also reachable through expert mode, especially:
 - `workspace_session_reconcile`
 - `workspace_session_list_plan_approvals`
 
-### Mode B: `maurice workspace` CLI
+### Mode B: External Inception MCP
+
+Use this when the connector named `agentmaurice-inception` is present, or when
+the user provides an External Inception MCP configured with a deployment key
+`sk_maurice_...`.
+
+Default pattern:
+```text
+1. inception_search(query="deployment doctor")
+2. inception_search(tool_name="inception_deployment_doctor")
+3. inception_call(tool_name="inception_deployment_doctor", arguments={"format":"ai_contract"})
+4. inception_search(category="...", query="...")
+5. inception_search(tool_name="exact_tool_name")
+6. inception_call(tool_name="exact_tool_name", arguments={...})
+```
+
+Use these categories when looking for configuration tools:
+- `dynamic_mcp` for first-class Dynamic MCP instances, grants, policies, jobs and audit
+- `llm` for organization LLM providers, credentials, models, profiles and deployment role config
+- `storage` for S3 storage config
+- `messaging` for messaging accounts
+- `mailcatcher` for inbound mail routes
+- `snapshot` for deployment import/export snapshots
+- `access` for deployment members
+- `web` for managed web search/fetch/extract when external documentation is needed
+
+External Inception modes:
+- `readonly` supports safe reads, diagnostics, discovery, provider tests and runtime-safe recipe execution controls
+- `god` supports deployment-scoped mutations except always-blocked security boundaries
+
+Even in `god` mode, plan first and require explicit approval before destructive
+or sensitive operations such as delete, credential upsert/rotation, snapshot
+import, deployment membership changes, MCP removal, messaging removal or mail
+route removal.
+
+### Mode C: `maurice workspace` CLI
 
 Use this when MCP is not connected, or when a reproducible terminal workflow is better.
 
@@ -159,7 +203,7 @@ maurice workspace call workspace_feature_prepare --arg goal=update_meta_recette 
 maurice workspace call workspace_feature_apply --arg approved_plan_hash=<hash>
 ```
 
-### Mode C: low-level CLI or `ai run`
+### Mode D: low-level CLI or `ai run`
 
 Use only when:
 - the user explicitly wants low-level deployment tools
@@ -254,6 +298,9 @@ For business feature creation from user intent, prefer the meta-recette workflow
 10. When the user provides only an app idea, optimize for a guided build-and-deploy flow rather than low-level platform exploration.
 11. When the user provides an application description directory, treat it as the primary source of truth and map it to deployments plus blueprint slices.
 12. When the user needs a frontend, separate the AgentMaurice backend plan from the client app repo plan.
+13. When using External Inception, use `inception_search` and `inception_call`; do not assume raw tools are directly listed in code-mode clients.
+14. Treat MCP OAuth, viewer/app runtime sessions, workspace subtasks and usage analytics as HTTP-guided surfaces unless the Doctor contract says otherwise.
+15. Use managed web tools only after checking AgentMaurice state and internal sources; cite URLs and never treat web results as more authoritative than the Doctor, runtime state, or local repository knowledge.
 
 ## References
 

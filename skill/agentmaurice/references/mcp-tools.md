@@ -54,6 +54,7 @@ Reach these through `workspace_call` when needed:
 - `workspace_capabilities_search_registry`
 - `workspace_capabilities_validate_imports`
 - `workspace_capabilities_explain_breaking_changes`
+- `workspace_capabilities_suggest_migration`
 
 ### `workspace_search`
 
@@ -138,17 +139,53 @@ Server:
 - `agentmaurice-inception`
 
 Endpoints:
-- `POST <base_url>/mcp/external/inception`
-- `GET <base_url>/mcp/external/inception/sse`
+- `POST <base_url>/api/v1/mcp/external/inception`
+- `GET <base_url>/api/v1/mcp/external/inception`
+- `DELETE <base_url>/api/v1/mcp/external/inception`
+- legacy SSE: `GET <base_url>/api/v1/mcp/external/inception/sse`
+- legacy SSE messages: `POST <base_url>/api/v1/mcp/external/inception/messages`
 
 Auth:
-- `Authorization: Bearer mk_...`
+- `Authorization: Bearer sk_maurice_...`
+- This is a deployment API key. Do not use the organization `sk_maurice_orgctrl_...` key here.
 
 Meta-tools:
 - `inception_search`
 - `inception_call`
+- `inception_mcp_capabilities`
 
 Use this gateway when you already have a deployment-scoped key and do not need workspace session management.
+
+In code-mode clients such as Claude Code and Codex, the gateway normally lists
+only `inception_search` and `inception_call`. Always search first, inspect the
+exact schema second, then call by exact name.
+
+Useful `inception_search` categories:
+- `recipe`
+- `deployment`
+- `mcp`
+- `dynamic_mcp`
+- `registry`
+- `skill`
+- `function`
+- `provider`
+- `llm`
+- `variable`
+- `schedule`
+- `meta_recette`
+- `user`
+- `access`
+- `space`
+- `rag`
+- `allowlist`
+- `multimodal`
+- `storage`
+- `messaging`
+- `mailcatcher`
+- `snapshot`
+- `web`
+- `devops`
+- `observability`
 
 ## 3. Important expert tool families
 
@@ -189,8 +226,19 @@ Low-level recipe management is based on recipe definitions:
 - `inception_recipe_definitions_activate`
 
 Runtime and history flows:
+- `inception_recipe_executions_start`
+- `inception_recipe_executions_start_sync`
+- `inception_recipe_executions_resume`
+- `inception_recipe_executions_submit_form`
+- `inception_recipe_executions_cancel`
+- `inception_recipe_executions_approve`
 - `inception_recipe_executions_list`
 - `inception_recipe_executions_get`
+- `inception_recipe_executions_logs`
+
+Deprecated compatibility helpers:
+- `inception_recipe_executions_create`
+- `inception_recipe_executions_update_status`
 
 For user intent like "create an agent", prefer the meta-recette workflow, not raw recipe-definition CRUD.
 
@@ -215,20 +263,145 @@ OpenUI delivery:
 ### MCP runtimes
 
 - `inception_mcpservers_list`
-- `inception_mcpservers_get`
+- `inception_mcpsseservers_list`
+- `inception_mcpsseservers_get`
+- `inception_mcpsseservers_create`
+- `inception_mcpsseservers_update`
+- `inception_mcpsseservers_delete`
+- `inception_mcpsseservers_doctor`
 - `inception_mcpsseservers_redeploy`
+- `inception_mcpstdioservers_list`
+- `inception_mcpstdioservers_create`
+- `inception_mcpstdioservers_delete`
 - `inception_mcpsidecarservers_list`
 - `inception_mcpsidecarservers_get`
+- `inception_mcpsidecarservers_create`
+- `inception_mcpsidecarservers_update`
+- `inception_mcpsidecarservers_delete`
 - `inception_mcpsidecarservers_redeploy`
 
-### Variables, providers, skills, schedules, spaces
+### Dynamic MCP first-class control plane
 
+Use these for managed/dynamic MCP instances, grants, grant policies, jobs and
+audit. They are deployment-scoped and should be discovered through
+`inception_search(category="dynamic_mcp", query="...")`.
+
+- `inception_dynamic_mcp_instances_list`
+- `inception_dynamic_mcp_instances_get`
+- `inception_dynamic_mcp_instances_create`
+- `inception_dynamic_mcp_instances_update`
+- `inception_dynamic_mcp_instances_delete`
+- `inception_dynamic_mcp_instances_redeploy`
+- `inception_dynamic_mcp_grants_list`
+- `inception_dynamic_mcp_grants_create`
+- `inception_dynamic_mcp_grants_update`
+- `inception_dynamic_mcp_grants_delete`
+- `inception_dynamic_mcp_grant_policies_list`
+- `inception_dynamic_mcp_grant_policies_create`
+- `inception_dynamic_mcp_grant_policies_update`
+- `inception_dynamic_mcp_grant_policies_delete`
+- `inception_dynamic_mcp_jobs_list`
+- `inception_dynamic_mcp_audit_list`
+
+### Organization and deployment LLM control plane
+
+Use these for organization providers, credential upsert/rotation, models,
+profiles and deployment role config for `run`, `build` and `embedding`.
+
+- `inception_org_llm_providers_list`
+- `inception_org_llm_providers_get`
+- `inception_org_llm_providers_create`
+- `inception_org_llm_providers_update`
+- `inception_org_llm_providers_delete`
+- `inception_org_llm_credentials_upsert`
+- `inception_org_llm_provider_test`
+- `inception_org_llm_models_list`
+- `inception_org_llm_models_create`
+- `inception_org_llm_models_sync`
+- `inception_org_llm_profiles_list`
+- `inception_org_llm_profiles_create`
+- `inception_org_llm_profiles_update`
+- `inception_org_llm_profiles_delete`
+- `inception_deployment_llm_config_get`
+- `inception_deployment_llm_config_set`
+- `inception_deployment_llm_config_select_model`
+
+Never expect credential tools to return raw secret values. Treat credential
+changes as sensitive mutations requiring an explicit plan and approval.
+
+### Registry, variables, providers, skills, schedules, spaces
+
+- `inception_registry_stats`
+- `inception_registry_deployment_status`
+- `inception_registry_deployment_logs`
+- `inception_registry_entry_tests`
+- `inception_registry_check_image`
 - `inception_variables_list`
 - `inception_variables_get`
-- `inception_providers_list`
+- `inception_llmproviders_list`
+- `inception_llmproviders_get`
+- `inception_embeddingproviders_list`
+- `inception_embeddingproviders_get`
 - `inception_skills_list`
+- `inception_skill_registry_list`
+- `inception_skill_registry_verify`
 - `inception_schedules_list`
 - `inception_spaces_list`
+
+### Storage, snapshots, messaging, mail catcher, access
+
+Use these to cover deployment configuration areas that are not recipes or MCP
+runtimes.
+
+Snapshots:
+- `inception_deployment_snapshot_export`
+- `inception_deployment_snapshot_import`
+
+S3 storage:
+- `inception_s3_storage_get`
+- `inception_s3_storage_create`
+- `inception_s3_storage_update`
+- `inception_s3_storage_delete`
+
+Messaging accounts:
+- `inception_messaging_accounts_list`
+- `inception_messaging_accounts_get`
+- `inception_messaging_accounts_create`
+- `inception_messaging_accounts_update`
+- `inception_messaging_accounts_delete`
+
+Mail catcher routes:
+- `inception_mailcatcher_routes_list`
+- `inception_mailcatcher_routes_get`
+- `inception_mailcatcher_routes_create`
+- `inception_mailcatcher_routes_update`
+- `inception_mailcatcher_routes_delete`
+
+Deployment members:
+- `inception_deployment_members_list`
+- `inception_deployment_members_assign`
+- `inception_deployment_members_remove`
+
+Confirm before snapshot import, delete operations, credential changes,
+membership changes, MCP removal, messaging account removal and mail route
+removal.
+
+### Managed websearch
+
+Use these when AgentMaurice internal state and repository knowledge are not
+enough, especially for external MCP documentation, third-party APIs, provider
+errors and integration examples. Results must be cited by URL and must not
+override Doctor/runtime truth.
+
+- `inception_admin_web_search`
+- `inception_admin_web_fetch`
+- `inception_admin_web_extract`
+- `inception_admin_web_mcp_docs`
+- `inception_admin_web_github_readme`
+
+The managed web gateway hides provider keys behind Console billing, quotas and
+audit. Calisto and external MCP clients receive search/fetch/extract results,
+not provider credentials.
 
 ### Runtime operations
 
@@ -236,11 +409,16 @@ OpenUI delivery:
 
 ## 4. Security and governance
 
-`admin`
-- mutations allowed unless blocked by policy
+External Workspace Control role header:
+- `admin`: mutations allowed unless blocked by policy
+- `operator`: runtime operations without broad admin mutation
+- `readonly`: inspection only
 
-`readonly`
-- inspection only
+External Inception mode:
+- `readonly`: inspection, diagnostics, registry discovery/tests, and runtime-safe recipe execution controls
+- `god`: deployment-scoped mutations allowed unless explicitly blocked
+- always blocked: API keys, sessions, organization memberships, auth connectors, raw secret reads, identity-sensitive user creation/deletion
+- credential upserts may exist for specific admin control planes, but outputs must only expose status/presence metadata and never raw secret values
 
 General rule:
 - plan first

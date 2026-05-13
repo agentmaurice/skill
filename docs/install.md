@@ -74,6 +74,36 @@ Workspace Control usually looks like this:
 }
 ```
 
+External Inception direct access uses a deployment key and the deployment-scoped endpoint:
+
+```json
+{
+  "command": "npx",
+  "args": [
+    "mcp-remote@latest",
+    "http://localhost:5000/api/v1/mcp/external/inception",
+    "--header",
+    "Authorization: Bearer sk_maurice_..."
+  ]
+}
+```
+
+Use `sk_maurice_orgctrl_...` only for Workspace Control. Use `sk_maurice_...` only for External Inception.
+
+In code-mode clients such as Claude Code and Codex, External Inception exposes
+the meta-tools `inception_search` and `inception_call`. Use `inception_search`
+to discover and inspect exact schemas before calling tools.
+
+The important configuration categories are:
+- `dynamic_mcp`
+- `llm`
+- `storage`
+- `messaging`
+- `mailcatcher`
+- `snapshot`
+- `access`
+- `web`
+
 ## Recommended CLI Bootstrap
 
 ```bash

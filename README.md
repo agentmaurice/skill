@@ -5,6 +5,8 @@ Public repository for an English-language AgentMaurice skill that helps an AI:
 - model that application as one or more deployments with one or more meta-recettes
 - choose and describe a public client frontend starter when needed
 - inspect deployments safely
+- configure deployment surfaces through External Inception when a deployment key is available
+- use managed web search/fetch/extract tools when external documentation is needed
 - operate AgentMaurice as a workflow backend and a mini-app backend
 - verify recipe runtimes, viewer bootstrap, and OpenUI-backed mini-app delivery
 - use the Workspace Control MCP gateway
@@ -67,6 +69,7 @@ The skill follows a few simple rules:
 - Doctor first
 - start from user intent, not from internal implementation nouns
 - prefer Workspace Control over lower-level paths
+- use External Inception `inception_search`/`inception_call` when a code-mode MCP client only exposes meta-tools
 - treat a meta-recette as an application blueprint slice, not as the whole application
 - expect a real application to span one or more deployments and one or more meta-recettes
 - treat the client frontend repo as a separate public artifact when the user needs a branded application front
@@ -75,6 +78,8 @@ The skill follows a few simple rules:
 - prefer `mode=app` plus OpenUI when the user describes an application, dashboard, or interactive operator surface
 - treat OpenUI as an optional presentation layer over the mini-app runtime, not as the runtime source of truth
 - use governed prepare/apply flows for changes
+- require explicit approval for sensitive External Inception mutations such as deletes, credential changes, snapshot imports, membership changes, MCP removal, messaging removal and mail route removal
+- use managed web tools only after internal AgentMaurice sources and runtime state, with URL citations
 - present plans before apply
 - prefer meta-recette workflows for user-intent changes
 - run lightweight verification flows before deep mutations when the user asks for runtime confidence
