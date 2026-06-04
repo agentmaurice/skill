@@ -7,7 +7,7 @@ Use this reference when the user provides an app idea but not enough implementat
 Capture or infer:
 - what the application boundary is
 - whether there are multiple deployments
-- whether there are multiple blueprint slices
+- which conceptual blueprint slices belong in each deployment Agent Spec
 - whether end users authenticate directly to AgentMaurice-backed surfaces
 - who uses the app
 - what they input or review
@@ -17,7 +17,7 @@ Capture or infer:
 
 Good blocking questions:
 - Does this app need one deployment or separate deployments for public, admin, or backend roles?
-- Should this be one blueprint slice or several meta-recettes with separate responsibilities?
+- Which slices belong together in the same deployment, and which need separate deployment isolation?
 - Do end users sign in with Firebase, Supabase, or another OIDC provider?
 - Who is the primary user of this app?
 - What is the single most important action they need to perform?

@@ -54,14 +54,17 @@ Use one of these:
 The skill should:
 1. Look for `agentmaurice.app.md` first.
 2. Read it before asking clarifying questions.
-3. Treat the application as one or more deployments with one or more meta-recette blueprint slices.
-4. Map each blueprint slice to `mode=app` or `mode=recipe`.
+3. Treat the application as one or more deployments, each with one canonical
+   Agent Spec / meta-recette in V1.
+4. Map each conceptual blueprint slice to `mode=app` or `mode=recipe` inside
+   the relevant deployment spec.
 5. If `End User Authentication` is present, model authentication per deployment.
 6. If `Frontend Strategy` is present, model the client application separately from the AgentMaurice backend.
-7. Build slice by slice when the application is too large for a single safe change.
+7. Build slice by slice when the application is too large for a single safe
+   change, while preserving the complete Agent Spec for each target deployment.
 
 The skill should not:
-- assume one application equals one meta-recette
+- assume one application equals one deployment Agent Spec
 - assume one application equals one deployment
 - assume every slice is interactive
 

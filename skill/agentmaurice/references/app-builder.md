@@ -4,6 +4,10 @@ Use this reference when the user starts with an idea for an app, tool, cockpit, 
 
 If the user provides a directory that describes the application, read that directory before deciding the build plan.
 
+If the user asks for reusable modules, a module catalog, a composed
+Application, or private/public Git modules, switch to
+`references/modular-applications.md` after this classification step.
+
 ## 1. Classify the idea
 
 Choose the runtime first.
@@ -27,17 +31,18 @@ If the user says "application" and is vague, default to:
 - `mode=app`
 - `presentation.ui_runtime=openui`
 
-But classify at the blueprint-slice level, not only at the whole-application level.
+But classify at the conceptual slice level, not only at the whole-application level.
 A single application may need both:
 - `mode=app` slices
 - `mode=recipe` slices
+- reusable modules installed through an AgentMaurice `Application`
 
 ## 2. Build sequence
 
 Preferred sequence:
 1. Resolve the application model.
 2. Identify deployments.
-3. Identify meta-recette blueprint slices.
+3. Identify conceptual slices inside each deployment Agent Spec.
 4. Identify end-user authentication requirements per deployment.
 5. Get the Doctor contract.
 6. Capture only blocking product details.
@@ -47,7 +52,8 @@ Preferred sequence:
 10. Re-check final state.
 11. Return the deployment map, access details, and next steps.
 
-When the application is large, build slice by slice instead of forcing one huge first apply.
+When the application is large, build slice by slice, but preserve the complete
+Agent Spec for each deployment during every compile/apply.
 
 ## 3. Preferred MCP path
 
@@ -57,7 +63,7 @@ When the application is large, build slice by slice instead of forcing one huge 
 3. Read the application description directory or user brief
 4. workspace_current_state()
 5. Identify auth expectations for the deployment you are working on
-6. Choose the deployment and blueprint slice you are working on
+6. Choose the deployment and conceptual slice you are working on
 7. workspace_feature_prepare(goal="...", intent_markdown="...")
 8. If mode=app, use preview or runtime verification
 9. Present the plan
@@ -76,7 +82,9 @@ If the user does not specify these, assume:
 
 Do not assume:
 - one deployment
-- one meta-recette
+- one Agent Spec covers the whole application
 - one runtime mode for the whole application
+- a one-off Agent Spec is better than a reusable module when the user explicitly
+  wants catalogued business modules
 
 Avoid asking broad product-management questions if the app can be scaffolded from reasonable assumptions.

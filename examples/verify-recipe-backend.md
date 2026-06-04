@@ -1,37 +1,44 @@
 # Verify a Recipe Backend
 
-Use this when you want the AI to confirm that an AgentMaurice deployment behaves like a workflow backend for `mode=recipe` recipes.
+Use this when you want the AI to confirm that an AgentMaurice deployment behaves
+like a workflow backend for `mode=recipe` recipes.
 
 ## Prompt
 
 ```text
 Use $agentmaurice to verify this AgentMaurice recipe backend.
-Start with the Doctor contract, confirm which recipe definitions are active,
-then run the lightest useful verification path for one target recipe.
-If a direct runtime check is possible, execute or start the recipe and inspect the status.
-Do not apply any governed change.
+Start with deployment scopes and Doctor, confirm which recipe is active, then
+run the lightest useful observed execution. Return status, result, trace_id,
+logs/traces summary, and usage_summary. Do not apply any governed change.
 ```
 
-## Expected MCP Path
+## Expected External Inception Path
 
 ```text
-1. workspace_bootstrap_contract(session_id="...")
-2. workspace_current_state()
-3. workspace_call(tool_name="inception_deployment_doctor", arguments={"format":"ai_contract"})
-4. workspace_call(tool_name="inception_recipe_definitions_list", arguments={})
-5. workspace_call(tool_name="inception_recipe_definitions_get", arguments={"id":"<recipe_id>"})
-6. If a live execution exists or is started, workspace_call(tool_name="inception_recipe_executions_get", arguments={"id":"<execution_id>"})
+1. inception_call(tool_name="inception_deployment_scopes_list", arguments={})
+2. inception_call(tool_name="inception_deployment_doctor", arguments={"format":"ai_contract","deployment_alias":"support"})
+3. inception_call(tool_name="inception_mcp_capabilities", arguments={"deployment_alias":"support"})
+4. inception_call(tool_name="inception_recipe_run_observed", arguments={
+     "deployment_alias":"support",
+     "recipe_id":"recipe_x",
+     "logs_limit":50,
+     "trace_limit":50,
+     "include_otel_trace":true
+   })
+5. inception_call(tool_name="inception_recipe_execution_usage", arguments={
+     "deployment_alias":"support",
+     "execution_id":"exec_x"
+   })
 ```
 
 ## Expected CLI and HTTP Path
 
 ```bash
-maurice workspace bind <workspace_session_id>
-maurice workspace call workspace_bootstrap_contract
-maurice workspace call workspace_current_state
-maurice tools call inception_deployment_doctor --deployment <id> --arg format=ai_contract
-maurice tools call inception_recipe_definitions_list --deployment <id>
-maurice tools call inception_recipe_definitions_get --deployment <id> --arg id=<recipe_id>
+maurice tools call inception_deployment_doctor --deployment <deployment_id> --arg format=ai_contract
+maurice tools call inception_recipe_definitions_list --deployment <deployment_id>
+maurice tools call inception_recipe_definitions_get --deployment <deployment_id> --arg id=<recipe_id>
+maurice tools call inception_recipe_run_observed --deployment <deployment_id> --arg recipe_id=<recipe_id> --arg logs_limit=50 --arg trace_limit=50
+maurice tools call inception_recipe_execution_usage --deployment <deployment_id> --arg execution_id=<execution_id>
 
 # Optional direct backend execution check with a deployment API key
 curl -X POST \
@@ -45,4 +52,8 @@ curl -X POST \
 
 - confirm the target recipe is in `mode=recipe`
 - confirm the deployment exposes the recipe backend surface
-- confirm execution status, logs, or trace are readable when a run is started
+- confirm execution state, result, logs, traces and `trace_id`
+- report `usage_summary.duration_ms`, actions, LLM tokens, estimated cost and
+  metering source when available
+- compare multiple runs with `inception_recipe_execution_usage` when the user
+  is optimizing a recipe

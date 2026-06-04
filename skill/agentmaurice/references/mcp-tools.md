@@ -1,8 +1,15 @@
 # AgentMaurice MCP — Current Gateway Reference
 
 AgentMaurice exposes two external MCP gateways:
-- Workspace Control: organization-scoped, workspace-aware, preferred
-- External Inception: deployment-scoped alternative
+- Workspace Control: organization-scoped, workspace-aware, preferred when a
+  Calisto workspace session is the active surface
+- External Inception: deployment-scoped or explicitly multi-deployment-scoped
+  control for code agents
+
+AgentMaurice OS also exposes two code-agent connection paths:
+- prompt-only agent discovery (`amb_...`) for users who do not install the CLI
+- `maurice agent connect` (`amc_...`) for developers who want Git-native
+  project files and local MCP client setup
 
 ## 1. Workspace Control
 
@@ -136,7 +143,9 @@ Pattern:
 ## 2. External Inception
 
 Server:
-- `agentmaurice-inception`
+- `agentmaurice-inception` for prompt-only setup
+- `agentmaurice-inception-<env>-<deployment-alias>` when configured by
+  `maurice agent connect`
 
 Endpoints:
 - `POST <base_url>/api/v1/mcp/external/inception`
@@ -148,17 +157,41 @@ Endpoints:
 Auth:
 - `Authorization: Bearer sk_maurice_...`
 - This is a deployment API key. Do not use the organization `sk_maurice_orgctrl_...` key here.
+- New keys may carry `external_inception_primary_deployment_id` and
+  `external_inception_deployment_scopes`. Old keys without explicit scopes
+  remain single-deployment on their first deployment edge.
 
 Meta-tools:
 - `inception_search`
 - `inception_call`
 - `inception_mcp_capabilities`
+- `inception_deployment_scopes_list`
 
-Use this gateway when you already have a deployment-scoped key and do not need workspace session management.
+Use this gateway when you already have a deployment-scoped key, a consumed
+agent-discovery contract, or an MCP client configured by `maurice agent
+connect`.
 
 In code-mode clients such as Claude Code and Codex, the gateway normally lists
 only `inception_search` and `inception_call`. Always search first, inspect the
 exact schema second, then call by exact name.
+
+Initial calls:
+```text
+inception_call(tool_name="inception_deployment_scopes_list", arguments={})
+inception_call(tool_name="inception_deployment_doctor", arguments={"format":"ai_contract"})
+inception_call(tool_name="inception_mcp_capabilities", arguments={})
+```
+
+For modular Applications, inspect `modular_applications` in the Doctor
+`ai_contract` and in `inception_mcp_capabilities`. It documents the Module
+Catalog, schemas, CLI commands, management endpoints, generic runtime routes,
+and security boundaries. In V1 these are documented HTTP/CLI surfaces, not
+direct External Inception mutation tools.
+
+When multiple deployment scopes are authorized, pass `deployment_alias`,
+`deployment_id`, or `target_deployment_id` to tools that accept a target.
+Never infer the target from display text. A forbidden target returns
+`external_inception_deployment_scope_forbidden`.
 
 Useful `inception_search` categories:
 - `recipe`
@@ -179,6 +212,7 @@ Useful `inception_search` categories:
 - `rag`
 - `allowlist`
 - `multimodal`
+- `integration`
 - `storage`
 - `messaging`
 - `mailcatcher`
@@ -198,22 +232,90 @@ Preferred high-level path:
 Low-level expert tools:
 - `inception_meta_recette_list`
 - `inception_meta_recette_get`
+- `inception_meta_recette_ensure`
 - `inception_meta_recette_create`
 - `inception_meta_recette_update`
 - `inception_meta_recette_compile`
 - `inception_meta_recette_plan_apply`
+- `inception_meta_recette_approve_plan`
+- `inception_meta_recette_reject_plan`
 - `inception_meta_recette_apply`
 - `inception_meta_recette_test`
 - `inception_meta_recette_reconcile`
 - `inception_meta_recette_export`
 - `inception_meta_recette_import`
 - `inception_meta_recette_merge`
+- `inception_meta_recette_project_export`
+- `inception_meta_recette_project_validate`
+- `inception_meta_recette_project_plan`
+- `inception_meta_recette_project_apply`
+- `inception_meta_recette_project_status`
+
+Use `inception_meta_recette_ensure` for normal create-or-reuse workflows. Keep
+`inception_meta_recette_create` for strict new-only flows where a duplicate
+meta-recette must be treated as an error.
+
+External Inception `guided` flow:
+```text
+1. inception_meta_recette_compile(dry_run=true, structured_spec={...})
+2. inception_meta_recette_compile(dry_run=false, structured_spec={...})
+3. inception_meta_recette_plan_apply(meta_recette_id="...")
+4. Present the plan and exact plan_hash in the chat.
+5. inception_meta_recette_approve_plan(
+     meta_recette_id="...",
+     plan_id="...",
+     plan_hash="<hash>",
+     approval_text="I approve <hash>"
+   )
+6. inception_meta_recette_apply(
+     meta_recette_id="...",
+     approval_id="...",
+     approved_plan_hash="<hash>",
+     run_tests=true
+   )
+```
+
+`readonly` accepts compile only with `dry_run=true`. In `guided`, persistence
+requires `dry_run=false` explicitly. The OS is an audit/supervision surface; it
+is not required for approval when the user explicitly approves in chat.
+
+Canonical Agent Spec rules:
+- one canonical meta-recette/Agent Spec per deployment in V1
+- `structured_spec.recipes_definitions` is the complete source of truth
+- partial structured specs merge by default and preserve existing recipes
+- removals must use `delete_recipe_ids`
+- full replacement must use `merge_strategy="replace_all"`
+- runtime recipes absent from the spec are drift; adopt them only with an
+  explicit `adopt_runtime_orphans=true`
+
+During apply, AgentMaurice computes final recipe versions first, including
+`AutoVersionBump`, then rewrites internal `recipe_call` actions between recipes
+generated in the same `recipes_definitions` batch. External explicit
+`recipe_version` targets remain strict.
 
 ### Doctor and deployment inspection
 
 - `inception_deployments_list`
 - `inception_deployment_get`
 - `inception_deployment_doctor`
+- `inception_integrations_inventory`
+- `inception_integrations_doctor`
+- `inception_mcp_capabilities`
+
+Doctor `ai_contract` also exposes modular Application metadata when supported:
+- `capabilities.module_catalog`
+- `capabilities.modular_applications`
+- `capabilities.application_runtime`
+- `capabilities.git_credentials`
+- `modular_applications.schemas`
+- `modular_applications.cli_commands`
+- `modular_applications.catalog_endpoints`
+- `modular_applications.application_management_endpoints`
+- `modular_applications.runtime_endpoints`
+
+Use this data to drive `maurice catalog modules`, `maurice module`,
+`maurice app`, and `maurice git credential` commands. Do not invent direct
+Inception module-mutation tools unless discovery explicitly lists them.
 
 ### Recipe definitions and executions
 
@@ -235,12 +337,30 @@ Runtime and history flows:
 - `inception_recipe_executions_list`
 - `inception_recipe_executions_get`
 - `inception_recipe_executions_logs`
+- `inception_recipe_run_observed`
+- `inception_recipe_execution_usage`
 
 Deprecated compatibility helpers:
 - `inception_recipe_executions_create`
 - `inception_recipe_executions_update_status`
 
 For user intent like "create an agent", prefer the meta-recette workflow, not raw recipe-definition CRUD.
+
+Recipe runtime contract:
+- `tool_call` actions use `actions[].tool` and `actions[].params`
+- do not use `tool_name` or `inputs` in recipe action specs unless Doctor says
+  a compatibility path is available
+- prefer full runtime tool names such as `server--tool`; use short names only
+  when non-ambiguous
+- no-input recipes use `forms: []`
+- form recipes follow `start -> waiting_for_form -> submit_form -> terminal`
+
+Observed execution:
+- `inception_recipe_run_observed` starts a recipe and returns result, data,
+  logs, recipe trace, optional OTel trace, timeline, `trace_id`, and
+  `usage_summary`
+- `inception_recipe_execution_usage` returns only the execution cost/usage
+  summary for comparison and optimization
 
 ### Backend verification surfaces
 
@@ -303,6 +423,38 @@ audit. They are deployment-scoped and should be discovered through
 - `inception_dynamic_mcp_jobs_list`
 - `inception_dynamic_mcp_audit_list`
 
+### Runtime MCP tools
+
+Runtime tools, including `storage--*`, `memory--*`, `llm--*`,
+`multimodal--*`, `docstore--*`, and `integration_*`, are visible through the
+Doctor, capabilities, inventory, and resolve/list tools. They are not called by
+placing their raw name in `inception_call.tool_name`.
+
+Direct runtime tool entrypoint:
+- `inception_runtime_tool_call`
+
+Rules:
+- `guided` can call visible deployment-scoped runtime tools directly
+- `readonly` can resolve/dry-run but cannot execute direct runtime calls
+- `god` has the same direct runtime tool ability as `guided`
+- no arbitrary user ID can be supplied
+- raw secrets are never returned
+
+Example:
+```text
+inception_call(
+  tool_name="inception_runtime_tool_call",
+  arguments={
+    "tool_name":"storage--list_files",
+    "arguments":{},
+    "timeout_sec":60
+  }
+)
+```
+
+If `inception_call(tool_name="storage--list_files")` returns a structured
+blocked response, switch to `inception_runtime_tool_call`.
+
 ### Organization and deployment LLM control plane
 
 Use these for organization providers, credential upsert/rotation, models,
@@ -329,6 +481,16 @@ profiles and deployment role config for `run`, `build` and `embedding`.
 Never expect credential tools to return raw secret values. Treat credential
 changes as sensitive mutations requiring an explicit plan and approval.
 
+Hosted AgentMaurice LLM catalog:
+- Doctor `allowed_llm_models` is the effective list of models callable by
+  recipe `llm_call.llm_model`
+- when the deployment uses AgentMaurice hosted, active `hosted:*` chat models
+  from the Console catalog are callable explicitly, not only the run/build
+  defaults
+- inspect `llm_model_catalog` before choosing a model
+- missing/unknown hosted model refs should be treated as stable config errors,
+  not as prompts to expose provider secrets
+
 ### Registry, variables, providers, skills, schedules, spaces
 
 - `inception_registry_stats`
@@ -352,6 +514,19 @@ changes as sensitive mutations requiring an explicit plan and approval.
 
 Use these to cover deployment configuration areas that are not recipes or MCP
 runtimes.
+
+Integrations are deployment-scoped at runtime:
+- provider directory and billing are organization-level
+- activation, settings, connections, runtime config, projected tools and usage
+  are deployment-level
+- a tool from another deployment must not appear callable unless it is enabled
+  for the current deployment scope
+- cross-deployment `recipe_call` runs the child recipe on the child deployment,
+  using the child deployment's integrations
+
+Integration discovery:
+- `inception_integrations_inventory`
+- `inception_integrations_doctor`
 
 Snapshots:
 - `inception_deployment_snapshot_export`
@@ -407,6 +582,31 @@ not provider credentials.
 
 - `inception_runtime_service_restart`
 
+### Git-native project tools
+
+Use these when the user works from a repository containing `agentmaurice.yaml`
+or wants a multi-user workflow:
+
+- `inception_meta_recette_project_export`
+- `inception_meta_recette_project_validate`
+- `inception_meta_recette_project_plan`
+- `inception_meta_recette_project_apply`
+- `inception_meta_recette_project_status`
+
+Project format:
+```text
+agentmaurice.yaml
+agentmaurice.lock.json
+environments/<env>.yaml
+deployments/<deployment-alias>/agent-spec.json
+deployments/<deployment-alias>/recipes/<recipe_id>.json
+deployments/<deployment-alias>/tests/test-plan.json
+```
+
+`project_plan` is non-mutating. `project_apply` requires `approval_id`,
+`approved_plan_hash`, and matching `base_resource_version`. Version conflicts
+return `meta_recette_version_conflict`.
+
 ## 4. Security and governance
 
 External Workspace Control role header:
@@ -415,7 +615,11 @@ External Workspace Control role header:
 - `readonly`: inspection only
 
 External Inception mode:
-- `readonly`: inspection, diagnostics, registry discovery/tests, and runtime-safe recipe execution controls
+- `readonly`: inspection, diagnostics, registry discovery/tests and dry-run
+  validation
+- `guided`: inspection, diagnostics, direct runtime tool calls, recipe
+  execution, explicit compile persist, and governed apply with persisted
+  conversation approval
 - `god`: deployment-scoped mutations allowed unless explicitly blocked
 - always blocked: API keys, sessions, organization memberships, auth connectors, raw secret reads, identity-sensitive user creation/deletion
 - credential upserts may exist for specific admin control planes, but outputs must only expose status/presence metadata and never raw secret values
@@ -423,4 +627,5 @@ External Inception mode:
 General rule:
 - plan first
 - show plan to the user
+- persist conversation approval when in `guided`
 - apply only after explicit approval

@@ -11,20 +11,23 @@ OpenUI belongs to the mini-app delivery path. It is not the runtime source of tr
 Use this path when you need confidence that a deployment can execute workflow recipes for external consumers.
 
 Recommended sequence:
-1. Get the Doctor contract.
-2. List recipe definitions and confirm the target recipe is active and in `mode=recipe`.
-3. If possible, execute the lightest useful runtime check.
-4. Inspect execution status, logs, and trace before concluding.
+1. List deployment scopes and choose the explicit alias or ID.
+2. Get the Doctor contract.
+3. Confirm the target recipe is active and in `mode=recipe`.
+4. Execute the lightest useful observed runtime check.
+5. Inspect execution status, logs, trace and `usage_summary` before concluding.
 
-Preferred MCP path:
+Preferred External Inception MCP path:
 ```text
-workspace_bootstrap_contract(session_id="...")
-workspace_current_state()
-workspace_call(tool_name="inception_deployment_doctor", arguments={"format":"ai_contract"})
-workspace_call(tool_name="inception_recipe_definitions_list", arguments={})
-workspace_call(tool_name="inception_recipe_definitions_get", arguments={"id":"<recipe_id>"})
-workspace_call(tool_name="inception_recipe_executions_get", arguments={"id":"<execution_id>"})
+inception_call(tool_name="inception_deployment_scopes_list", arguments={})
+inception_call(tool_name="inception_deployment_doctor", arguments={"format":"ai_contract","deployment_alias":"support"})
+inception_call(tool_name="inception_mcp_capabilities", arguments={"deployment_alias":"support"})
+inception_call(tool_name="inception_recipe_run_observed", arguments={"deployment_alias":"support","recipe_id":"<recipe_id>","logs_limit":50,"trace_limit":50})
+inception_call(tool_name="inception_recipe_execution_usage", arguments={"deployment_alias":"support","execution_id":"<execution_id>"})
 ```
+
+Workspace Control can use the same Inception tools through `workspace_call`
+when a Calisto workspace session is the active surface.
 
 External HTTP runtime surface:
 - `GET /recipe/<deploymentId>/recipes`
@@ -89,3 +92,7 @@ For the skill, the right user-facing framing is:
 - AgentMaurice can be used as a governed configuration platform
 - AgentMaurice can also be used as an external backend for workflows and mini-apps
 - OpenUI strengthens the mini-app delivery story, but it does not replace the underlying mini-app runtime
+- recipe verification should include result, logs, traces and usage summary
+- monetary billing is not invented locally; report estimated provider/runtime
+  cost, credits or final monetary cost only when the runtime or billing source
+  exposes them

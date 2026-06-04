@@ -6,6 +6,7 @@ After the app is prepared, verified, and deployed, the final answer should read 
 
 - what was built
 - the application map
+- if modular, the `Application` key and installed modules
 - which runtime was chosen: `mode=app` or `mode=recipe`
 - which deployment was targeted
 - which blueprint slice or meta-recette was changed
@@ -35,6 +36,20 @@ Return:
 - the recipe or execution surface
 - how to invoke it
 - what runtime checks were performed
+
+## For modular Applications
+
+Return:
+- the `Application` key and display name
+- installed module keys and versions
+- catalog entry IDs
+- source URLs, requested refs, resolved commit SHAs and module hashes
+- deployments created or updated for each module
+- declared capabilities per module: actions, queries and apps
+- end-user auth assumptions, especially deployment-scoped auth propagation
+- whether `maurice app plan`, approval and `maurice app apply` were completed
+- `maurice app status` and `maurice app docs` findings
+- runtime capability verification performed through generic Application routes
 
 ## Keep the close-out practical
 

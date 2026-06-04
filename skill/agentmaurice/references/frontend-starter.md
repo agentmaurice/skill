@@ -24,16 +24,20 @@ When the user wants a GitHub-ready starter:
 
 The viewer repo already contains:
 - bootstrap by `slug` or `deploymentId`
+- bootstrap by `applicationKey`, `moduleKey`, and `appKey` for modular
+  Applications
 - runtime state handling
 - event dispatch
 - auth adapter support
+- separate `X-API-Key` Application/runtime key handling and
+  `Authorization: Bearer ...` end-user auth handling
 - a Supabase example
 - an embeddable web component path
 
 So the skill should prefer it over generating a frontend client stack from scratch.
 
 The skill should also describe:
-- whether the starter should become its own public repository
+- whether the starter should become a separate client application repository
 - which package is the right publication base
 - what branding and auth integration remain to be implemented
 
@@ -42,6 +46,35 @@ The skill should also describe:
 The starter is strong for viewer-centric client apps, but the skill should still check whether the target runtime surfaces match the desired auth mode and API access pattern.
 
 In particular:
-- viewer bootstrap works well with bearer-token flows
+- legacy viewer bootstrap works with `slug` or `deploymentId`
+- modular Application bootstrap uses `applicationKey`, `moduleKey`, `appKey`,
+  and an Application/runtime API key
+- viewer bootstrap works well with bearer-token end-user flows
 - recipe backend verification can also align well
 - some mini-app runtime endpoints may still require deployment API keys depending on the current product surface
+
+React modular Application example:
+
+```tsx
+<AgentMauriceViewer
+  apiBaseUrl="https://api.example"
+  apiKey="runtime_application_key"
+  applicationKey="salon"
+  moduleKey="booking"
+  appKey="booking_widget"
+  authAdapter={clientAuthAdapter}
+/>
+```
+
+Web Component modular Application example:
+
+```html
+<agent-maurice-viewer
+  api-url="https://api.example"
+  api-key="runtime_application_key"
+  application-key="salon"
+  module-key="booking"
+  app-key="booking_widget"
+  auth-token="end_user_bearer_token"
+></agent-maurice-viewer>
+```
