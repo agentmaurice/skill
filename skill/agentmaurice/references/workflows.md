@@ -35,10 +35,12 @@ Rule:
    - workflow backend slice -> create_recipe or create_meta_recette
 7. workspace_feature_prepare(goal="...", intent_markdown="...")
 8. If mode=app, preview and verify the mini-app path
-9. Present the plan
-10. workspace_feature_apply(approved_plan_hash="<hash>")
-11. workspace_current_state()
-12. Return the application map, access details, and next steps
+9. workspace_session_inspect_prepared_plan()
+10. Present the exact plan_hash
+11. workspace_session_approve_prepared_plan(plan_hash="<hash>")
+12. workspace_session_apply_prepared_plan()
+13. workspace_current_state()
+14. Return the application map, access details, and next steps
 ```
 
 ### Via CLI
@@ -49,9 +51,9 @@ maurice workspace bind <workspace_session_id>
 maurice workspace call workspace_bootstrap_contract --arg goal=create_meta_recette
 maurice workspace call workspace_current_state
 maurice workspace call workspace_feature_prepare --arg goal=create_meta_recette --arg intent_markdown='Build an operations cockpit for onboarding reviews'
-
-# after approval
-maurice workspace call workspace_feature_apply --arg approved_plan_hash=<hash>
+maurice workspace call workspace_session_inspect_prepared_plan
+maurice workspace call workspace_session_approve_prepared_plan --arg plan_hash=<hash> --arg approval_comment='I approve <hash>'
+maurice workspace call workspace_session_apply_prepared_plan --arg run_tests=false
 maurice workspace call workspace_current_state
 ```
 
@@ -180,7 +182,7 @@ credential references.
 
 ## 4. Governed meta-recette update
 
-### Via External Inception guided
+### Via External Inception governed apply
 
 ```text
 1. inception_call(tool_name="inception_deployment_scopes_list", arguments={})
@@ -216,17 +218,20 @@ credential references.
 ```
 
 The approval happens in the user/agent conversation and is persisted through
-`inception_meta_recette_approve_plan`. AgentMaurice OS is only audit and
-supervision for this path.
+`inception_meta_recette_approve_plan`. This is required for every non-dry-run
+apply, including `god` mode. AgentMaurice OS is only audit and supervision for
+this path.
 
 ### Via Workspace Control MCP
 
 ```text
 1. workspace_bootstrap_contract(session_id="...", goal="update_meta_recette")
 2. workspace_feature_prepare(goal="update_meta_recette", intent_markdown="Add spam detection to support workflow")
-3. Present the plan to the user
-4. workspace_feature_apply(approved_plan_hash="<hash>")
-5. workspace_current_state()
+3. workspace_session_inspect_prepared_plan()
+4. Present the exact plan_hash to the user
+5. workspace_session_approve_prepared_plan(plan_hash="<hash>")
+6. workspace_session_apply_prepared_plan()
+7. workspace_current_state()
 ```
 
 ### Manual expert path
@@ -240,7 +245,7 @@ supervision for this path.
 6. workspace_call(tool_name="inception_meta_recette_compile", arguments={"meta_recette_id":"mr_xxx","dry_run":false,"structured_spec":{...}})
 7. workspace_call(tool_name="inception_meta_recette_plan_apply", arguments={"meta_recette_id":"mr_xxx"})
 8. Present the plan and exact plan_hash to the user.
-9. Persist conversation approval if the active gateway requires an approval_id.
+9. Persist conversation approval. Non-dry-run apply always requires an approval_id.
 10. workspace_call(tool_name="inception_meta_recette_apply", arguments={"meta_recette_id":"mr_xxx", "approval_id":"...", "approved_plan_hash":"<hash>","run_tests":true})
 11. workspace_call(tool_name="inception_meta_recette_reconcile", arguments={"meta_recette_id":"mr_xxx"})
 ```
@@ -256,8 +261,9 @@ create flow:
 3. workspace_call(tool_name="inception_meta_recette_compile", arguments={"meta_recette_id":"mr_xxx","dry_run":true,"structured_spec":{...}})
 4. workspace_call(tool_name="inception_meta_recette_compile", arguments={"meta_recette_id":"mr_xxx","dry_run":false,"structured_spec":{...}})
 5. workspace_call(tool_name="inception_meta_recette_plan_apply", arguments={"meta_recette_id":"mr_xxx"})
-6. Present the plan to the user
-7. workspace_call(tool_name="inception_meta_recette_apply", arguments={"meta_recette_id":"mr_xxx","approval_id":"...","approved_plan_hash":"<hash>","run_tests":true})
+6. Present the plan and exact plan_hash to the user.
+7. Persist explicit approval containing the plan_hash.
+8. workspace_call(tool_name="inception_meta_recette_apply", arguments={"meta_recette_id":"mr_xxx","approval_id":"...","approved_plan_hash":"<hash>","run_tests":true})
 ```
 
 Use `inception_meta_recette_create` only for strict new-only flows.
@@ -283,9 +289,9 @@ after `AutoVersionBump`; explicit calls to recipes outside the current
 ```bash
 maurice workspace call workspace_bootstrap_contract --arg goal=update_meta_recette
 maurice workspace call workspace_feature_prepare --arg goal=update_meta_recette --arg intent_markdown='Add spam detection to support workflow'
-
-# after approval
-maurice workspace call workspace_feature_apply --arg approved_plan_hash=<hash>
+maurice workspace call workspace_session_inspect_prepared_plan
+maurice workspace call workspace_session_approve_prepared_plan --arg plan_hash=<hash> --arg approval_comment='I approve <hash>'
+maurice workspace call workspace_session_apply_prepared_plan
 ```
 
 ## 5. Create or update a recipe from user intent
@@ -302,7 +308,7 @@ Rule:
 - use `actions[].tool` and `actions[].params` for `tool_call`
 - use `forms: []` for no-input recipes
 
-### Via External Inception guided
+### Via External Inception governed apply
 
 ```text
 1. inception_call(tool_name="inception_deployment_scopes_list", arguments={})
@@ -356,8 +362,10 @@ Create flow:
 ```text
 1. workspace_bootstrap_contract(session_id="...", goal="create_recipe")
 2. workspace_feature_prepare(goal="create_recipe", intent_markdown="Create a support summary agent")
-3. Present the plan to the user
-4. workspace_feature_apply(approved_plan_hash="<hash>")
+3. workspace_session_inspect_prepared_plan()
+4. Present the exact plan_hash to the user
+5. workspace_session_approve_prepared_plan(plan_hash="<hash>")
+6. workspace_session_apply_prepared_plan()
 ```
 
 Update flow:
@@ -365,8 +373,10 @@ Update flow:
 ```text
 1. workspace_bootstrap_contract(session_id="...", goal="update_recipe")
 2. workspace_feature_prepare(goal="update_recipe", intent_markdown="Add escalation classification")
-3. Present the plan
-4. workspace_feature_apply(approved_plan_hash="<hash>")
+3. workspace_session_inspect_prepared_plan()
+4. Present the exact plan_hash
+5. workspace_session_approve_prepared_plan(plan_hash="<hash>")
+6. workspace_session_apply_prepared_plan()
 ```
 
 ### Low-level recipe-definition path
@@ -548,6 +558,9 @@ Rules:
 - use `target_deployment_alias` for cross-deployment `recipe_call` actions
 - if apply returns `meta_recette_version_conflict`, pull/export again, merge
   in Git, validate, plan and apply again
+- project apply is atomic across compile, runtime DB apply and approval
+  consumption; if DB apply fails, compile changes are rolled back and the
+  approval is released
 - production-like environments can require clean Git, commit SHA, PR URL and
   approval text containing both the plan hash and environment name
 

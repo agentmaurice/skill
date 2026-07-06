@@ -66,9 +66,11 @@ Agent Spec for each deployment during every compile/apply.
 6. Choose the deployment and conceptual slice you are working on
 7. workspace_feature_prepare(goal="...", intent_markdown="...")
 8. If mode=app, use preview or runtime verification
-9. Present the plan
-10. workspace_feature_apply(approved_plan_hash="...")
-11. workspace_current_state()
+9. workspace_session_inspect_prepared_plan()
+10. Present the exact plan_hash
+11. workspace_session_approve_prepared_plan(plan_hash="...")
+12. workspace_session_apply_prepared_plan()
+13. workspace_current_state()
 ```
 
 ## 4. Defaults

@@ -332,8 +332,10 @@ maurice workspace get
 maurice workspace tools list
 maurice workspace call workspace_bootstrap_contract --arg goal=update_meta_recette
 maurice workspace call workspace_current_state
-maurice workspace call workspace_feature_prepare --arg goal=update_meta_recette --arg intent_markdown='Add a support dashboard'
-maurice workspace call workspace_feature_apply --arg approved_plan_hash=<hash>
+maurice workspace plan prepare
+maurice workspace plan inspect
+maurice workspace plan approve --plan-hash <hash> --comment "I approve <hash>"
+maurice workspace plan apply --run-tests=false
 ```
 
 Prepared-plan lifecycle:

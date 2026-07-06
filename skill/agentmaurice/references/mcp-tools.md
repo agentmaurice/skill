@@ -125,7 +125,8 @@ Pattern:
 - optional `structured_spec`
 - optional `additional_structured_spec`
 - optional `implementation_priority`
-- returns prepared plan data, often including a persisted plan and an `approved_plan_hash`
+- returns prepared plan data, including `plan_hash`, `plan_id` and persisted
+  `prepared_by` when a workspace session is bound
 
 `workspace_feature_apply`
 - optional `goal`
@@ -134,6 +135,11 @@ Pattern:
 - optional `run_tests`
 - optional `fail_on_test_failure`
 - optional `dry_run`
+- in production, returns `action_type=requires_approval` instead of applying
+  when no persisted approval exists for the prepared plan
+- after approval, prefer `workspace_session_apply_prepared_plan`; use
+  `workspace_feature_apply` only as the transparent apply wrapper for an
+  already approved prepared plan
 
 `workspace_recipe_identity_repair`
 - required `canonical_recipe_id`
@@ -255,7 +261,7 @@ Use `inception_meta_recette_ensure` for normal create-or-reuse workflows. Keep
 `inception_meta_recette_create` for strict new-only flows where a duplicate
 meta-recette must be treated as an error.
 
-External Inception `guided` flow:
+External Inception governed apply flow:
 ```text
 1. inception_meta_recette_compile(dry_run=true, structured_spec={...})
 2. inception_meta_recette_compile(dry_run=false, structured_spec={...})
@@ -276,8 +282,10 @@ External Inception `guided` flow:
 ```
 
 `readonly` accepts compile only with `dry_run=true`. In `guided`, persistence
-requires `dry_run=false` explicitly. The OS is an audit/supervision surface; it
-is not required for approval when the user explicitly approves in chat.
+requires `dry_run=false` explicitly. Every non-dry-run apply, including `god`,
+requires persisted approval through `inception_meta_recette_approve_plan`. The
+OS is an audit/supervision surface; it is not required for approval when the
+user explicitly approves in chat.
 
 Canonical Agent Spec rules:
 - one canonical meta-recette/Agent Spec per deployment in V1
@@ -604,15 +612,27 @@ deployments/<deployment-alias>/tests/test-plan.json
 ```
 
 `project_plan` is non-mutating. `project_apply` requires `approval_id`,
-`approved_plan_hash`, and matching `base_resource_version`. Version conflicts
-return `meta_recette_version_conflict`.
+`approved_plan_hash`, and matching `base_resource_version`. Approvals are
+one-shot: the backend claims `APPROVED` -> `APPLYING`, then marks
+`APPLYING` -> `APPLIED` after success. New approvals expire after 24 hours.
+Version conflicts return `meta_recette_version_conflict`; failed DB apply rolls
+back compile changes and releases the approval.
 
 ## 4. Security and governance
 
 External Workspace Control role header:
-- `admin`: mutations allowed unless blocked by policy
-- `operator`: runtime operations without broad admin mutation
-- `readonly`: inspection only
+- `readonly`: default for newly issued CLI credentials; inspection,
+  diagnostics, discovery and dry-run validation only
+- `operator`: session binding, target selection and operational actions within
+  policy
+- `admin`: production mutations only through plan -> inspect -> approve ->
+  apply and policy gates
+- unknown `X-AgentMaurice-Workspace-Role` values are rejected with HTTP 400
+- credentials may be organization-wide (`deployment_id=null`) or scoped to one
+  deployment; scoped credentials cannot bind, target or call another deployment
+- Workspace Control approvals use `cred:<credential_id>` as the principal, then
+  `user:<user_id>` only as fallback
+- production approval requires `prepared_by != approved_by`
 
 External Inception mode:
 - `readonly`: inspection, diagnostics, registry discovery/tests and dry-run
@@ -620,12 +640,14 @@ External Inception mode:
 - `guided`: inspection, diagnostics, direct runtime tool calls, recipe
   execution, explicit compile persist, and governed apply with persisted
   conversation approval
-- `god`: deployment-scoped mutations allowed unless explicitly blocked
+- `god`: deployment-scoped mutations allowed unless explicitly blocked; Agent
+  Spec apply still requires persisted approval
 - always blocked: API keys, sessions, organization memberships, auth connectors, raw secret reads, identity-sensitive user creation/deletion
 - credential upserts may exist for specific admin control planes, but outputs must only expose status/presence metadata and never raw secret values
 
 General rule:
 - plan first
 - show plan to the user
-- persist conversation approval when in `guided`
+- persist conversation approval for every non-dry-run apply, including `god`;
+  Workspace Control uses `workspace_session_approve_prepared_plan(plan_hash=...)`
 - apply only after explicit approval
