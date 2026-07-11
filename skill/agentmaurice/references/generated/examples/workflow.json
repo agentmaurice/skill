@@ -1,0 +1,52 @@
+{
+  "$schema": "agentmaurice.workflow/v2",
+  "schema_version": 2,
+  "workflow_id": "triage-request",
+  "kind": "workflow",
+  "title": "Trier une demande",
+  "description": "Qualifie une demande et recherche le dossier client.",
+  "version": "2.0",
+  "input_schema": {
+    "type": "object",
+    "required": ["message"],
+    "properties": {
+      "message": { "type": "string" }
+    }
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "forms": [],
+  "actions": [
+    {
+      "id": "classify",
+      "type": "llm_call",
+      "llm_prompt": "Classe la demande : {{ message }}",
+      "llm_response_format": "json",
+      "llm_max_tokens": 512,
+      "output_key": "classification"
+    },
+    {
+      "id": "fetch-customer",
+      "type": "workflow_call",
+      "target": {
+        "agent_id": "agt-customers",
+        "capability": "customer-records",
+        "version": "1"
+      },
+      "execution": "sync",
+      "input": {
+        "email": "{{ classification.email }}"
+      },
+      "output_key": "customer"
+    }
+  ],
+  "capability_references": [
+    {
+      "agent_id": "agt-customers",
+      "capability": "customer-records",
+      "version": "1"
+    }
+  ]
+}
+

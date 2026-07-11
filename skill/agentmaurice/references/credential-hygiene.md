@@ -1,30 +1,28 @@
-# Credential Hygiene
+# Credential hygiene
 
-Use this reference when issuing or handling AgentMaurice credentials.
+Load this reference whenever Agent Spec authoring, a Module, or a client
+integration needs credentials.
 
-## Workspace Control credentials
+## Rules
 
-- `maurice workspace auth issue` defaults to `--role readonly`.
-- Request `--role operator` or `--role admin` only when the task explicitly
-  needs it.
-- Prefer `--deployment <deployment_id>` for production work. A scoped
-  credential cannot bind, target, or call tools for another deployment.
-- Do not ask the user to paste raw Workspace Control tokens back into chat.
-- Store local CLI credentials only through MauriceCLI config; the config
-  directory must be private and the config file must be user-readable only.
+- Never write API keys, bearer tokens, Git credentials, provider secrets, SSH
+  private keys, database passwords, or secret environment values into Git,
+  prompts, logs, test fixtures, plans, events, or user-facing answers.
+- Store only a credential reference: identifier, alias, scope, expiry, status,
+  and provider metadata may be reviewed; the value may not.
+- Keep MauriceCLI credentials in its private local configuration. Require
+  user-only file permissions.
+- Scope credentials to the organization, environment, Agent, and capability
+  needed by the task. Do not broaden scope for convenience.
+- Do not ask the user to paste a raw token into chat. Prefer a secret-file,
+  environment, keychain, or interactive credential flow advertised by the CLI.
+- Redact runner output before retention. A benchmark event must never contain a
+  credential value.
 
 ## Approval identity
 
-- Workspace Control approval principals are `cred:<credential_id>` when a
-  credential is available.
-- `user:<user_id>` is only a fallback.
-- In production, the approver must be a different principal from the preparer.
-- `workspace_session_approve_prepared_plan` requires the exact `plan_hash`.
+An approval must identify a human principal and the exact immutable plan hash.
+An agent or service principal cannot approve its own plan. In production, the
+preparer and approver must be distinct principals.
 
-## Secret handling
-
-- Never write raw API keys, bearer tokens, Git credentials, provider secrets,
-  SSH private keys, or database passwords into prompts, logs, manifests, lock
-  files, test fixtures, or final answers.
-- Store credential references only: IDs, aliases, scopes, expiry and status are
-  acceptable; secret values are not.
+If the platform cannot prove the approver identity, stop before apply.

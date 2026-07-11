@@ -1,7 +1,7 @@
 interface:
   display_name: "AgentMaurice"
-  short_description: "Build and operate AgentMaurice apps through MCP or CLI"
-  default_prompt: "Use $agentmaurice to turn an app idea into a deployed AgentMaurice app or backend, choose a frontend starter if needed, verify it, and explain how to access it."
+  short_description: "Author and deploy governed Agent Specs"
+  default_prompt: "Use $agentmaurice to make this change through the Git-native Agent Spec V2 check, plan, human approval, apply, and verify workflow."
 
 policy:
   allow_implicit_invocation: true

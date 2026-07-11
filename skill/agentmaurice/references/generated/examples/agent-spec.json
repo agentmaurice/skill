@@ -1,0 +1,35 @@
+{
+  "$schema": "agentmaurice.agent_spec/v2",
+  "schema_version": 2,
+  "agent_id": "agt-support",
+  "agent_alias": "support",
+  "agent_spec_id": "asp-support",
+  "identity": {
+    "name": "Support client",
+    "description": "Répond aux demandes et prépare les actions de suivi.",
+    "instructions": "Qualifier la demande, utiliser les outils autorisés et citer les sources internes."
+  },
+  "capabilities": [
+    {
+      "name": "customer-support",
+      "version": "2",
+      "description": "Qualification et résolution d'une demande client.",
+      "workflow_id": "triage-request"
+    }
+  ],
+  "dependencies": [
+    {
+      "agent_id": "agt-customers",
+      "capability": "customer-records",
+      "version": "1"
+    }
+  ],
+  "parameters": {
+    "language": "fr",
+    "max_candidates": 5
+  },
+  "secret_references": {
+    "crm_token": "secret://integrations/crm-token"
+  },
+  "policy_references": ["policy/customer-data/v2"]
+}

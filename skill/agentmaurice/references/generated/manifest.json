@@ -1,0 +1,46 @@
+{
+  "contract_bundle_sha256": "f6381fe3022dcfa59ad96366a25a9816c0e5660e15caeeb15e7ce3ca74a684cc",
+  "files": [
+    {
+      "path": "agent-spec-v2.generated.md",
+      "sha256": "cfdfe8f48dad06cf9b42485346ff6257d9dfcf7a1190beebecab190cde9043de"
+    },
+    {
+      "path": "examples/agent-spec.json",
+      "sha256": "84ceaa709a6fd4c00875bd12b07171ba2d7905e601578d448517aac3e369f2de"
+    },
+    {
+      "path": "examples/bootstrap.json",
+      "sha256": "0140826c525bf0b6578c3531eace034a99a13c3cce8b8a2456bada07d79017d3"
+    },
+    {
+      "path": "examples/cli-error.json",
+      "sha256": "fc5e4aece83dc312d22bc7eecd9b4f08e44131512631b410e87f38358d7fe11e"
+    },
+    {
+      "path": "examples/environment.json",
+      "sha256": "d092cfba0d437b2c385053c5954dd262097c26649c6eb97a15e32fb421f0a595"
+    },
+    {
+      "path": "examples/lock.json",
+      "sha256": "8dc246ba536d786813134e8f0b0c6aef19e09b38f3ae6187a6221363a1b6876a"
+    },
+    {
+      "path": "examples/miniapp.json",
+      "sha256": "367d70ae0c7decba64506728addcd4f12e3088b3c81f3c6df10427126f86c009"
+    },
+    {
+      "path": "examples/project.json",
+      "sha256": "1a64d1c76cd0878a56e37be2112491fac6185193a33817e5583234952d9c45f7"
+    },
+    {
+      "path": "examples/test-plan.json",
+      "sha256": "bde2a560c4ad6986b6bddfac4e6ca83945b83f2472a304d9e77c5f3167e50844"
+    },
+    {
+      "path": "examples/workflow.json",
+      "sha256": "0030c48758e968d4b3e537b48985087b4e4b83cfb055d3e0ca0938b69a72c48f"
+    }
+  ],
+  "schema_version": "agentmaurice.generated_skill_contracts/v2"
+}
