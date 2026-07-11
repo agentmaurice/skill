@@ -1,0 +1,40 @@
+{
+  "$schema": "agentmaurice.miniapp/v2",
+  "schema_version": 2,
+  "miniapp_id": "support-console",
+  "kind": "miniapp",
+  "title": "Console support",
+  "description": "Affiche une demande et lance son triage.",
+  "version": "2.0",
+  "ui": {
+    "renderer": "component",
+    "component": "support-request",
+    "configuration": {
+      "showCustomerPanel": true
+    }
+  },
+  "state_schema": {
+    "type": "object",
+    "properties": {
+      "message": { "type": "string" },
+      "result": { "type": "object" }
+    }
+  },
+  "initial_state": {
+    "message": ""
+  },
+  "events": [
+    {
+      "event_id": "submit-request",
+      "trigger": "form.submit",
+      "workflow": {
+        "workflow_id": "triage-request",
+        "input": {
+          "message": "{{ state.message }}"
+        }
+      },
+      "result_to_state": "result"
+    }
+  ]
+}
+

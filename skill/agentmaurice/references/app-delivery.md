@@ -1,64 +1,25 @@
-# AgentMaurice App Delivery
+# Application delivery
 
-After the app is prepared, verified, and deployed, the final answer should read like a delivered product handoff.
+Load this reference after apply and verification when the user requested a
+delivered application outcome.
 
-## The answer should include
+Report:
 
-- what was built
-- the application map
-- if modular, the `Application` key and installed modules
-- which runtime was chosen: `mode=app` or `mode=recipe`
-- which deployment was targeted
-- which blueprint slice or meta-recette was changed
-- what end-user auth was assumed or configured
-- what was verified
-- how to access it
-- the most important next steps
+- what was built and for which Agent and environment;
+- the applied `plan_id`, resource revisions, and source commit;
+- Workflows, MiniApps, and Modules created, changed, preserved, or removed;
+- end-user authentication and credential-reference assumptions;
+- automatic tests and runtime/provenance verification;
+- how an authorized caller opens the MiniApp or invokes the Workflow;
+- remaining gaps, drift, or manual operational steps.
 
-## For mini-apps
+For a MiniApp, identify the Workflow used for each business side effect and
+the verified viewer/bootstrap surface. For a Workflow, identify its public
+invocation capability and observed result. For Modules, report catalog
+identity, version, source URL, resolved commit, content hash, contributed
+resources, and verification results.
 
-Return:
-- the mini-app framing
-- the deployment it belongs to
-- the blueprint slice it represents
-- whether end-user bearer auth is part of the intended access path
-- viewer bootstrap or app access path when available
-- whether OpenUI delivery is intended
-- what was previewed or runtime-tested
-
-## For workflow backends
-
-Return:
-- the backend framing
-- the deployment it belongs to
-- the blueprint slice it represents
-- whether callers use bearer JWT, API key, or both
-- the recipe or execution surface
-- how to invoke it
-- what runtime checks were performed
-
-## For modular Applications
-
-Return:
-- the `Application` key and display name
-- installed module keys and versions
-- catalog entry IDs
-- source URLs, requested refs, resolved commit SHAs and module hashes
-- deployments created or updated for each module
-- declared capabilities per module: actions, queries and apps
-- end-user auth assumptions, especially deployment-scoped auth propagation
-- whether `maurice app plan`, approval and `maurice app apply` were completed
-- `maurice app status` and `maurice app docs` findings
-- runtime capability verification performed through generic Application routes
-
-## Keep the close-out practical
-
-Prefer this shape:
-- Built
-- Application map
-- Access
-- Verified
-- Gaps or assumptions
-- Next steps
-
-Do not stop at "plan applied" when the user asked for an application outcome.
+Never report success solely because apply returned. Require `spec verify` to
+match desired state, observed state, provenance, and blocking tests. If apply
+partially committed before a test failure, say so explicitly and report the
+current revisions and recovery plan.

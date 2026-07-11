@@ -1,0 +1,15 @@
+{
+  "$schema": "agentmaurice.project/v2",
+  "schema_version": 2,
+  "project_id": "support-platform",
+  "name": "Support platform",
+  "default_environment": "development",
+  "agents": [
+    {
+      "agent_alias": "support",
+      "path": "agents/support"
+    }
+  ],
+  "environment_files": ["environments/development.json"]
+}
+

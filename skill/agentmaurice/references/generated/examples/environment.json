@@ -1,0 +1,27 @@
+{
+  "$schema": "agentmaurice.environment/v2",
+  "schema_version": 2,
+  "environment_name": "development",
+  "environment_kind": "development",
+  "instance_url": "https://dev.agentmaurice.example",
+  "organization_id": "org-acme",
+  "agents": [
+    {
+      "agent_alias": "support",
+      "agent_id": "agt-support"
+    }
+  ],
+  "parameters": {
+    "locale": "fr-FR",
+    "max_results": 10
+  },
+  "secret_references": {
+    "crm_token": "vault://customer-support/crm-token"
+  },
+  "policies": {
+    "require_clean_git": true,
+    "require_pull_request_url": false,
+    "tests": "auto"
+  }
+}
+
