@@ -1,9 +1,9 @@
 {
-  "contract_bundle_sha256": "f6381fe3022dcfa59ad96366a25a9816c0e5660e15caeeb15e7ce3ca74a684cc",
+  "contract_bundle_sha256": "43327de3a9d0f59a370b4cd7a74b20d2f877a6399e6644be658b1cf512e174bb",
   "files": [
     {
       "path": "agent-spec-v2.generated.md",
-      "sha256": "cfdfe8f48dad06cf9b42485346ff6257d9dfcf7a1190beebecab190cde9043de"
+      "sha256": "fe04fd3a3e4a8edf58b6356f34042f38f6f835322fd755e4b0353a7edf1543a2"
     },
     {
       "path": "examples/agent-spec.json",
@@ -39,7 +39,7 @@
     },
     {
       "path": "examples/workflow.json",
-      "sha256": "0030c48758e968d4b3e537b48985087b4e4b83cfb055d3e0ca0938b69a72c48f"
+      "sha256": "6b717559445e779c537dc5cf74364e786e8ba0d939ceec37345b9e7631468d07"
     }
   ],
   "schema_version": "agentmaurice.generated_skill_contracts/v2"
