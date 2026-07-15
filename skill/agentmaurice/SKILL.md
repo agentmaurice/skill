@@ -89,7 +89,9 @@ maurice spec init \
 
 `spec init` creates authoring state only. It must not create runtime resources.
 If remote state already exists, use `maurice spec pull` instead of overwriting
-it.
+it. After a successful fresh `spec init`, do not run `spec pull`: the local
+manifest and lock changes are expected and must be committed with the Agent
+resource files.
 
 ### 3. Load the contract, then edit
 
