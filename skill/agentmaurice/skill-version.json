@@ -2,12 +2,12 @@
   "schema_version": "agentmaurice.skill/v2",
   "name": "agentmaurice",
   "version": "2.0.1",
-  "contract_bundle_sha256": "43327de3a9d0f59a370b4cd7a74b20d2f877a6399e6644be658b1cf512e174bb",
-  "content_hash": "aa9ee93783f53be3a59e4af5cf1db9bd9d6973b40ab5a4e217d367c3153a91d1",
+  "contract_bundle_sha256": "0f6f5f8dfdf59a987a936589dd8c9433bdcdbe096ca798796061bc66aaf59061",
+  "content_hash": "95d7261bed996ccae1784a5cb3bb1086633973213791dff66eac34352d39f594",
   "files": [
     {
       "path": "SKILL.md",
-      "sha256": "3f5a98a479b7cba95dadd8b0e155763e8a8438ec36698ae2b4e18466a90af2de"
+      "sha256": "7d4df3e2cf859fdd5e9aacb3fa69aa83259ae6206843a713df50330dac056567"
     },
     {
       "path": "agents/openai.yaml",
@@ -15,7 +15,7 @@
     },
     {
       "path": "references/agent-spec-v2.md",
-      "sha256": "70bd33e80d4774f1fa5a97f1da1c88d354c18f6a10ed8e9cd3d63e040cd6ab8a"
+      "sha256": "e3512c72db235644cab429a21788127e3ad8064cc5306cec0b5a014c62768064"
     },
     {
       "path": "references/app-delivery.md",
@@ -31,7 +31,7 @@
     },
     {
       "path": "references/expert-operations.md",
-      "sha256": "c7d83f7830c9d6dcf815a6c15b812a00b19bcb6243bc1d92c7b9c26caf85f4a4"
+      "sha256": "46d663b85573d8e9c4623d98b306bb369a68f45c99e34b6c52366059600ba31c"
     },
     {
       "path": "references/frontend-starter.md",
@@ -39,7 +39,7 @@
     },
     {
       "path": "references/generated/agent-spec-v2.generated.md",
-      "sha256": "fe04fd3a3e4a8edf58b6356f34042f38f6f835322fd755e4b0353a7edf1543a2"
+      "sha256": "3df560740f16f79041b378503df055d446db11bc21d08332e87b2db9fdb4b073"
     },
     {
       "path": "references/generated/examples/agent-spec.json",
@@ -55,7 +55,7 @@
     },
     {
       "path": "references/generated/examples/environment.json",
-      "sha256": "d092cfba0d437b2c385053c5954dd262097c26649c6eb97a15e32fb421f0a595"
+      "sha256": "6249b1dec781406f897453b28c5f0ff654cc70db5c1f54f2681688cc622d7285"
     },
     {
       "path": "references/generated/examples/lock.json",
@@ -75,11 +75,11 @@
     },
     {
       "path": "references/generated/examples/workflow.json",
-      "sha256": "6b717559445e779c537dc5cf74364e786e8ba0d939ceec37345b9e7631468d07"
+      "sha256": "3d26544c4ea44dce925338af49bae7f3cb4308ec397e77016c815d3a75abe345"
     },
     {
       "path": "references/generated/manifest.json",
-      "sha256": "806d8a096232b83b5c12f4e96961476dc79f52f718fb17939787fbf05d96478e"
+      "sha256": "b2eaeac807ff4c701ceca4a057851a46a27ce8a94c2d1e4631024435475ce223"
     },
     {
       "path": "references/modules.md",

@@ -40,6 +40,13 @@ Store one Workflow or MiniApp per file:
 - use reference objects for secrets;
 - use versioned capabilities for inter-Agent dependencies.
 
+Workflow `metadata.labels` contains at most 64 string-to-string labels.
+`metadata.annotations` may contain descriptive structured JSON, including
+domain fields named `mode`, but must remain non-secret and below 64 KiB once
+canonicalized. Metadata is preserved by pull, plan, apply, and round-trip; it
+must not be used to hide runtime behavior that belongs in explicit Workflow
+fields.
+
 When a MiniApp causes a business side effect, call a Workflow. Keep business
 logic, retry policy, authorization, and observability in that Workflow rather
 than duplicating them in the MiniApp event handler.
@@ -91,3 +98,18 @@ After a V1-to-V2 migration, inspect the report and commit the migration alone
 before adding functional changes. Restore from
 `.git/agentmaurice/migrations/<migration-id>` only during the declared cutover
 recovery window.
+
+Migration is never implicit. `maurice spec migrate` and `--check` are dry runs;
+only `maurice spec migrate --write` may change the workspace, after a green
+preview and an unambiguous server identity. `spec pull` never migrates and
+requires `--force` before overwriting a locally modified managed file.
+
+## Governance and deployment
+
+Use `maurice spec deploy` for the nominal check, plan, apply, and verify flow.
+The server returns the effective governance policy and the workspace may only
+tighten it. Sandbox, development, and integration-test plans are authorized by
+policy; staging requires a human; production and unknown profiles require a
+human distinct from the plan author, plus a pull or merge request. A terminal
+failed plan is diagnostic evidence and cannot be rearmed: rerun `spec deploy`
+to create a fresh plan.
