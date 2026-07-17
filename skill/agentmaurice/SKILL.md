@@ -33,8 +33,8 @@ Catalog.
 Use this sequence for every managed change:
 
 ```text
-connect -> init -> edit -> check -> commit -> plan
-        -> human approval (separate principal) -> apply -> verify
+connect -> init|pull -> edit -> commit -> spec deploy
+        -> policy authorization or human gate -> apply -> verify
 ```
 
 Do not mutate managed Workflows or MiniApps through direct administration
@@ -56,6 +56,21 @@ maurice agent connect "<single-use-bootstrap-url>" \
 Never infer an organization, environment, Agent, or alias from a display name.
 Use identifiers returned by the bootstrap or committed manifests.
 
+The CLI may hold several AgentMaurice instances. Use the workspace-bound
+context by default; inspect or switch explicitly when needed:
+
+```bash
+maurice context current --json
+maurice context list
+maurice context use <name>       # global default
+maurice context bind <name>      # current project and managed MCP connection
+```
+
+Never conclude that a runtime MCP or tool is absent before calling
+`inception_tools_list` or `maurice tools list`. `inception_mcp_capabilities`
+describes the Agent Spec control plane, not the runtime inventory. A tool
+reported as `workflow_only` is available but governed; it is not missing.
+
 Before editing, read:
 
 ```text
@@ -68,11 +83,11 @@ agents/<agent-alias>/miniapps/*.json
 agents/<agent-alias>/tests/test-plan.json
 ```
 
-If a V1 workspace is detected, run `maurice spec migrate --check`. The first
-V2 `spec` command may perform the local migration, create a backup under
-`.git/agentmaurice/migrations/`, and stop with
-`workspace_migrated_commit_required`. Review and commit the conversion before
-continuing. Do not hand-edit a partial migration.
+If a V1 workspace is detected, every command except `spec migrate` stops with
+`workspace_migration_required` and leaves the disk unchanged. Run `maurice
+spec migrate --check`, then `spec migrate --write` only after a green preview.
+Review the backup under `.git/agentmaurice/migrations/` and commit the
+conversion before continuing. Do not hand-edit a partial migration.
 
 ### 2. Initialize explicitly
 
@@ -137,70 +152,30 @@ git commit -m "Describe the Agent Spec change"
 Treat exit code `2` as an invalid contract. Repair from the diagnostic and run
 `check` again. Do not plan an invalid or dirty workspace.
 
-### 5. Plan without changing runtime state
+### 5. Deploy through the effective server policy
 
 ```bash
-maurice spec plan \
+maurice spec deploy \
   --env <environment> \
   --agent-alias <agent-alias> \
+  --tests auto \
   --dir . \
   --json
 ```
 
-Review the semantic diff, blast radius, risk, component versions, test policy,
-source commit, and plan expiry. The default plan artifact stays outside the
-worktree. Do not edit or reconstruct it.
+`deploy` performs check, plan, apply, and verify. Sandbox, development, and
+integration-test plans receive a traceable policy authorization and continue
+without a human. When it returns exit code `4` with `awaiting_approval`, present
+the Studio link and stop. Never approve with an agent/service credential.
+After the authenticated human confirms the persisted plan, rerun the exact
+same `spec deploy` command; it resumes that plan without asking the user for
+IDs or hashes.
 
-### 6. Obtain human approval
-
-Present the exact `plan_id`, `plan_hash`, target environment, destructive
-actions, blast radius, and tests to the user. Ask for explicit approval.
-
-Never approve on the user's behalf. Never treat a request to inspect, plan, or
-prepare as approval. Stop after presenting the plan. An authenticated human
-must approve it in AgentMaurice OS or run the following command from their own
-human session:
-
-```bash
-maurice spec approve \
-  --plan <plan-id-or-path> \
-  --text "<verbatim-human-approval>" \
-  --json
-```
-
-Do not run `spec approve` with the code-agent credential: agent and service
-principals are rejected. Resume only after the persisted plan detail reports
-`status: approved` and supplies the matching `approval_id`.
-
-If approval is missing, expired, consumed, or does not match the exact plan
-hash, stop and create a fresh approval for a fresh plan.
-
-### 7. Apply the approved artifact exactly
-
-```bash
-maurice spec apply \
-  --plan <plan-id-or-path> \
-  --approval-id <approval-id> \
-  --tests auto \
-  --json
-```
-
-Do not modify files between plan and apply. Exit code `3` means stale state or
-a version conflict: pull, merge or rebase, check, commit, plan, and request a
-new approval. Never bypass the conflict.
-
-Use `--tests off` only outside production, only when the user explicitly
-authorizes it, and always provide the audited reason required by the CLI.
-
-### 8. Verify desired and observed state
-
-```bash
-maurice spec verify --plan <plan-id-or-path> --wait --json
-```
-
-Require a match between desired state, runtime state, provenance, and blocking
-tests. Report resource revisions and any drift. An apply or verification test
-failure is a failure even if some resources were committed.
+Review the semantic diff, risk, test policy, source commit, and environment.
+Do not modify files after planning. Exit code `3` means stale state or a
+version conflict: pull, merge or rebase, commit, then rerun `deploy`. A terminal
+failed plan requires a new deploy. Success requires a green verification; the
+CLI writes the lock only then.
 
 ## Use expert operations only when needed
 

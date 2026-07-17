@@ -21,7 +21,7 @@
   "policies": {
     "require_clean_git": true,
     "require_pull_request_url": false,
+    "approval_mode": "none",
     "tests": "auto"
   }
 }
-

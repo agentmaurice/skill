@@ -1,5 +1,33 @@
 # Expert operations
 
+## Resolve the instance and runtime inventory first
+
+AgentMaurice contexts isolate instance URLs, credentials, organizations and
+default Agents. Resolution order is `--context`, `MAURICE_CONTEXT`, the
+workspace binding, then the global `current_context`. Start every diagnosis
+with:
+
+```bash
+maurice context current --json
+maurice tools list --json
+maurice tools list --query "<needed capability>" --json
+maurice tools describe <exact-tool-name> --json
+```
+
+From External Inception, use the equivalent read-only tools directly:
+
+1. `inception_tools_list` for the authoritative runtime inventory;
+2. `inception_tools_resolve` for an intent or capability;
+3. `inception_tools_describe` for the exact schema and invocation policy;
+4. execute directly only when `invocation.direct.allowed` is true;
+5. otherwise declare the call in a managed Workflow when
+   `invocation.workflow.allowed` is true;
+6. report a missing capability only after an explicit `not_found` result.
+
+Do not use `inception_mcp_capabilities` as proof that Memory, Brain, Docstore
+or another runtime MCP is absent. Do not pass runtime tool names directly to
+the generic `inception_call` wrapper.
+
 Load this reference only for diagnosis, observation, schema discovery, drift,
 or explicitly unmanaged sandbox administration. Managed authoring stays on the
 Git-native CLI rail in `SKILL.md`.
