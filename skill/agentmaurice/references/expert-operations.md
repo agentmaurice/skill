@@ -86,6 +86,21 @@ advertised by the bootstrap. Capture result, logs, trace, duration, token/cost
 usage, and resource revision when available. Keep raw discovery documents and
 secret-bearing headers out of user-facing output.
 
+## Workflow LLM transport
+
+Treat the Doctor `recipe_usage_rules.llm_call` block as the source of truth.
+For native `llm_call` actions, configured OpenAI-compatible endpoints use
+provider streaming and the runtime reassembles all deltas before storing the
+text wrapper or parsed JSON at `output_key`. This transport is transparent to
+downstream Workflow actions; never invent an action-level `stream` field.
+
+A direct LLM `fetch()` inside Deno `code_execution` is a separate HTTP client
+and does not inherit that behavior. With `stream: false`, parse the single JSON
+response. With `stream: true`, consume `response.body` as SSE, concatenate
+`choices[].delta.content`, handle the final usage chunk, and stop at `[DONE]`.
+Do not call `response.json()` on a streaming response. Prefer native `llm_call`
+when the Workflow only needs a completed text or JSON result.
+
 ## Explicit unmanaged sandbox
 
 Before a direct administrative mutation, require all of the following:
