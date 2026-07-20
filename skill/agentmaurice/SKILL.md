@@ -125,6 +125,13 @@ correct `kind`. Put Workflows under `workflows/` and MiniApps under `miniapps/`.
 Use `workflow_call` for Workflow composition. Reference secrets by identifier;
 never place secret values in manifests, locks, prompts, logs, or answers.
 
+Workflow `llm_call` transport is runtime-managed. Do not add an uncontracted
+`stream` field: configured OpenAI-compatible endpoints stream upstream and the
+runtime reassembles the final text or JSON before downstream steps continue.
+For direct LLM HTTP calls inside Deno `code_execution`, read
+[Expert operations](references/expert-operations.md); those calls do not inherit
+the native action transport.
+
 Treat `agent-spec.json` as intent and desired state. Do not embed discovered
 runtime snapshots, generated editor state, or duplicate resource lists in it.
 
