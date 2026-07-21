@@ -43,10 +43,22 @@ the server explicitly reports as `unmanaged`.
 
 ### 1. Connect and inspect
 
-Run a user-provided bootstrap command exactly as given:
+Classify the connection surface before running anything:
+
+| Input | Purpose | Required action |
+|---|---|---|
+| `amb_...` URL or `bootstrap_kind: external_inception_mcp` | External Inception MCP setup | Consume it only through the MCP client setup instructions. Never pass it to MauriceCLI. |
+| `amc_...` URL or `bootstrap_kind: maurice_cli` | MauriceCLI project connection | Run the exact user- or OS-provided `maurice agent connect` command. |
+| External Inception already configured | Existing MCP connection | Use the exposed Agent scopes and tools without reconnecting MauriceCLI. |
+
+An error reporting the other bootstrap family is not evidence of an outdated
+CLI. Never infer a client/server version mismatch from `wrong_bootstrap_kind`;
+use the remediation returned by the command.
+
+For a user- or OS-provided `amc_` bootstrap, run the command exactly as given:
 
 ```bash
-maurice agent connect "<single-use-bootstrap-url>" \
+maurice agent connect "https://instance.example/api/v2/agent-connections/cli-bootstrap/amc_xxx" \
   --client <claude-code|codex|cursor|windsurf|generic> \
   --env <environment> \
   --agent-alias <agent-alias> \
@@ -131,6 +143,9 @@ runtime reassembles the final text or JSON before downstream steps continue.
 For direct LLM HTTP calls inside Deno `code_execution`, read
 [Expert operations](references/expert-operations.md); those calls do not inherit
 the native action transport.
+Read the same reference before invoking a runtime tool from `code_execution`;
+it defines the supported `callTool` import, signature, return value, context,
+and native JSON templating pattern.
 
 Treat `agent-spec.json` as intent and desired state. Do not embed discovered
 runtime snapshots, generated editor state, or duplicate resource lists in it.
