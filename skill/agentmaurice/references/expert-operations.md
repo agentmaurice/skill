@@ -101,6 +101,45 @@ response. With `stream: true`, consume `response.body` as SSE, concatenate
 Do not call `response.json()` on a streaming response. Prefer native `llm_call`
 when the Workflow only needs a completed text or JSON result.
 
+## Runtime tools from code execution
+
+Use the sandbox bridge only after resolving the exact tool name and argument
+schema from the runtime inventory. Import it statically at the top of the code;
+the Deno sandbox moves imports outside its async wrapper:
+
+```ts
+import { callTool } from './tools/nats_bridge.ts';
+
+const items = {{ json .persist.contacts_items }};
+if (!Array.isArray(items) || items.length === 0) {
+  return { skipped: true, reason: 'no items' };
+}
+
+const result = await callTool('memory.entities.upsert', {
+  entityType: 'contact',
+  items,
+  source: {{ json .persist.source }},
+  writer: {{ json .persist.writer }}
+});
+return result;
+```
+
+The supported signature is
+`callTool(name: string, args: Record<string, any> = {}): Promise<any>`. Do not
+use a global helper or a dynamic import. Template rendering happens before Deno
+execution: embed `{{ json .path }}` without surrounding quotes to produce a
+native array, object, string, number, boolean, or null. Use the same pattern for
+dynamic scalar values so quotes and line breaks cannot invalidate the code.
+
+`callTool` returns `structuredContent` when present, otherwise parsed JSON from
+the first text content block, otherwise the full tool result. Returning that
+value stores it at the action `output_key`. Runtime scope and execution metadata are injected automatically;
+do not add tenant or transport identifiers to tool
+arguments unless the described tool schema explicitly requires them. Standard
+tool calls have a 120-second bridge timeout. Validate the Workflow with a real
+execution because static contract checking cannot prove a rendered value's
+runtime type.
+
 ## Explicit unmanaged sandbox
 
 Before a direct administrative mutation, require all of the following:

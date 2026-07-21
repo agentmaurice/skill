@@ -47,7 +47,7 @@ def main() -> None:
     manifest = read_json(MANIFEST_PATH)
     if manifest.get("schema_version") != "agentmaurice.skill/v2":
         raise SystemExit("invalid Skill schema_version")
-    if manifest.get("name") != "agentmaurice" or manifest.get("version") != "2.0.2":
+    if manifest.get("name") != "agentmaurice" or manifest.get("version") != "2.0.3":
         raise SystemExit("invalid Skill identity")
     contract_hash = manifest.get("contract_bundle_sha256", "")
     if not re.fullmatch(r"[0-9a-f]{64}", contract_hash):
@@ -80,6 +80,16 @@ def main() -> None:
         for forbidden in FORBIDDEN:
             if forbidden.lower() in text.lower():
                 raise SystemExit(f"{path.relative_to(ROOT)} contains forbidden V1 surface {forbidden!r}")
+
+    expert_operations = (ROOT / "references" / "expert-operations.md").read_text(encoding="utf-8")
+    for required in (
+        "import { callTool } from './tools/nats_bridge.ts';",
+        "callTool(name: string, args: Record<string, any> = {}): Promise<any>",
+        "const items = {{ json .persist.contacts_items }};",
+        "Runtime scope and execution metadata are injected automatically",
+    ):
+        if required not in expert_operations:
+            raise SystemExit(f"expert operations is missing code_execution guidance {required!r}")
 
     print(f"AgentMaurice Skill V2 OK: {manifest['content_hash']}")
 
