@@ -12,6 +12,9 @@ maurice context current --json
 maurice tools list --json
 maurice tools list --query "<needed capability>" --json
 maurice tools describe <exact-tool-name> --json
+maurice tools call <exact-tool-name> --dry-run --input-file ./tool-input.json --json
+maurice tools call <exact-tool-name> --input-file ./tool-input.json \
+  --idempotency-key "<stable-key>" --json
 ```
 
 From External Inception, use the equivalent read-only tools directly:
@@ -19,10 +22,20 @@ From External Inception, use the equivalent read-only tools directly:
 1. `inception_tools_list` for the authoritative runtime inventory;
 2. `inception_tools_resolve` for an intent or capability;
 3. `inception_tools_describe` for the exact schema and invocation policy;
-4. execute directly only when `invocation.direct.allowed` is true;
-5. otherwise declare the call in a managed Workflow when
+4. resolve the effective route with
+   `inception_runtime_tool_call(dry_run=true)`;
+5. execute with `inception_runtime_tool_call` and a stable
+   `idempotency_key` only when `invocation.direct.allowed` is true;
+6. direct calls are limited to `sandbox`, `development` and
+   `integration_test`; staging and production always require a Workflow;
+7. use `inception_workflow_executions_start_sync` or
+   `inception_workflow_executions_start` for an applied Workflow, then inspect
+   it with `inception_workflow_executions_get` and
+   `inception_workflow_executions_logs`;
+8. use `inception_agent_spec_workflow_preview` only for a valid sandbox draft;
+9. otherwise declare the call in a managed Workflow when
    `invocation.workflow.allowed` is true;
-6. report a missing capability only after an explicit `not_found` result.
+10. report a missing capability only after an explicit `not_found` result.
 
 Do not use `inception_mcp_capabilities` as proof that Memory, Brain, Docstore
 or another runtime MCP is absent. Do not pass runtime tool names directly to
@@ -51,6 +64,7 @@ The public V2 family is:
 inception_agent_spec_init
 inception_agent_spec_pull
 inception_agent_spec_check
+inception_agent_spec_workflow_preview
 inception_agent_spec_plan
 inception_agent_spec_approve
 inception_agent_spec_apply
