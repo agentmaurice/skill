@@ -33,9 +33,13 @@ Catalog.
 Use this sequence for every managed change:
 
 ```text
-connect -> init|pull -> edit -> commit -> spec deploy
-        -> policy authorization or human gate -> apply -> verify
+connect -> init -> edit -> check -> commit -> plan
+        -> human approval (separate principal) -> apply -> verify
 ```
+
+`init` may be replaced by `pull` when remote desired state already exists.
+`plan` / `apply` / `verify` are reached through `maurice spec deploy` (or an
+equivalent governed path). After apply, confirm with `maurice spec verify`.
 
 Do not mutate managed Workflows or MiniApps through direct administration
 tools. Use an Agent Spec plan. Direct mutation is reserved for a sandbox that
@@ -188,10 +192,7 @@ maurice spec deploy \
 `deploy` performs check, plan, apply, and verify. Sandbox, development, and
 integration-test plans receive a traceable policy authorization and continue
 without a human. When it returns exit code `4` with `awaiting_approval`, present
-the Studio link and stop. Never approve with an agent/service credential.
-After the authenticated human confirms the persisted plan, rerun the exact
-same `spec deploy` command; it resumes that plan without asking the user for
-IDs or hashes.
+the Studio link and stop. Never approve on the user's behalf. Do not run `spec approve` with the code-agent credential. Never approve with an agent/service credential. After the authenticated human confirms the persisted plan, rerun the exact same `spec deploy` command; it resumes that plan without asking the user for IDs or hashes.
 
 Review the semantic diff, risk, test policy, source commit, and environment.
 Do not modify files after planning. Exit code `3` means stale state or a
