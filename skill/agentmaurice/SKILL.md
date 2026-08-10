@@ -9,12 +9,19 @@ description: >-
 
 # AgentMaurice
 
-Use the public Agent Spec V2 workflow. Keep the repository as the reviewed
-source and let AgentMaurice compile it into runtime resources.
+Use the **unified org builder**: one session (External Inception MCP or Studio)
+for architecture **and** Agent Spec. Repository is the reviewed source; typed
+plans + human approval govern mutations.
 
 ## Keep the object model exact
 
+- **Builder session**: org-capable credential exposes
+  `inception_architecture_*` and `inception_agent_spec_*` together.
+- **Architecture plan**: `agentmaurice.architecture.plan/v1` — Applications,
+  members, surface, `llm.run_ref`, `mcp_grants`. Approve in OS; apply via MCP.
 - **Agent Spec**: declarative desired state for one Agent.
+- **Application**: product boundary (members + `public_surface` + Run config).
+  Revue Application in OS Builder, not a separate Compose tool.
 - **Agent**: deployed, operable product resource.
 - **Workflow**: executable business process managed by an Agent Spec.
 - **MiniApp**: interactive runtime surface managed by an Agent Spec.
@@ -30,20 +37,20 @@ Catalog.
 
 ## Follow one authoring rail
 
-Use this sequence for every managed change:
+Start with the org graph, then architecture and/or Agent Spec as needed:
 
 ```text
-connect -> init -> edit -> check -> commit -> plan
-        -> human approval (separate principal) -> apply -> verify
+connect (org-builder) -> architecture observe
+  -> architecture.plan (optional) -> human approve -> architecture apply -> verify
+  -> agent_spec: connect -> init -> edit -> check -> commit -> plan
+  -> human approval (separate principal) -> apply -> verify
 ```
 
+CLI helpers: `maurice architecture observe|plan-get|approve|verify`,
+`maurice app run-config set`, `maurice spec …`.
 `init` may be replaced by `pull` when remote desired state already exists.
-`plan` / `apply` / `verify` are reached through `maurice spec deploy` (or an
-equivalent governed path). After apply, confirm with `maurice spec verify`.
-
-Do not mutate managed Workflows or MiniApps through direct administration
-tools. Use an Agent Spec plan. Direct mutation is reserved for a sandbox that
-the server explicitly reports as `unmanaged`.
+Do not mutate managed Workflows or MiniApps via direct admin tools — use an
+Agent Spec plan (except an explicit unmanaged sandbox).
 
 ### 1. Connect and inspect
 
