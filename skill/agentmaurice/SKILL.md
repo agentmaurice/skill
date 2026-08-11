@@ -47,7 +47,8 @@ connect (org-builder) -> architecture observe
 ```
 
 CLI helpers: `maurice architecture observe|plan-get|approve|verify`,
-`maurice app run-config set`, `maurice spec …`.
+`maurice app …`, `maurice spec …` (Application runtime consumption:
+[App delivery](references/app-delivery.md)).
 `init` may be replaced by `pull` when remote desired state already exists.
 Do not mutate managed Workflows or MiniApps via direct admin tools — use an
 Agent Spec plan (except an explicit unmanaged sandbox).
