@@ -82,8 +82,19 @@ maurice app workflow run <applicationKey> <workflowId> --input '<json>' [--app-k
 maurice app chat <applicationKey> --message "…" [--session <id>] [--app-key …] [--json]
 ```
 
-Authoring companions (org session, not app key): `maurice app surface set|publish`,
-`maurice app run-config set`, `maurice app members …`, architecture observe/plan.
+Authoring companions (org session, not app key):
+
+```text
+maurice app scaffold <key> --kind test|standard --dir <path>
+maurice app validate --file <path>/application.yaml
+maurice app init <key> --kind test|standard --name "<name>"
+maurice app docs <applicationId>
+maurice app surface set|publish
+maurice app run-config set
+maurice app members …
+```
+
+Then architecture observe/plan as needed.
 
 Prefer these CLI entrypoints over inventing Workspace Control or V1 miniapp
 routes — those rails are removed.

@@ -47,7 +47,7 @@ connect (org-builder) -> architecture observe
 ```
 
 CLI helpers: `maurice architecture observe|plan-get|approve|verify`,
-`maurice app …`, `maurice spec …` (Application runtime consumption:
+`maurice app …`, `maurice spec …` (Application authoring and runtime:
 [App delivery](references/app-delivery.md)).
 `init` may be replaced by `pull` when remote desired state already exists.
 Do not mutate managed Workflows or MiniApps via direct admin tools — use an
@@ -197,7 +197,7 @@ maurice spec deploy \
   --json
 ```
 
-`deploy` performs check, plan, apply, and verify. Sandbox, development, and
+`deploy` performs check, plan, apply, and `maurice spec verify`. Sandbox, development, and
 integration-test plans receive a traceable policy authorization and continue
 without a human. When it returns exit code `4` with `awaiting_approval`, present
 the Studio link and stop. Never approve on the user's behalf. Do not run `spec approve` with the code-agent credential. Never approve with an agent/service credential. After the authenticated human confirms the persisted plan, rerun the exact same `spec deploy` command; it resumes that plan without asking the user for IDs or hashes.
