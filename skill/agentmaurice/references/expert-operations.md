@@ -154,6 +154,35 @@ tool calls have a 120-second bridge timeout. Validate the Workflow with a real
 execution because static contract checking cannot prove a rendered value's
 runtime type.
 
+## Outbound network allowlist
+
+Deno `code_execution` only receives the current Agent's `--allow-net` entries.
+HTTP fetch tools use the same deployment-scoped list. Paths, query strings and
+credentials are never stored; only host, scheme and effective port persist.
+
+Inspect first, then mutate with the URL upsert when the user asked to allow a
+callback:
+
+```bash
+maurice network allowlist list --json
+maurice network allowlist allow-url --url "https://devmachine.example.com/callback"
+```
+
+Equivalent External Inception tools, scoped to the connected Agent:
+
+```text
+inception_allowlist_list
+inception_allowlist_url_upsert
+inception_allowlist_create
+inception_allowlist_update
+inception_allowlist_delete
+```
+
+`inception_allowlist_list` is readable in readonly mode. Mutations require a
+guided credential. Prefer `allow-url` / `inception_allowlist_url_upsert` over
+hand-derived host and port. Doctor reports the surface as
+`allowlist_skills` with `inception_allowlist_*`; it does not replace `list`.
+
 ## Explicit unmanaged sandbox
 
 Before a direct administrative mutation, require all of the following:
