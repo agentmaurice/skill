@@ -111,14 +111,11 @@ blocking diagnostic covers `thread new`, `plan`, or `closeout`; use only the
 redacted `next_actions[]` returned by the Doctor and never bypass it with a
 direct HTTP call. Rerun the preflight after a context or version change.
 
-For organization builders, use the organization Doctor before
-`studio thread new --scope organization`. The org rail must verify
-`builder_scope: organization`, a unique Chief, the v2 plan contract, and the
-`create_agent`/`closeout` handoff path. If the Doctor returns
-`organization_builder_scope_required`, the current session is Agent-scoped and
-must not be bootstrapped as an organization session. Follow the redacted
-`next_actions[]` exactly; do not invent aliases or internal identifiers in the
-product output.
+For organization builders, run the organization Doctor before `studio thread
+new --scope organization`. It must verify `builder_scope: organization`, one
+Chief, plan v2, `create_agent`, closeout, and handoff. A diagnostic
+`organization_builder_scope_required` means this session is Agent-scoped:
+stop and follow only its redacted `next_actions[]`, without inventing aliases.
 
 Before editing, read:
 
@@ -164,11 +161,10 @@ If approval is absent, return `awaiting_approval` with code `4`, present the
 Studio review link, and stop. After a separate authenticated human approves
 the exact persisted plan, rerun the same closeout command.
 
-For organization-scoped work, the thread new command targets the reserved
-Chief internally, then hands off to the newly created Agent thread. If a
-handoff or initialization step fails, keep any already committed
-`created_applications` or `created_agents`, return `authoring_required`, and
-wait for the human step instead of recreating the Agent or thread.
+For organization scope, thread creation targets the reserved Chief internally,
+then hands off to the new Agent. On handoff or initialization failure, keep
+committed `created_applications` and `created_agents`, return
+`authoring_required`, and never recreate the Agent or thread.
 
 Use `studio new-cycle` after a verified change, `studio fork` to explore an
 immutable revision without moving the source thread, and `studio thread
