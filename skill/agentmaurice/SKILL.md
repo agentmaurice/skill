@@ -95,6 +95,20 @@ Never conclude that a runtime MCP or tool is absent before calling
 describes the Agent Spec control plane, not the runtime inventory. A tool
 reported as `workflow_only` is available but governed; it is not missing.
 
+For an existing Agent, run the compact Studio Doctor before opening a thread
+or preparing a plan:
+
+```bash
+maurice studio doctor --agent <agent-alias> --env <environment> --json
+```
+
+Confirm the canonical target, server/CLI/contract/Skill compatibility,
+required Studio capabilities, governance, and blocking diagnostics. For an
+agent or service principal, `can_approve` must remain `false`. Stop if a
+blocking diagnostic covers `thread new`, `plan`, or `closeout`; use only the
+redacted `next_actions[]` returned by the Doctor and never bypass it with a
+direct HTTP call. Rerun the preflight after a context or version change.
+
 Before editing, read:
 
 ```text
@@ -112,6 +126,53 @@ If a V1 workspace is detected, every command except `spec migrate` stops with
 spec migrate --check`, then `spec migrate --write` only after a green preview.
 Review the backup under `.git/agentmaurice/migrations/` and commit the
 conversion before continuing. Do not hand-edit a partial migration.
+
+## Choose the correct CLI rail
+
+- Use `maurice studio` for a persisted conversation with Studio. The draft,
+  revision, plan, and closeout live on the server-side thread.
+- Use `maurice spec` for direct Git-native authoring from reviewed project
+  files. Do not mix its provenance with a Studio plan.
+- Use `maurice test studio` for a closed-loop test suite and structured
+  verdict. Hermetic mode validates the CLI harness; live mode qualifies the
+  real Studio/model path.
+
+For Studio phase 2, keep one governed lifecycle:
+
+```text
+studio thread new -> studio say -> studio thread show --files --diff
+  -> studio plan -> policy authorization or separate human approval
+  -> studio closeout --wait -> apply(tests=auto) -> verify
+```
+
+`studio events --since <sequence> [--follow]` resumes after the last observed
+sequence. `studio closeout --wait` resumes only the latest non-terminal plan
+bound to that thread and revision; never copy or invent plan, hash, or approval
+identifiers. Code `0` is success only after required tests and green verify.
+If approval is absent, return `awaiting_approval` with code `4`, present the
+Studio review link, and stop. After a separate authenticated human approves
+the exact persisted plan, rerun the same closeout command.
+
+Use `studio new-cycle` after a verified change, `studio fork` to explore an
+immutable revision without moving the source thread, and `studio thread
+archive` to hide a completed thread without deleting the Agent. Use
+`studio say --record` and `studio replay` only with
+`$schema: agentmaurice.studio_dialogue/v1`; assert structured facts, never
+model prose, credentials, signed URLs, or approval identifiers.
+
+Interpret Studio exit codes consistently:
+
+| Code | Meaning |
+|---|---|
+| `0` | completed; closeout tests and verification are green |
+| `1` | terminal turn or plan failure |
+| `2` | invalid arguments, dialogue script, or thread state |
+| `3` | stale plan/revision or version conflict |
+| `4` | server/auth unavailable or human approval awaited; inspect `error_code` |
+| `5` | timeout; resume from `last_sequence` |
+
+After a timeout or ambiguous response, read and reconcile server state before
+retrying a mutation. Never run concurrent turns or closeouts on one thread.
 
 ### 2. Initialize explicitly
 
@@ -229,11 +290,15 @@ For client delivery, load only the relevant reference:
 Stop and explain the exact boundary when:
 
 - the target Agent or environment is ambiguous;
+- Studio Doctor reports a blocking capability, compatibility, contract, or
+  Skill diagnostic for the requested operation;
 - a contract identifier or hash is incompatible;
 - migration reports an ambiguous resource;
 - a managed resource was changed out of band;
 - the plan is stale or expired;
 - human approval is absent or mismatched;
+- a Studio plan is not the latest non-terminal plan for the exact thread and
+  revision, or a mutation result cannot be reconciled after timeout;
 - a command requests a raw secret;
 - verification detects drift, failed tests, or provenance mismatch.
 
