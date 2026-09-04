@@ -3,11 +3,11 @@
   "name": "agentmaurice",
   "version": "2.0.9",
   "contract_bundle_sha256": "22c6b69d3616a3afe56830a6aab5d094cd21956cb993adbd15a36db447643304",
-  "content_hash": "89e63fa57d2292819cbf8ae656d2390f7010ecb8f016e2c114977c7e05a63fab",
+  "content_hash": "c02eebcc4433433f1fd02c2461e42b4c3f372d54267ab7e41e55a44f7df0f109",
   "files": [
     {
       "path": "SKILL.md",
-      "sha256": "9257fbf7dbee197d673fd7f4ba1e56e0c13814f26dc15896af769a10e7a6b1e0"
+      "sha256": "9ba77e128047612e8ccf6476b820f918b3876ff03487c545122b4eabe38f4d12"
     },
     {
       "path": "agents/openai.yaml",
