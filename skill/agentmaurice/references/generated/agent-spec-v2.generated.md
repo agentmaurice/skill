@@ -2,7 +2,7 @@
 
 > Généré par `tools/contract_tool.py`. Ne pas modifier à la main.
 
-Bundle SHA-256 : `22c6b69d3616a3afe56830a6aab5d094cd21956cb993adbd15a36db447643304`
+Bundle SHA-256 : `9929dd47bfc3abb1993b413cce384d660d65345f6af5dc41cc4d7b6271071891`
 
 Charge le schéma ou l'exemple exact avec `maurice spec schema <contrat>` et
 `maurice spec example <contrat>`. Les copies ci-dessous sont validées à chaque génération.
