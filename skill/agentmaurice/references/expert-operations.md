@@ -183,6 +183,74 @@ guided credential. Prefer `allow-url` / `inception_allowlist_url_upsert` over
 hand-derived host and port. Doctor reports the surface as
 `allowlist_skills` with `inception_allowlist_*`; it does not replace `list`.
 
+## Studio Doctor and CLI rails
+
+For an existing Agent, run the compact Studio Doctor before opening a thread
+or preparing a plan:
+
+```bash
+maurice studio doctor --agent <agent-alias> --env <environment> --json
+```
+
+Confirm the canonical target, server/CLI/contract/Skill compatibility,
+required Studio capabilities, governance, and blocking diagnostics. For an
+agent or service principal, `can_approve` must remain `false`. Stop if a
+blocking diagnostic covers `thread new`, `plan`, or `closeout`; use only the
+redacted `next_actions[]` returned by the Doctor and never bypass it with a
+direct HTTP call. Rerun the preflight after a context or version change.
+
+For organization builders, run the organization Doctor before `studio thread
+new --scope organization`. It must verify `builder_scope: organization`, one
+Chief, plan v2, `create_agent`, closeout, and handoff. A diagnostic
+`organization_builder_scope_required` means this session is Agent-scoped:
+stop and follow only its redacted `next_actions[]`, without inventing aliases.
+
+Use `maurice studio` for a persisted conversation with Studio. The draft,
+revision, plan, and closeout live on the server-side thread. Use `maurice spec`
+for direct Git-native authoring from reviewed project files. Do not mix its
+provenance with a Studio plan. Use `maurice test studio` for a closed-loop test
+suite and structured verdict.
+
+For Studio phase 2, keep one governed lifecycle:
+
+```text
+studio thread new -> studio say -> studio thread show --files --diff
+  -> studio plan -> policy authorization or separate human approval
+  -> studio closeout --wait -> apply(tests=auto) -> verify
+```
+
+`studio events --since <sequence> [--follow]` resumes after the last observed
+sequence. `studio closeout --wait` resumes only the latest non-terminal plan
+bound to that thread and revision; never copy or invent plan, hash, or approval
+identifiers. Code `0` is success only after required tests and green verify.
+If approval is absent, return `awaiting_approval` with code `4`, present the
+Studio review link, and stop. After a separate authenticated human approves
+the exact persisted plan, rerun the same closeout command.
+
+For organization scope, thread creation targets the reserved Chief internally,
+then hands off to the new Agent. On handoff or initialization failure, keep
+committed `created_applications` and `created_agents`, return
+`authoring_required`, and never recreate the Agent or thread.
+
+Use `studio new-cycle` after a verified change, `studio fork` to explore an
+immutable revision without moving the source thread, and `studio thread
+archive` to hide a completed thread without deleting the Agent. Use
+`studio say --record` and `studio replay` only with
+`$schema: agentmaurice.studio_dialogue/v1`; assert structured facts, never
+model prose, credentials, signed URLs, or approval identifiers.
+
+| Code | Meaning |
+|---|---|
+| `0` | completed; closeout tests and verification are green |
+| `1` | terminal turn or plan failure |
+| `2` | invalid arguments, dialogue script, or thread state |
+| `3` | stale plan/revision or version conflict |
+| `4` | server/auth unavailable or human approval awaited; inspect `error_code` |
+| `5` | timeout; resume from `last_sequence` |
+
+After a timeout or ambiguous response, read and reconcile server state before
+retrying a mutation. Never run concurrent turns or closeouts on one thread.
+
 ## Explicit unmanaged sandbox
 
 Before a direct administrative mutation, require all of the following:
