@@ -1,9 +1,57 @@
 {
-  "contract_bundle_sha256": "78ffc026f0d29afb39ee28314c0f56999b04318a6ee518b5d357ad3383373890",
+  "contract_bundle_sha256": "63f37b23f3fd7deb183307fbe4db3bd1558e547ca32ccd2934de32546a2d28fc",
   "files": [
     {
       "path": "agent-spec-v2.generated.md",
-      "sha256": "90b342eddd9c85030c861d564334990e161979bda07b798b19435f6ade7994a6"
+      "sha256": "1927a9b3e0211738fbb13623614387f509439ac4d0cb59fa22a62689506e05d1"
+    },
+    {
+      "path": "bounded-prospects/README.md",
+      "sha256": "af3df1586a263a751339904e8f36ffe725c41c758c037551115dc101723c3756"
+    },
+    {
+      "path": "bounded-prospects/agentmaurice.project.json",
+      "sha256": "6fa06afecda4972c9d730b80add42a8542509cab005096f65af444854b9151c6"
+    },
+    {
+      "path": "bounded-prospects/agents/prospects/agent-spec.json",
+      "sha256": "8b07c21c7b263535f7b23a7bdd4ec80c9a3bf6b7703b9ae8c9fb3309273b2268"
+    },
+    {
+      "path": "bounded-prospects/agents/prospects/tests/test-plan.json",
+      "sha256": "03666b01b66813e97ec341fb263e8fdc2e00ccf1d89599f85de55601c499fae6"
+    },
+    {
+      "path": "bounded-prospects/agents/prospects/workflows/analyze-prospects.json",
+      "sha256": "1a9f2d7de9fb62a759f4a189c0f163afe2d40f62b1d6128794784f4677dfb113"
+    },
+    {
+      "path": "bounded-prospects/agents/prospects/workflows/existing-customer.json",
+      "sha256": "11941fc05e8b0a1fa62e0c4131353c0fc43142b952aeadb18c2abfc51b45f326"
+    },
+    {
+      "path": "bounded-prospects/agents/prospects/workflows/new-prospect.json",
+      "sha256": "c3371cb0946e5b8aff1662391c7482c3effd73ceea409c471840173e7f4ecc33"
+    },
+    {
+      "path": "bounded-prospects/agents/prospects/workflows/review-prospect.json",
+      "sha256": "722d37313b2fbd0bdf93dd61ca2a5437701605b4a0a3c0e036b31406ecb709b0"
+    },
+    {
+      "path": "bounded-prospects/agents/prospects/workflows/route-prospect.json",
+      "sha256": "50bae8369e40e24a916468b035c3bb6f52c0035bad9a04c7c368da61c67c2fb5"
+    },
+    {
+      "path": "bounded-prospects/environments/dev.json",
+      "sha256": "3ddd2cd4f11c89db3b57a1e624854f7c0a86e061e3461bd839a703815a39e613"
+    },
+    {
+      "path": "bounded-prospects/expected.json",
+      "sha256": "e8b0cd95530bc60802e46d672cb2c6e3622b046fefc03bb7113799f87e3f3ced"
+    },
+    {
+      "path": "bounded-prospects/input.json",
+      "sha256": "5f28000ffd4dcbcf058ca63fcec5e3057048ee64bc420a6dee90c039a7062425"
     },
     {
       "path": "examples/agent-spec.json",
@@ -39,7 +87,7 @@
     },
     {
       "path": "examples/workflow.json",
-      "sha256": "3d26544c4ea44dce925338af49bae7f3cb4308ec397e77016c815d3a75abe345"
+      "sha256": "8391ce2031a255c9db095cf8843b0a6ebc3bd969e0de807c8faaae48130066e1"
     }
   ],
   "schema_version": "agentmaurice.generated_skill_contracts/v2"

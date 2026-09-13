@@ -1,0 +1,16 @@
+{
+  "$schema": "agentmaurice.project/v2",
+  "schema_version": 2,
+  "project_id": "bounded-prospects",
+  "name": "Prospects bornés",
+  "default_environment": "dev",
+  "agents": [
+    {
+      "agent_alias": "prospects",
+      "path": "agents/prospects"
+    }
+  ],
+  "environment_files": [
+    "environments/dev.json"
+  ]
+}
