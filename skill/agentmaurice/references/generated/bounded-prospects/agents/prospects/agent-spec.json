@@ -1,0 +1,11 @@
+{
+  "$schema": "agentmaurice.agent_spec/v2",
+  "schema_version": 2,
+  "agent_id": "agent-prospects-example",
+  "agent_alias": "prospects",
+  "identity": {
+    "name": "Prospects",
+    "description": "Exemple borné sans écriture métier",
+    "instructions": "Analyser une liste déjà classée puis produire le récapitulatif structuré."
+  }
+}

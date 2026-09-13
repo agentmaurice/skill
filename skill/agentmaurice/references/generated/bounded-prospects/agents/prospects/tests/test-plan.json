@@ -1,0 +1,55 @@
+{
+  "$schema": "agentmaurice.test_plan/v2",
+  "schema_version": 2,
+  "test_plan_id": "bounded-prospects",
+  "cases": [
+    {
+      "id": "bounded-prospects",
+      "description": "Trois prospects, trois branches, sorties ordonnées.",
+      "workflow": {
+        "workflow_id": "analyze-prospects",
+        "input": {
+          "prospects": [
+            {
+              "id": "p1",
+              "kind": "new"
+            },
+            {
+              "id": "p2",
+              "kind": "existing"
+            },
+            {
+              "id": "p3",
+              "kind": "unknown"
+            }
+          ]
+        }
+      },
+      "assertions": [
+        {
+          "type": "status",
+          "expected": "completed"
+        },
+        {
+          "type": "result_jsonpath",
+          "path": "$.results",
+          "operator": "equals",
+          "expected": [
+            {
+              "id": "p1",
+              "classification": "new"
+            },
+            {
+              "id": "p2",
+              "classification": "existing"
+            },
+            {
+              "id": "p3",
+              "classification": "review"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
