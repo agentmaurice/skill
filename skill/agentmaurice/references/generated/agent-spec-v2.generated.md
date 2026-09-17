@@ -2,7 +2,7 @@
 
 > Généré par `tools/contract_tool.py`. Ne pas modifier à la main.
 
-Bundle SHA-256 : `63f37b23f3fd7deb183307fbe4db3bd1558e547ca32ccd2934de32546a2d28fc`
+Bundle SHA-256 : `2191f12d180e4056c20e350110ea2a35bea3bce4c91cf4c6c5665ecdd7505f67`
 
 Charge le schéma ou l'exemple exact avec `maurice spec schema <contrat>` et
 `maurice spec example <contrat>`. Les copies ci-dessous sont validées à chaque génération.
@@ -21,7 +21,9 @@ Charge le schéma ou l'exemple exact avec `maurice spec schema <contrat>` et
 
 Exemple complet : [Prospects bornés](bounded-prospects/README.md).
 Actions Workflow : tool_call, code_execution, llm_call, workflow_call, decision et for_each.
-decision : selector.mode=input ; input sélectionne la branche ; child_input transmet un objet au fils.
+decision : selector.mode=input pour une valeur structurée, ou llm avec llm_prompt et llm_model portable slug:model ; child_input transmet un objet au fils.
+Le sélecteur LLM utilise une température zéro et un enum fermé ; réponse invalide ou confiance sous min_confidence => fallback. Une erreur provider reste un échec visible.
+confidence_kind distingue self_reported et none ; ne jamais présenter une confiance JSON auto-déclarée comme calibrée. Doctor avertit lorsqu'un seuil porte sur cette confiance.
 for_each : liste structurée, max_items de 1 à 100, exécution séquentielle sans troncature.
 output est requis avec output_schema ; llm_response_schema est requis avec le format JSON.
 Ne pas contourner decision ou for_each par une boucle JavaScript callRecipe.
