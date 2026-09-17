@@ -1,7 +1,7 @@
 {
   "schema_version": "agentmaurice.skill/v2",
   "name": "agentmaurice",
-  "version": "2.0.12",
+  "version": "2.0.13",
   "contract_bundle_sha256": "b116ccc4b51e6f5d26a9314dede432f4295061a6f05aa38031958efd0f3bff15",
   "content_hash": "9bdfbedd2a91b5cffa74080815abcca77c94a9cfbb5095020042c64cbeb3872d",
   "files": [
