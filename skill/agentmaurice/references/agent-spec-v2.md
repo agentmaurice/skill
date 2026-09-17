@@ -113,3 +113,41 @@ policy; staging requires a human; production and unknown profiles require a
 human distinct from the plan author, plus a pull or merge request. A terminal
 failed plan is diagnostic evidence and cannot be rearmed: rerun `spec deploy`
 to create a fresh plan.
+
+## Typed questions before routing
+
+Use a pure `question` action for classification, scoring, or a yes/no assessment
+of unstructured content. Use `decision` with `selector.mode: input` to route
+its answer; do not classify with a JSON `llm_call` or
+`code_execution` + `callTool("llm_chat_completion")`.
+
+```json
+{
+  "id": "qualify",
+  "type": "question",
+  "state": { "text": "{{ text }}" },
+  "questions": {
+    "kind": {
+      "type": "choice",
+      "instructions": "Classify this page",
+      "criteria": { "article": "Editorial article", "product": "Product offer with a price" },
+      "min_confidence": 0.7
+    }
+  },
+  "output_key": "q"
+}
+```
+
+The consuming decision reads `{{ q.kind.choice }}`. Declare exactly the same
+choice IDs and an explicit fallback for `uncertain`. Choose the threshold for
+the worst downstream write; a fixed threshold is not appropriate for every
+Agent. Metadata is under `q._meta` (`provider`, `model`, `input_tokens`). Low
+confidence scores become `null`; a `noul` answer is a number from 0 to 1.
+
+All questions in one action use a single System One request. Keep extracted
+state below 32 KiB after interpolation. Omit `provider` for portable role
+resolution; an explicit provider uses `slug:model`. If Doctor reports the
+`system_one` role blocked, configure TypeSafe or the hosted connection. Never
+silently substitute a generative model. Use `question_overrides` in test plans
+for deterministic routing tests, plus labelled live fixtures to assess accuracy
+and calibration on the Agent's own workload.

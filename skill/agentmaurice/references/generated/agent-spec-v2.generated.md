@@ -2,7 +2,7 @@
 
 > Généré par `tools/contract_tool.py`. Ne pas modifier à la main.
 
-Bundle SHA-256 : `2191f12d180e4056c20e350110ea2a35bea3bce4c91cf4c6c5665ecdd7505f67`
+Bundle SHA-256 : `b116ccc4b51e6f5d26a9314dede432f4295061a6f05aa38031958efd0f3bff15`
 
 Charge le schéma ou l'exemple exact avec `maurice spec schema <contrat>` et
 `maurice spec example <contrat>`. Les copies ci-dessous sont validées à chaque génération.
@@ -20,7 +20,8 @@ Charge le schéma ou l'exemple exact avec `maurice spec schema <contrat>` et
 | `cli-error` | `agentmaurice.cli_error/v2` | [`examples/cli-error.json`](examples/cli-error.json) (`fc5e4aece83dc312d22bc7eecd9b4f08e44131512631b410e87f38358d7fe11e`) |
 
 Exemple complet : [Prospects bornés](bounded-prospects/README.md).
-Actions Workflow : tool_call, code_execution, llm_call, workflow_call, decision et for_each.
+Actions Workflow : tool_call, code_execution, llm_call, workflow_call, decision, for_each et question.
+question : choix, score ou noul calibré en un appel System One ; state court, critères discriminants, min_confidence avant write ; métadonnées sous output_key._meta. Classifier avec question puis decision/input, jamais code_execution + callTool("llm_chat_completion").
 decision : selector.mode=input pour une valeur structurée, ou llm avec llm_prompt et llm_model portable slug:model ; child_input transmet un objet au fils.
 Le sélecteur LLM utilise une température zéro et un enum fermé ; réponse invalide ou confiance sous min_confidence => fallback. Une erreur provider reste un échec visible.
 confidence_kind distingue self_reported et none ; ne jamais présenter une confiance JSON auto-déclarée comme calibrée. Doctor avertit lorsqu'un seuil porte sur cette confiance.
