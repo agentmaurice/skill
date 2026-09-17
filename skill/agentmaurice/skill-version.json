@@ -1,9 +1,9 @@
 {
   "schema_version": "agentmaurice.skill/v2",
   "name": "agentmaurice",
-  "version": "2.0.12",
-  "contract_bundle_sha256": "2191f12d180e4056c20e350110ea2a35bea3bce4c91cf4c6c5665ecdd7505f67",
-  "content_hash": "91ad696568471a49d33db3a8f232f61a7cccb0b9398839f5a69c75883ea15f72",
+  "version": "2.0.13",
+  "contract_bundle_sha256": "b116ccc4b51e6f5d26a9314dede432f4295061a6f05aa38031958efd0f3bff15",
+  "content_hash": "9bdfbedd2a91b5cffa74080815abcca77c94a9cfbb5095020042c64cbeb3872d",
   "files": [
     {
       "path": "SKILL.md",
@@ -15,7 +15,7 @@
     },
     {
       "path": "references/agent-spec-v2.md",
-      "sha256": "e3512c72db235644cab429a21788127e3ad8064cc5306cec0b5a014c62768064"
+      "sha256": "8acea2089c4b1e46b7356f3730395b001ed330efa76ca3c3f16c9f5c20709334"
     },
     {
       "path": "references/app-delivery.md",
@@ -39,7 +39,7 @@
     },
     {
       "path": "references/generated/agent-spec-v2.generated.md",
-      "sha256": "3eab6350d8c28e8cedc0ec5767d5572609c712f8d0fc0e4062a8c8bf27da5a52"
+      "sha256": "f65eacdb7d645a3167e9859a06df37e18787e8127f3be2f781cb3e373dc3702b"
     },
     {
       "path": "references/generated/bounded-prospects/README.md",
@@ -127,7 +127,7 @@
     },
     {
       "path": "references/generated/manifest.json",
-      "sha256": "9b25b803ffb5b748d8e18595a2d4a161a66e9036aa7e738b28d3c48db29158e1"
+      "sha256": "ece573e90e0c0d141f534a7c27f60a3c77f2f895b67034553c9b901af36d07bd"
     },
     {
       "path": "references/modules.md",
