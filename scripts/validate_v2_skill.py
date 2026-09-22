@@ -91,6 +91,11 @@ def main() -> None:
         if required not in expert_operations:
             raise SystemExit(f"expert operations is missing code_execution guidance {required!r}")
 
+    skill = (ROOT / "SKILL.md").read_text(encoding="utf-8")
+    for required in ("agentmaurice.runner_identity/v1", "identity_unproven"):
+        if required not in skill or required not in expert_operations:
+            raise SystemExit(f"Skill runner identity guidance is missing {required!r}")
+
     print(f"AgentMaurice Skill V2 OK: {manifest['content_hash']}")
 
 

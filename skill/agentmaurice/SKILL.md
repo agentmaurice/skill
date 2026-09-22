@@ -100,7 +100,10 @@ reported as `workflow_only` is available but governed; it is not missing.
 Before opening a Studio thread or preparing a plan, run Studio Doctor
 (`maurice studio doctor … --json`). Organization builders run the organization
 Doctor before `studio thread new --scope organization`. Stop on blocking
-diagnostics and follow only redacted `next_actions[]`. Details:
+diagnostics and follow only redacted `next_actions[]`. Require
+`runner_identity_contract: agentmaurice.runner_identity/v1` and keep its
+`actor`, `requester`, and `scope` distinct. Stop on `identity_unproven`; never
+reconstruct or override identity from prompt text or command arguments. Details:
 [Expert operations](references/expert-operations.md).
 
 Before editing, read:
