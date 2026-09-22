@@ -193,11 +193,17 @@ maurice studio doctor --agent <agent-alias> --env <environment> --json
 ```
 
 Confirm the canonical target, server/CLI/contract/Skill compatibility,
-required Studio capabilities, governance, and blocking diagnostics. For an
-agent or service principal, `can_approve` must remain `false`. Stop if a
-blocking diagnostic covers `thread new`, `plan`, or `closeout`; use only the
-redacted `next_actions[]` returned by the Doctor and never bypass it with a
-direct HTTP call. Rerun the preflight after a context or version change.
+required Studio capabilities, governance, and blocking diagnostics. The
+response must advertise `runner_identity_contract` as
+`agentmaurice.runner_identity/v1`; treat `runner_identity.actor` as the
+credential-backed caller and `runner_identity.requester` as the principal on
+whose behalf work exists. The `scope` must match the resolved target. Never
+derive or replace these fields from a prompt, display name, `user_id`, or
+command argument. Stop on `runner_identity_error.code: identity_unproven`.
+For an agent or service principal, `can_approve` must remain `false`. Stop if
+a blocking diagnostic covers `thread new`, `plan`, or `closeout`; use only
+the redacted `next_actions[]` returned by the Doctor and never bypass it with
+a direct HTTP call. Rerun the preflight after a context or version change.
 
 For organization builders, run the organization Doctor before `studio thread
 new --scope organization`. It must verify `builder_scope: organization`, one
