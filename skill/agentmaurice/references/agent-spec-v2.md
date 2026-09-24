@@ -144,10 +144,11 @@ the worst downstream write; a fixed threshold is not appropriate for every
 Agent. Metadata is under `q._meta` (`provider`, `model`, `input_tokens`). Low
 confidence scores become `null`; a `noul` answer is a number from 0 to 1.
 
-All questions in one action use a single System One request. Keep extracted
+All questions in one action use a single provider request. Keep extracted
 state below 32 KiB after interpolation. Omit `provider` for portable role
 resolution; an explicit provider uses `slug:model`. If Doctor reports the
-`system_one` role blocked, configure TypeSafe or the hosted connection. Never
+`decision` role blocked, configure a TypeSafe or OpenRouter key or the hosted
+connection (`hosted:jev-latest`, or `hosted:jev-1.13` to pin a version). Never
 silently substitute a generative model. Use `question_overrides` in test plans
 for deterministic routing tests, plus labelled live fixtures to assess accuracy
 and calibration on the Agent's own workload.

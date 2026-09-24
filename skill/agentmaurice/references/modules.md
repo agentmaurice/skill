@@ -43,6 +43,10 @@ agents/main/workflows/<workflow-id>.json
 agents/main/miniapps/<miniapp-id>.json
 ```
 
+A MiniApp renders only what its documents declare: read
+[MiniApp user interface](miniapp-ui.md) before writing one, or the Viewer shows
+its component name as plain text.
+
 `module.yaml` requires `$schema: agentmaurice.module/v2` and
 `schema_version: 2`. Each `provides.actions` or `provides.queries` entry points
 to an explicit `workflow_id` and `workflow_version`; each `provides.apps`
