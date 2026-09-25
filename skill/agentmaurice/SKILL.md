@@ -223,7 +223,9 @@ commit, redeploy. Success requires green verify before the lock is written.
 
 Read [Expert operations](references/expert-operations.md) for MCP diagnosis,
 runtime observation, drift, or unmanaged sandbox work. Read
-[Modules](references/modules.md) when packaging executable resources. For client
+[Modules](references/modules.md) when packaging executable resources, and
+[MiniApp user interface](references/miniapp-ui.md) before writing a MiniApp a
+person will use. For client
 delivery: [Credential hygiene](references/credential-hygiene.md),
 [End-user authentication](references/end-user-auth.md),
 [Frontend starter](references/frontend-starter.md),

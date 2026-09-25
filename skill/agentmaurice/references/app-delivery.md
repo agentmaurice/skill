@@ -82,6 +82,27 @@ maurice app workflow run <applicationKey> <workflowId> --input '<json>' [--app-k
 maurice app chat <applicationKey> --message "…" [--session <id>] [--app-key …] [--json]
 ```
 
+To present a published MiniApp through the durable local One Viewer, create a
+contextual display request. Keep the key stable across retries; change it for a
+different business operation. The context is non-sensitive correlation only.
+
+```text
+maurice app display open <applicationKey> --agent <agentId> --miniapp <miniAppId> \
+  --idempotency-key <operationId> --interaction informative|result \
+  --context '{"operation_id":"…","reason":"…"}' [--open-browser]
+maurice app display show <applicationKey> <requestId>
+maurice app display reopen <applicationKey> <requestId> [--open-browser]
+maurice app display llm-access <applicationKey> --idempotency-key <operationId> \
+  --context '{"reason":"…","feature":"…"}' [--open-browser]
+maurice app display action <applicationKey> <actionId> [--open-browser]
+```
+
+Use `--instance` on `display open` only to resume an explicitly known instance.
+Never place a secret, token, API key, password, authorization header, or full
+transcript in `--context`; the server rejects sensitive field names. Secret,
+OAuth, and approval interactions remain `maurice action` requests rendered by
+the same Viewer under their own `human_action/v1` contract.
+
 Authoring companions (org session, not app key):
 
 ```text
