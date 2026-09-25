@@ -12,13 +12,78 @@ plain text and nothing else: no field, no button, no state. If
 `maurice viewer open` returns a UI tree whose only node is a `text` node with
 the component name, the MiniApp has no usable interface yet.
 
-Three blocks produce a real interface. Combine them in one MiniApp.
+Four blocks produce a real interface. Combine them in one MiniApp; prefer a
+layout for any screen richer than one form and one value.
 
 | Block | Declared in | Renders |
 |---|---|---|
+| Layout | `ui.configuration.layout` | the components listed, in order: sections, cards, metrics, steps, tables, charts, buttons… |
 | Form | the target Workflow's `forms`, used by a `form.submit` event | a button titled with the form title, opening a form with its fields |
 | Detail view | `ui.configuration.detail_view` | an optional label and one value read from the MiniApp state |
 | List view | `ui.configuration.list_view` | a refresh button and a table bound to a state array |
+
+## Layout
+
+`ui.configuration.layout` is an array of components. The One Viewer and the
+AgentMaurice OS render the same components, in light and dark themes. The
+compiler rejects an unknown `type`, a missing required property, a trigger
+that names no declared event, and a malformed binding, with the JSON path of
+the error: fix the MiniApp until `maurice spec check` or `app plan` is clean.
+
+Bind a value to the MiniApp state with `{"state": "path.to.value"}`: it keeps
+its type (number, array, object). Use it for data that Workflows write with
+`result_to_state`. A trigger (`on_click`, `on_row_click`, `on_item_click`,
+`on_select`) names an `event_id` of the MiniApp `events`.
+
+| Family | `type` | Properties (required in bold) |
+|---|---|---|
+| Structure | `section` | `title`, **`children`** |
+| | `card` | `title`, `subtitle`, `layout` (`row`, `column`), **`children`** |
+| | `accordion` | **`items`**: `{title, children}` |
+| | `tabs` | **`items`** (strings), `active`, **`on_select`** (payload `item`, `index`) |
+| | `separator` | — |
+| Content | `text` | **`value`** |
+| | `stat` | **`label`**, **`value`** |
+| | `metric` | **`label`**, **`value`**, `delta`, `trend` (`up`, `down`, `neutral`), `caption` |
+| | `kpi_grid` | **`items`**: `{label, value, tone}` |
+| | `badge_row` | **`items`**: `{label, value, tone}` |
+| | `callout` | `title`, **`value`**, `tone` |
+| | `empty_state` | **`title`**, **`description`**, `action_label` with `on_click` |
+| | `steps` | **`items`**: `{title, description, status}` (`done`, `current`, `todo`) |
+| Data | `table` | **`columns`**, **`rows`**, `column_labels`, `on_row_click` (payload `item`, `index`) |
+| | `list` | **`items`** (strings), `on_item_click` (payload `item`, `index`) |
+| | `chart` | **`chart_type`** (`bar`, `line`, `area`, `pie`, `horizontal_bar`), **`x_key`**, **`y_key`**, **`data`**, `title` |
+| Actions | `button` | **`label`**, **`on_click`**, `variant` |
+| | `action_bar` | **`actions`**: `{label, variant, on_click}` |
+| | `filter_bar` | **`filters`**: `{label, value, on_click, active}` (payload `item`, `label`) |
+
+`tone` is `info`, `success`, `warning`, `error` or `neutral`. A form is not a
+layout component: it comes from the Workflow a `form.submit` event targets
+and appears first, before the layout.
+
+```json
+"configuration": {
+  "layout": [
+    { "type": "section", "title": "Overview", "children": [
+      { "type": "metric", "label": "Open requests", "value": { "state": "stats.open" }, "trend": "up", "delta": "+3" },
+      { "type": "steps", "items": [
+        { "title": "Received", "status": "done" },
+        { "title": "In progress", "status": "current" },
+        { "title": "Closed", "status": "todo" }
+      ] }
+    ] },
+    { "type": "chart", "title": "Requests per month", "chart_type": "area",
+      "x_key": "month", "y_key": "count", "data": { "state": "stats.by_month" } },
+    { "type": "table", "columns": ["id", "subject"], "rows": { "state": "requests" },
+      "on_row_click": "open-request" },
+    { "type": "button", "label": "Refresh", "on_click": "refresh" }
+  ]
+}
+```
+
+Here `refresh` (trigger `action.click`) and `open-request` (trigger
+`table.row_click`) are declared in `events`; the clicked row is
+`{{ event.payload.item.<column> }}` in the event input.
 
 ## Form from the target Workflow
 
