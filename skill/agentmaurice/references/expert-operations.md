@@ -45,6 +45,139 @@ Load this reference only for diagnosis, observation, schema discovery, drift,
 or explicitly unmanaged sandbox administration. Managed authoring stays on the
 Git-native CLI rail in `SKILL.md`.
 
+## Choose an MCP server on One
+
+The person does not name servers. You choose. Start from `maurice tools list`.
+Use a tool that is already running in One when it does the job.
+
+One starts the MCP servers it needs. Do not start one beside it. Internal
+servers, including Storage, already run inside the One process. A file the
+Workflow must read goes through that Storage MCP, not through a filesystem
+server on the side.
+
+**AgentMaurice Edge is only the bridge to a remote instance.** `maurice edge`
+lends MCP servers that stay on this computer to a distant AgentMaurice (a
+remote One or a hosted instance). The remote instance decides the calls; Edge
+only executes them. Do not use Edge when the runtime is the local One. Edge
+never starts One, and it is not how One gains a server.
+
+**Which server.** Match the person's words to one row. A Storage file is not
+a substitute. A Workflow `question` is not a substitute for `guard` or
+`decision`. Your own notes, `MEMORY.md`, and this conversation are not a
+substitute either: if the person wants something remembered, hidden, compared,
+kept, explained, opened, read from a picture, or reached on a machine, call
+the server in the table and show its result. Answering from this chat does
+not count.
+
+| The person wants | Server | Prove it with |
+| --- | --- | --- |
+| remember, recall, a fact, a preference, an appointment | `memory` | `memory.facts.append`, then `memory.query` on `v_facts_enriched` |
+| hide or detect a secret, an email, a card, a password | `guard` | `guard_scan_v1`, then `guard_redact_v1` |
+| a table, a CSV, which row is the largest | `data` | `data_profile_v1` or `data_query_v1` |
+| a document they can keep | `artifact` | `artifact_create_v1` |
+| why a run failed or which step was slow | `observe` | `observe_explain_v1` |
+| call an API the organization already described | `api` | `api_health_v1`, then `api_call_v1` only for a known operation |
+| find something in what the organization already knows | `brain` | tool names from that server's README |
+| look at a web page | `browser` | needs Chromium; if One cannot start it, say so |
+| classify, score, or answer yes or no on a short text | `decision` | needs TypeSafe; if that key is missing, say so and stop |
+| read the words in a picture | `ocr` | needs the hosted bridge; if it is missing, say so and stop |
+| run a command on a machine they already named | `ssh` | only a published target; if none exists, say so and stop |
+
+**Models, once the account is paired.** Every chat model on the platform can
+be offered. Do not keep a short list in memory. Read the live catalog:
+
+```text
+https://llm.agentmaurice.app/v1/models
+```
+
+Keep rows whose `model_kind` is `chat` or `decision`. Match the person’s words
+to one `label`. Name that model and ask them to use it. Each use is paid with
+credits they buy from the One home page. If the account is not paired, say
+these models need that account first. A personal key stays a separate, local
+choice.
+
+**Services the person already uses.** The connector directory is the full
+Nango catalog, the same one as the search on the One home page. It is not a
+local MCP server, and Edge does not provide it. Do not keep a short list in
+memory. Read the live directory and match a top-level key to its
+`display_name`:
+
+```text
+https://raw.githubusercontent.com/NangoHQ/nango/master/packages/providers/providers.yaml
+```
+
+Propose one when the person’s words match a service and this One is paired
+with an AgentMaurice account. The One home page then shows Connecteurs, with
+a search. Name that one service in everyday words.
+
+Airtable does not open a login window. It uses a personal access token. Ask
+the person to type that key in the masked Airtable field on the One home
+page. Do not ask them to paste the key in this conversation, do not read a
+credential file, and do not print the key. Wait until they say it is saved.
+The key stays in the operating-system keyring. Connectors already set up
+are listed apart, under « Déjà en place », so the person does not search the
+full directory to find them. Once the key is saved, call
+`airtable_list_bases`, `airtable_list_tables` (base_id) or
+`airtable_list_records` (base_id and table). Find them with
+`maurice tools list --query airtable` and call them with `maurice tools call`.
+Do not print the key. Do not read the keyring, the `security` command, or
+the secret yourself. Those tools already send the saved key.
+
+For any other service, ask them to press Connect there. Wait for them. Do not
+open the provider window, do not complete their login, and do not print a
+session token. Each use is paid with credits they buy. After they say it is
+connected, use the tools `maurice tools list` shows.
+
+If the account is not paired, say the service needs that account on the home
+page first. Do not deploy a server from the catalog as a stand-in, and do not
+promise the service works without it.
+
+`document`, `rag` and `search` are `one_compatible: false`. Do not deploy
+them. Name what `requires` lists. `sidecar` is the launcher One already uses.
+Do not deploy it as a tool for the person. Do not invent a tool name. If the
+catalog `tools` list is empty, read `<slug>/README.md`.
+
+**Shipped by AgentMaurice.** When the inventory cannot do the job, discover
+the server from the public catalog, not from the Console and not from memory:
+
+```text
+https://raw.githubusercontent.com/agentmaurice/mcp/main/catalog.json
+```
+
+Read `servers[]`. Keep rows with `one_compatible: true`. Match the person's
+request to `description`, `tools[].name` and `tools[].description`. Skip
+`one_compatible: false` (today `document`, `rag`, `search`): tell the person
+which extra engine `requires` names, and do not promise that install. The
+runtime image is `install_image` (`ghcr.io/agentmaurice/mcp/…`).
+
+**One deploys it.** On this One the same servers are already in the instance
+registry. Deploy there, with provider `docker`. That call is One starting the
+sidecar. Do not `docker build`, do not `docker run` the image yourself, and do
+not fall back to `maurice edge` or to a public npm server.
+
+```text
+GET  /api/v1/registry/entries
+POST /api/v1/registry/entries/<name>/deploy
+     {"provider":"docker"}
+```
+
+The route also requires the current Agent id from `maurice context current`.
+If the first call is rejected for a missing field, read that error, put the
+Agent id in the field it names, and retry once. Use the CLI credential already
+configured for this instance. Never print a token, API key, or credential
+file. If Docker is missing or stopped, say so and keep the rest of the work;
+One itself does not need Docker. If deploy still fails, report the server you
+chose and the exact error. Do not claim the tool ran.
+
+Each server's tool names are in `https://github.com/agentmaurice/mcp` under
+`<slug>/README.md`. The catalog often leaves `tools` empty; read the README
+before calling. Do not invent sidecar flags or tool names.
+
+**Then use it.** After `maurice tools list` shows the tool, copy that exact
+name into a managed Workflow with `callTool` (see "Runtime tools from
+code execution"). A MiniApp only sends an event to that Workflow. Prove the
+call with a real execution.
+
 ## Bootstrap contract
 
 Use the compact bootstrap returned by `maurice agent connect`. Ground every
