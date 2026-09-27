@@ -219,10 +219,21 @@ Never approve with an agent/service credential. After a human confirms the
 persisted plan, rerun the same `spec deploy`. Exit `3`: pull, merge/rebase,
 commit, redeploy. Success requires green verify before the lock is written.
 
+### 6. Debug the MiniApp you just deployed
+
+`spec verify` and `maurice doctor` do not prove a MiniApp page works. Doctor only checks the process, writable storage, and `/ready`. After a MiniApp deploy, follow the debug loop in [App delivery](references/app-delivery.md) before you report success. You create the Agent, its Workflows, and its MiniApp, then you launch them yourself from the One home page. A missing control or a failed action means the delivery failed: fix the spec and repeat.
+
 ## Use expert operations only when needed
 
-Read [Expert operations](references/expert-operations.md) for MCP diagnosis,
-runtime observation, drift, or unmanaged sandbox work. Read
+Read [Expert operations](references/expert-operations.md) before choosing an
+MCP server for One, and for diagnosis, drift, or unmanaged sandbox work. When
+the work needs a model, or a service the person already uses (mail, calendar,
+chat, cloud files), follow the live-catalog rules there and propose one match.
+Airtable is a personal key: ask them to type it in the masked field on the
+One home page, never in the chat. Once they say it is saved, call
+`airtable_list_bases`, `airtable_list_tables` or `airtable_list_records`
+with `maurice tools call`. Do not read the key yourself. Do not use a memorized short list, and do
+not deploy a local server in its place. Read
 [Modules](references/modules.md) when packaging executable resources, and
 [MiniApp user interface](references/miniapp-ui.md) before writing a MiniApp a
 person will use. For client
