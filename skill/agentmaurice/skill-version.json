@@ -1,9 +1,9 @@
 {
   "schema_version": "agentmaurice.skill/v2",
   "name": "agentmaurice",
-  "version": "2.0.15",
-  "contract_bundle_sha256": "b116ccc4b51e6f5d26a9314dede432f4295061a6f05aa38031958efd0f3bff15",
-  "content_hash": "2eceb7336fdab5e72b700dd90cded70767ff87ae9dbcdafa1a8e9c356dae7e6f",
+  "version": "2.0.16",
+  "contract_bundle_sha256": "d05d138ddd5b293d3c82d36e1e320e89134a8853735874d3266cf63df4042c50",
+  "content_hash": "36cd23578dddea4d83c7e89c60b948150b8bfd4801ff8246ec5568dba2b4e653",
   "files": [
     {
       "path": "SKILL.md",
@@ -19,7 +19,7 @@
     },
     {
       "path": "references/app-delivery.md",
-      "sha256": "1283a77d4d006bd5facfd63908b93302d97e746063b974bc5538fe863c175a82"
+      "sha256": "08c015ec365f97ce509ca2a39bc9fe900ac90a949ca88149844d74713f3d2a54"
     },
     {
       "path": "references/credential-hygiene.md",
@@ -31,7 +31,7 @@
     },
     {
       "path": "references/expert-operations.md",
-      "sha256": "1382f87fadc33b3e66002ce26e60db41d92eae407fe0f88f404ec5ad713ebd5f"
+      "sha256": "fe6979c6e9d31d1ce4223080bb81a602cea6bfa649ec8bf384ef2a50d86ab452"
     },
     {
       "path": "references/frontend-starter.md",
@@ -39,7 +39,7 @@
     },
     {
       "path": "references/generated/agent-spec-v2.generated.md",
-      "sha256": "f65eacdb7d645a3167e9859a06df37e18787e8127f3be2f781cb3e373dc3702b"
+      "sha256": "4036ddc57aa0177f8168061fa05d69a268fdd8af474cb12be5d88a7329032bc4"
     },
     {
       "path": "references/generated/bounded-prospects/README.md",
@@ -111,7 +111,7 @@
     },
     {
       "path": "references/generated/examples/miniapp.json",
-      "sha256": "367d70ae0c7decba64506728addcd4f12e3088b3c81f3c6df10427126f86c009"
+      "sha256": "62faa6dcef35553f5cc0013e037b007b1e78b937721aa28af23182e48ad78b37"
     },
     {
       "path": "references/generated/examples/project.json",
@@ -127,11 +127,11 @@
     },
     {
       "path": "references/generated/manifest.json",
-      "sha256": "ece573e90e0c0d141f534a7c27f60a3c77f2f895b67034553c9b901af36d07bd"
+      "sha256": "8a856def5a9536b8870b52dabe8b6d8f847f412133cd17a1749649a6afd3bf56"
     },
     {
       "path": "references/miniapp-ui.md",
-      "sha256": "4486647f1767e53ae2cbfc0cf0db10caa6b6682b60dea461b6e38350817780c3"
+      "sha256": "ab11112456246197ddbd64e79e314a2b270be00c80bcd5adf79cdd859de36529"
     },
     {
       "path": "references/modules.md",

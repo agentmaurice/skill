@@ -1,9 +1,9 @@
 {
-  "contract_bundle_sha256": "b116ccc4b51e6f5d26a9314dede432f4295061a6f05aa38031958efd0f3bff15",
+  "contract_bundle_sha256": "d05d138ddd5b293d3c82d36e1e320e89134a8853735874d3266cf63df4042c50",
   "files": [
     {
       "path": "agent-spec-v2.generated.md",
-      "sha256": "f65eacdb7d645a3167e9859a06df37e18787e8127f3be2f781cb3e373dc3702b"
+      "sha256": "4036ddc57aa0177f8168061fa05d69a268fdd8af474cb12be5d88a7329032bc4"
     },
     {
       "path": "bounded-prospects/README.md",
@@ -75,7 +75,7 @@
     },
     {
       "path": "examples/miniapp.json",
-      "sha256": "367d70ae0c7decba64506728addcd4f12e3088b3c81f3c6df10427126f86c009"
+      "sha256": "62faa6dcef35553f5cc0013e037b007b1e78b937721aa28af23182e48ad78b37"
     },
     {
       "path": "examples/project.json",

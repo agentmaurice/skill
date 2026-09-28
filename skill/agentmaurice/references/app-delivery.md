@@ -119,3 +119,14 @@ Then architecture observe/plan as needed.
 
 Prefer these CLI entrypoints over inventing Workspace Control or V1 miniapp
 routes — those rails are removed.
+
+## Debug a MiniApp before you report success
+
+You can create an Agent with `maurice spec init`, author its Workflows and MiniApp, deploy them with `maurice spec deploy`, and launch them yourself. Do that loop. A green `spec verify` or `maurice doctor` is not the page.
+
+1. When an Application already exists, publish its surface (`maurice app surface set`, then `maurice app surface publish`) so the home serves the revision you just deployed.
+2. Run `maurice home --no-open --wait 2m`. Open the printed local URL in the browser you can drive before it expires. The URL contains no credential. Click Ouvrir on the Application.
+3. Exercise every control the page shows: forms, refresh, row selection, and any other button. Also run `maurice app workflow run` for each Workflow you added.
+4. Read the visible error and the HTTP status. A success from `maurice viewer` or `spec verify` does not replace this page. The page opened from the home is the proof.
+5. If a control is missing or an action fails, change the spec, commit, deploy, publish, and repeat from step 2.
+6. Report the page you saw. Do not call the MiniApp done while a visible action fails or a requested action has no control.
