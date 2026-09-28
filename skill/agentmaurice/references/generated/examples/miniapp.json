@@ -1,40 +1,59 @@
 {
   "$schema": "agentmaurice.miniapp/v2",
   "schema_version": 2,
-  "miniapp_id": "support-console",
+  "miniapp_id": "pilotage",
   "kind": "miniapp",
-  "title": "Console support",
-  "description": "Affiche une demande et lance son triage.",
-  "version": "2.0",
+  "title": "Pilotage des demandes",
+  "description": "Indicateurs, étapes et tableau des demandes, liés à l'état.",
+  "version": "1.0",
   "ui": {
     "renderer": "component",
-    "component": "support-request",
+    "component": "pilotage",
     "configuration": {
-      "showCustomerPanel": true
+      "layout": [
+        {
+          "type": "section",
+          "title": "Vue d'ensemble",
+          "children": [
+            { "type": "metric", "label": "Demandes ouvertes", "value": { "state": "stats.open" }, "delta": "+3", "trend": "up" },
+            { "type": "steps", "items": [
+              { "title": "Reçue", "status": "done" },
+              { "title": "En traitement", "status": "current" },
+              { "title": "Close", "status": "todo" }
+            ] }
+          ]
+        },
+        { "type": "separator" },
+        { "type": "chart", "title": "Demandes par mois", "chart_type": "area", "x_key": "month", "y_key": "count", "data": { "state": "stats.by_month" } },
+        { "type": "table", "columns": ["id", "subject"], "rows": { "state": "requests" }, "on_row_click": "open-request" },
+        { "type": "button", "label": "Actualiser", "on_click": "refresh" }
+      ]
     }
   },
   "state_schema": {
     "type": "object",
     "properties": {
-      "message": { "type": "string" },
-      "result": { "type": "object" }
+      "stats": { "type": "object" },
+      "requests": { "type": "array" },
+      "selected": { "type": "object" }
     }
   },
   "initial_state": {
-    "message": ""
+    "stats": { "open": 0, "by_month": [] },
+    "requests": []
   },
   "events": [
     {
-      "event_id": "submit-request",
-      "trigger": "form.submit",
-      "workflow": {
-        "workflow_id": "triage-request",
-        "input": {
-          "message": "{{ state.message }}"
-        }
-      },
-      "result_to_state": "result"
+      "event_id": "refresh",
+      "trigger": "action.click",
+      "workflow": { "workflow_id": "load-requests", "input": {} },
+      "result_to_state": "requests"
+    },
+    {
+      "event_id": "open-request",
+      "trigger": "table.row_click",
+      "workflow": { "workflow_id": "read-request", "input": { "id": "{{ event.payload.item.id }}" } },
+      "result_to_state": "selected"
     }
   ]
 }
-

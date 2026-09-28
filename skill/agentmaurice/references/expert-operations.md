@@ -83,6 +83,15 @@ not count.
 | read the words in a picture | `ocr` | needs the hosted bridge; if it is missing, say so and stop |
 | run a command on a machine they already named | `ssh` | only a published target; if none exists, say so and stop |
 
+**A model needed during a local conversation.** If the person wants an AI
+operation and One has no usable model, tell them that One can use their own
+key without an AgentMaurice account. Direct them to **Connecter un modèle IA**
+on the One home page, then **Ma clé API**. Ask them to choose the provider and
+model and enter the key in that masked form; never ask them to paste it in the
+conversation. Keep the original task pending. Once the form reports a
+successful test, resume that same task and prove the LLM call ran; a saved
+secret reference alone is not proof of a usable model.
+
 **Models, once the account is paired.** Every chat model on the platform can
 be offered. Do not keep a short list in memory. Read the live catalog:
 
@@ -150,24 +159,29 @@ request to `description`, `tools[].name` and `tools[].description`. Skip
 which extra engine `requires` names, and do not promise that install. The
 runtime image is `install_image` (`ghcr.io/agentmaurice/mcp/…`).
 
-**One deploys it.** On this One the same servers are already in the instance
-registry. Deploy there, with provider `docker`. That call is One starting the
-sidecar. Do not `docker build`, do not `docker run` the image yourself, and do
-not fall back to `maurice edge` or to a public npm server.
+**One deploys it.** The public GitHub catalog and this One's instance registry
+are separate. A compatible public server may be absent from the instance
+registry. Use the CLI to inspect the public catalog, register the chosen
+version under `public-<slug>` when needed, and ask One to start its Docker
+sidecar:
 
 ```text
-GET  /api/v1/registry/entries
-POST /api/v1/registry/entries/<name>/deploy
-     {"provider":"docker"}
+maurice catalog mcp list --query <capability>
+maurice catalog mcp info <slug>
+maurice catalog mcp deploy <slug>
 ```
 
-The route also requires the current Agent id from `maurice context current`.
-If the first call is rejected for a missing field, read that error, put the
-Agent id in the field it names, and retry once. Use the CLI credential already
-configured for this instance. Never print a token, API key, or credential
-file. If Docker is missing or stopped, say so and keep the rest of the work;
-One itself does not need Docker. If deploy still fails, report the server you
-chose and the exact error. Do not claim the tool ran.
+The deploy command uses the Agent ID from `maurice context current` by default;
+pass `--deployment <id>` only for a different Agent you are authorized to
+manage.
+Treat only `active` or `already_deployed` in the command result as success;
+`failed`, `timeout`, or an unknown status must stop the workflow.
+Do not `docker build`, do not `docker run` the image yourself, and do not fall
+back to `maurice edge` or a public npm server. Never print a token, API key,
+or credential file. If Docker is missing, the registry image is inaccessible,
+or deployment fails, report the exact error and keep the rest of the work.
+Do not claim the tool ran. One itself does not need Docker to serve its home
+page or internal tools.
 
 Each server's tool names are in `https://github.com/agentmaurice/mcp` under
 `<slug>/README.md`. The catalog often leaves `tools` empty; read the README
