@@ -9,6 +9,8 @@ description: >-
 
 # AgentMaurice
 
+The local runtime is AgentMaurice One. After that first mention, call it Maurice.
+
 Use the **unified org builder**: one session (External Inception MCP or Studio)
 for architecture **and** Agent Spec. Repository is the reviewed source; typed
 plans + human approval govern mutations.
@@ -88,7 +90,7 @@ maurice context use <name>       # global default
 maurice context bind <name>      # current project and managed MCP connection
 ```
 
-For an existing One, use `maurice agent list --json` to identify the exact
+For an existing Maurice, use `maurice agent list --json` to identify the exact
 Agent. For disposable Agents, follow the guarded `maurice agent delete` flow
 in [Expert operations](references/expert-operations.md).
 
@@ -207,16 +209,16 @@ commit, redeploy. Success requires green verify before the lock is written.
 
 ### 6. Debug the MiniApp you just deployed
 
-`spec verify` and `maurice doctor` do not prove a MiniApp page works. Doctor only checks the process, writable storage, and `/ready`. After a MiniApp deploy, follow the debug loop in [App delivery](references/app-delivery.md) before you report success. You create the Agent, its Workflows, and its MiniApp, then you launch them yourself from the One home page. A missing control or a failed action means the delivery failed: fix the spec and repeat.
+`spec verify` and `maurice doctor` do not prove a MiniApp page works. Doctor only checks the process, writable storage, and `/ready`. After a MiniApp deploy, follow the debug loop in [App delivery](references/app-delivery.md) before you report success. You create the Agent, its Workflows, and its MiniApp, then you launch them yourself from the Maurice home page. A missing control or a failed action means the delivery failed: fix the spec and repeat.
 
 ## Use expert operations only when needed
 
 Read [Expert operations](references/expert-operations.md) before choosing an
-MCP server for One, and for diagnosis, drift, or unmanaged sandbox work. When
+MCP server for Maurice, and for diagnosis, drift, or unmanaged sandbox work. When
 the work needs a model, or a service the person already uses (mail, calendar,
 chat, cloud files), follow the live-catalog rules there and propose one match.
 Airtable is a personal key: ask them to type it in the masked field on the
-One home page, never in the chat. Once they say it is saved, call
+Maurice home page, never in the chat. Once they say it is saved, call
 `airtable_list_bases`, `airtable_list_tables` or `airtable_list_records`
 with `maurice tools call`. Do not read the key yourself. Do not use a memorized short list, and do
 not deploy a local server in its place. Read

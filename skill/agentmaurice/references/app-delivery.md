@@ -82,7 +82,7 @@ maurice app workflow run <applicationKey> <workflowId> --input '<json>' [--app-k
 maurice app chat <applicationKey> --message "…" [--session <id>] [--app-key …] [--json]
 ```
 
-To present a published MiniApp through the durable local One Viewer, create a
+To present a published MiniApp through the durable local Maurice Viewer, create a
 contextual display request. Keep the key stable across retries; change it for a
 different business operation. The context is non-sensitive correlation only.
 

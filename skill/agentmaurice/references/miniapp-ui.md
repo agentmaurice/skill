@@ -24,7 +24,7 @@ layout for any screen richer than one form and one value.
 
 ## Layout
 
-`ui.configuration.layout` is an array of components. The One Viewer and the
+`ui.configuration.layout` is an array of components. The Maurice Viewer and the
 AgentMaurice OS render the same components, in light and dark themes. The
 compiler rejects an unknown `type`, a missing required property, a trigger
 that names no declared event, and a malformed binding, with the JSON path of
@@ -138,7 +138,7 @@ so the first render is not empty.
 ## Complete example
 
 A module that greets a person. It installs with `maurice app add --dev`,
-`app plan`, `app apply`, and renders a working form in the One Viewer.
+`app plan`, `app apply`, and renders a working form in the Maurice Viewer.
 
 `agents/main/workflows/greet.json`:
 
@@ -194,7 +194,7 @@ gives `code_execution` the array. Text mixed with expressions stays text.
    "miniapp_id": "greeter", "version": "1"}]}}`, then
    `maurice app surface publish <applicationId>`.
 2. Open it: `maurice app display open <applicationKey> --agent <agent>
-   --miniapp greeter --idempotency-key <key>` returns a local link; the One
+   --miniapp greeter --idempotency-key <key>` returns a local link; the Maurice
    home lists the Application, whose page lists its published MiniApps.
 3. Drive it without a browser: `maurice viewer connect --deployment <agent>`,
    `viewer open`, `viewer submit <instance> <event> --expected-state-version

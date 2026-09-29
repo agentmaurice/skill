@@ -64,21 +64,23 @@ Application lifecycle for any disposable Application you also created. Never
 delete an Agent inferred only from a display name, and never use this command
 to clean another person's resources.
 
-## Choose an MCP server on One
+The local runtime is AgentMaurice One. After that first mention, call it Maurice.
+
+## Choose an MCP server on Maurice
 
 The person does not name servers. You choose. Start from `maurice tools list`.
-Use a tool that is already running in One when it does the job.
+Use a tool that is already running in Maurice when it does the job.
 
-One starts the MCP servers it needs. Do not start one beside it. Internal
-servers, including Storage, already run inside the One process. A file the
+Maurice starts the MCP servers it needs. Do not start one beside it. Internal
+servers, including Storage, already run inside the Maurice process. A file the
 Workflow must read goes through that Storage MCP, not through a filesystem
 server on the side.
 
 **AgentMaurice Edge is only the bridge to a remote instance.** `maurice edge`
 lends MCP servers that stay on this computer to a distant AgentMaurice (a
-remote One or a hosted instance). The remote instance decides the calls; Edge
-only executes them. Do not use Edge when the runtime is the local One. Edge
-never starts One, and it is not how One gains a server.
+remote Maurice or a hosted instance). The remote instance decides the calls; Edge
+only executes them. Do not use Edge when the runtime is the local Maurice. Edge
+never starts Maurice, and it is not how Maurice gains a server.
 
 **Which server.** Match the person's words to one row. A Storage file is not
 a substitute. A Workflow `question` is not a substitute for `guard` or
@@ -97,15 +99,15 @@ not count.
 | why a run failed or which step was slow | `observe` | `observe_explain_v1` |
 | call an API the organization already described | `api` | `api_health_v1`, then `api_call_v1` only for a known operation |
 | find something in what the organization already knows | `brain` | tool names from that server's README |
-| look at a web page | `browser` | needs Chromium; if One cannot start it, say so |
+| look at a web page | `browser` | needs Chromium; if Maurice cannot start it, say so |
 | classify, score, or answer yes or no on a short text | `decision` | needs TypeSafe; if that key is missing, say so and stop |
 | read the words in a picture | `ocr` | needs the hosted bridge; if it is missing, say so and stop |
 | run a command on a machine they already named | `ssh` | only a published target; if none exists, say so and stop |
 
 **A model needed during a local conversation.** If the person wants an AI
-operation and One has no usable model, tell them that One can use their own
+operation and Maurice has no usable model, tell them that Maurice can use their own
 key without an AgentMaurice account. Direct them to **Connecter un modèle IA**
-on the One home page, then **Ma clé API**. Ask them to choose the provider and
+on the Maurice home page, then **Ma clé API**. Ask them to choose the provider and
 model and enter the key in that masked form; never ask them to paste it in the
 conversation. Keep the original task pending. Once the form reports a
 successful test, resume that same task and prove the LLM call ran; a saved
@@ -120,12 +122,12 @@ https://llm.agentmaurice.app/v1/models
 
 Keep rows whose `model_kind` is `chat` or `decision`. Match the person’s words
 to one `label`. Name that model and ask them to use it. Each use is paid with
-credits they buy from the One home page. If the account is not paired, say
+credits they buy from the Maurice home page. If the account is not paired, say
 these models need that account first. A personal key stays a separate, local
 choice.
 
 **Services the person already uses.** The connector directory is the full
-Nango catalog, the same one as the search on the One home page. It is not a
+Nango catalog, the same one as the search on the Maurice home page. It is not a
 local MCP server, and Edge does not provide it. Do not keep a short list in
 memory. Read the live directory and match a top-level key to its
 `display_name`:
@@ -134,12 +136,12 @@ memory. Read the live directory and match a top-level key to its
 https://raw.githubusercontent.com/NangoHQ/nango/master/packages/providers/providers.yaml
 ```
 
-Propose one when the person’s words match a service and this One is paired
-with an AgentMaurice account. The One home page then shows Connecteurs, with
+Propose one when the person’s words match a service and this Maurice is paired
+with an AgentMaurice account. The Maurice home page then shows Connecteurs, with
 a search. Name that one service in everyday words.
 
 Airtable does not open a login window. It uses a personal access token. Ask
-the person to type that key in the masked Airtable field on the One home
+the person to type that key in the masked Airtable field on the Maurice home
 page. Do not ask them to paste the key in this conversation, do not read a
 credential file, and do not print the key. Wait until they say it is saved.
 The key stays in the operating-system keyring. Connectors already set up
@@ -161,7 +163,7 @@ page first. Do not deploy a server from the catalog as a stand-in, and do not
 promise the service works without it.
 
 `document`, `rag` and `search` are `one_compatible: false`. Do not deploy
-them. Name what `requires` lists. `sidecar` is the launcher One already uses.
+them. Name what `requires` lists. `sidecar` is the launcher Maurice already uses.
 Do not deploy it as a tool for the person. Do not invent a tool name. If the
 catalog `tools` list is empty, read `<slug>/README.md`.
 
@@ -178,10 +180,10 @@ request to `description`, `tools[].name` and `tools[].description`. Skip
 which extra engine `requires` names, and do not promise that install. The
 runtime image is `install_image` (`ghcr.io/agentmaurice/mcp/…`).
 
-**One deploys it.** The public GitHub catalog and this One's instance registry
+**Maurice deploys it.** The public GitHub catalog and this Maurice's instance registry
 are separate. A compatible public server may be absent from the instance
 registry. Use the CLI to inspect the public catalog, register the chosen
-version under `public-<slug>` when needed, and ask One to start its Docker
+version under `public-<slug>` when needed, and ask Maurice to start its Docker
 sidecar:
 
 ```text
@@ -201,7 +203,7 @@ Do not `docker build`, do not `docker run` the image yourself, and do not fall
 back to `maurice edge` or a public npm server. Never print a token, API key,
 or credential file. If Docker is missing, the registry image is inaccessible,
 or deployment fails, report the exact error and keep the rest of the work.
-Do not claim the tool ran. One itself does not need Docker to serve its home
+Do not claim the tool ran. Maurice itself does not need Docker to serve its home
 page or internal tools.
 
 Each server's tool names are in `https://github.com/agentmaurice/mcp` under
