@@ -1,13 +1,13 @@
 {
   "schema_version": "agentmaurice.skill/v2",
   "name": "agentmaurice",
-  "version": "2.0.17",
+  "version": "2.0.18",
   "contract_bundle_sha256": "d05d138ddd5b293d3c82d36e1e320e89134a8853735874d3266cf63df4042c50",
-  "content_hash": "4127b1e07b1eb044734f735581574a8c1237bb934793c2f838ee14aefd9e2899",
+  "content_hash": "4109857452b8ec44ed402ff7a959c22de57eb9404b68a8bb2d4e877aaac24b35",
   "files": [
     {
       "path": "SKILL.md",
-      "sha256": "662624ac7c09a2c2de5f95b55675e3f08db2fe036be7229d17ecd98dfea2a99c"
+      "sha256": "f97849b007e5a639f9ff7e07b3cebd055b5d6e849dbcca411ae932beb6caf7cb"
     },
     {
       "path": "agents/openai.yaml",
@@ -19,7 +19,7 @@
     },
     {
       "path": "references/app-delivery.md",
-      "sha256": "08c015ec365f97ce509ca2a39bc9fe900ac90a949ca88149844d74713f3d2a54"
+      "sha256": "7346a303888d5159f7db8a058e4e62da27291f8ec8a348a6ab4eb386d61fdde1"
     },
     {
       "path": "references/credential-hygiene.md",
@@ -31,7 +31,7 @@
     },
     {
       "path": "references/expert-operations.md",
-      "sha256": "387c0505e5c6502964b9e7946b8fd301a06f74bd6312e3f498711349eb78be34"
+      "sha256": "29c3af501250ad805302297685568706502023cc43fcdda0fd94910e68fd1ccc"
     },
     {
       "path": "references/frontend-starter.md",
@@ -131,7 +131,7 @@
     },
     {
       "path": "references/miniapp-ui.md",
-      "sha256": "ab11112456246197ddbd64e79e314a2b270be00c80bcd5adf79cdd859de36529"
+      "sha256": "1e50fda21f931569bc85acd01f2d36e46605c73ea8fedf95e940bcbd90e32fa0"
     },
     {
       "path": "references/modules.md",
