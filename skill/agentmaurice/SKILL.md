@@ -72,11 +72,7 @@ use the remediation returned by the command.
 For a user- or OS-provided `amc_` bootstrap, run the command exactly as given:
 
 ```bash
-maurice agent connect "https://instance.example/api/v2/agent-connections/cli-bootstrap/amc_xxx" \
-  --client <claude-code|codex|cursor|windsurf|generic> \
-  --env <environment> \
-  --agent-alias <agent-alias> \
-  --dir .
+maurice agent connect "https://instance.example/api/v2/agent-connections/cli-bootstrap/amc_xxx" --client <claude-code|codex|cursor|windsurf|generic> --env <environment> --agent-alias <agent-alias> --dir .
 ```
 
 Never infer an organization, environment, Agent, or alias from a display name.
@@ -91,6 +87,10 @@ maurice context list
 maurice context use <name>       # global default
 maurice context bind <name>      # current project and managed MCP connection
 ```
+
+For an existing One, use `maurice agent list --json` to identify the exact
+Agent. For disposable Agents, follow the guarded `maurice agent delete` flow
+in [Expert operations](references/expert-operations.md).
 
 Never conclude that a runtime MCP or tool is absent before calling
 `inception_tools_list` or `maurice tools list`. `inception_mcp_capabilities`
@@ -140,12 +140,7 @@ approve on the user's behalf from a code-agent or service credential.
 For a fresh Agent with no local or remote Agent Spec, run:
 
 ```bash
-maurice spec init \
-  --env <environment> \
-  --agent-alias <agent-alias> \
-  --title "<title>" \
-  --dir . \
-  --json
+maurice spec init --env <environment> --agent-alias <agent-alias> --title "<title>" --dir . --json
 ```
 
 `spec init` creates authoring state only. It must not create runtime resources.
@@ -186,11 +181,7 @@ only for offline contract identifiers; it is tied to `skill-version.json`.
 ### 4. Check and commit
 
 ```bash
-maurice spec check \
-  --env <environment> \
-  --agent-alias <agent-alias> \
-  --dir . \
-  --json
+maurice spec check --env <environment> --agent-alias <agent-alias> --dir . --json
 
 git diff --check
 git status --short
@@ -204,12 +195,7 @@ Treat exit code `2` as an invalid contract. Repair from the diagnostic and run
 ### 5. Deploy through the effective server policy
 
 ```bash
-maurice spec deploy \
-  --env <environment> \
-  --agent-alias <agent-alias> \
-  --tests auto \
-  --dir . \
-  --json
+maurice spec deploy --env <environment> --agent-alias <agent-alias> --tests auto --dir . --json
 ```
 
 `deploy` performs check, plan, apply, and `maurice spec verify`. Sandbox,

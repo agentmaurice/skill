@@ -45,6 +45,25 @@ Load this reference only for diagnosis, observation, schema discovery, drift,
 or explicitly unmanaged sandbox administration. Managed authoring stays on the
 Git-native CLI rail in `SKILL.md`.
 
+## Identify and remove an Agent you own
+
+Use `maurice agent list --json` to read exact IDs and names in the selected
+organization. For a disposable Agent you created, first preview its dependent
+MCP servers and deletion scope, then apply only when the ID and returned name
+both match:
+
+```bash
+maurice agent delete --agent-id <id> --expect-name '<exact-name>' --json
+maurice agent delete --agent-id <id> --expect-name '<exact-name>' --apply --json
+```
+
+Preview is read-only. Apply stops the Agent, removes its STDIO and sidecar MCP
+servers, deletes the Agent and verifies its absence. It refuses reserved
+instance Agents. Applications are independent and remain in place; use the
+Application lifecycle for any disposable Application you also created. Never
+delete an Agent inferred only from a display name, and never use this command
+to clean another person's resources.
+
 ## Choose an MCP server on One
 
 The person does not name servers. You choose. Start from `maurice tools list`.
@@ -173,9 +192,11 @@ maurice catalog mcp deploy <slug>
 
 The deploy command uses the Agent ID from `maurice context current` by default;
 pass `--deployment <id>` only for a different Agent you are authorized to
-manage.
-Treat only `active` or `already_deployed` in the command result as success;
-`failed`, `timeout`, or an unknown status must stop the workflow.
+manage. The command waits for the chosen server to publish its tools by
+default. Treat only `active` or `already_deployed` **with** `tools_ready: true`
+as ready to use; registration without tools is still pending. A `failed`,
+`timeout`, unknown status, or `tools_ready: false` stops the dependent call.
+Inspect `maurice tools list` again before copying an exact tool name.
 Do not `docker build`, do not `docker run` the image yourself, and do not fall
 back to `maurice edge` or a public npm server. Never print a token, API key,
 or credential file. If Docker is missing, the registry image is inaccessible,
