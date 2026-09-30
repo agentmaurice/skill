@@ -223,9 +223,34 @@ maurice catalog connector list --query "<service>"
 
 A model row is `ref`, label, then `chat` or `decision`. Write that exact `ref`
 as `llm_model`. A connector row is key, label, then `api_key` or `connect`.
-`api_key` is a personal key typed in the masked field on the Maurice home
-page. `connect` is the Connect button there. Never paste a key or a session
-token in the chat.
+`connect` is the Connect button on the Maurice home page. `api_key`, and any
+`secret://` name a Workflow needs, is a masked field. Open that page yourself.
+Never paste a key, never read another agent's secret store, and never finish
+by only telling the person to type the key.
+
+For each missing secret, drop a `secret://` prefix, then run:
+
+```bash
+maurice action request --kind secret_input --resource <secret_ref> --constraint secret_ref=<secret_ref> --json
+```
+
+Read `action_id`. Start the page in the background so it keeps serving:
+
+```bash
+maurice viewer browser --human-action <action_id> --no-open
+```
+
+The command prints `Viewer served locally at http://127.0.0.1:<port>/#/human-action/<action_id>`.
+Open that exact URL in the browser you already control. Leave the HTML
+`page_url` from the request unused: that page does not collect the secret.
+Then wait:
+
+```bash
+maurice action wait --id <action_id> --follow
+```
+
+Continue only after `stored` or `cancelled`. One request per secret. Never
+type the value and never resolve the request yourself.
 
 If either command says `account_not_paired`, stop. Ask which API key or local
 model to use, or say the service needs the account on the home page. Do not
@@ -247,8 +272,7 @@ asks for it. A local model must already be answering. Never start one yourself.
 Read [Expert operations](references/expert-operations.md) before choosing an
 MCP server for Maurice, and for diagnosis, drift, or unmanaged sandbox work. When
 the work needs a model or a connector, run the commands above and propose one match.
-Airtable is a personal key: ask them to type it in the masked field on the
-Maurice home page, never in the chat. Once they say it is saved, call
+Airtable is a personal key: open the masked secret page above, then call
 `airtable_list_bases`, `airtable_list_tables` or `airtable_list_records`
 with `maurice tools call`. Do not read the key yourself. Do not use a memorized short list, and do
 not deploy a local server in its place. Read
@@ -265,6 +289,7 @@ delivery: [Credential hygiene](references/credential-hygiene.md),
 Stop when the Agent/environment is ambiguous; Studio Doctor blocks; a contract
 hash is incompatible; migration is ambiguous; a managed resource drifted;
 approval is absent/mismatched; the Studio plan is not the latest for the thread
-and revision; a mutation cannot be reconciled; a raw secret is requested; or
+and revision; a mutation cannot be reconciled; someone asks you to paste,
+reveal, or invent a secret value; or
 verify detects drift/failed tests. Do not invent aliases, hidden mutations, or
 recovery commands.

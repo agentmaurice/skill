@@ -16,6 +16,18 @@ integration needs credentials.
   needed by the task. Do not broaden scope for convenience.
 - Do not ask the user to paste a raw token into chat. Prefer a secret-file,
   environment, keychain, or interactive credential flow advertised by the CLI.
+
+## Missing secret
+
+When a Workflow needs a secret that is not stored yet, open the masked page
+and wait. Drop a `secret://` prefix. Run `maurice action request --kind
+secret_input --resource <secret_ref> --constraint secret_ref=<secret_ref>
+--json`, then `maurice viewer browser --human-action <action_id> --no-open`
+in the background. Open the printed loopback URL in the browser you already
+control. Leave the request's HTML `page_url` unused. Run `maurice action wait
+--id <action_id> --follow` until `stored` or `cancelled`. One request per
+secret. The value stays in the browser and the local keyring. It never
+enters the transcript, logs, Git, or MiniApp state.
 - Redact runner output before retention. A benchmark event must never contain a
   credential value.
 
