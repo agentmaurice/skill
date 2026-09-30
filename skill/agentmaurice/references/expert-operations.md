@@ -120,9 +120,8 @@ maurice catalog llm list
 ```
 
 Keep a row whose third column is `chat` or `decision`. Write that exact first
-column as `llm_model` on the workflow. Name it to the person. When the workflow
-runs, Maurice asks them to confirm that same model. Do not choose a different
-one.
+column as `llm_model` on the workflow. Maurice calls it. Do not ask the home
+page to confirm that ref again. Do not choose a different one.
 
 If the command says `account_not_paired` or `no authorized model`, stop. Ask
 the person which API key to use, or which local model. Do not read
@@ -144,18 +143,21 @@ maurice catalog connector list --query "<service>"
 
 The first column is the connector key. The third column is `api_key` or
 `connect`. Propose one when the person’s words match a service and this
-Maurice is paired with an AgentMaurice account. The Maurice home page then
-shows Connecteurs, with a search. Name that one service in everyday words.
-`api_key` is typed in the masked field on that page. `connect` is the Connect
-button there.
+Maurice is paired with an AgentMaurice account. Name that one service in
+everyday words. `connect` is the Connect button on the Maurice home page.
+`api_key` is a masked field you open yourself, with the secret page steps in
+SKILL.md: `maurice action request --kind secret_input`, then
+`maurice viewer browser --human-action <action_id> --no-open` in the
+background, then open the printed loopback URL in the browser you already
+control, then `maurice action wait --id <action_id> --follow` until `stored`
+or `cancelled`. Leave the HTML `page_url` unused. Never paste the key.
 
-Airtable does not open a login window. It uses a personal access token. Ask
-the person to type that key in the masked Airtable field on the Maurice home
-page. Do not ask them to paste the key in this conversation, do not read a
-credential file, and do not print the key. Wait until they say it is saved.
-The key stays in the operating-system keyring. Connectors already set up
-are listed apart, under « Déjà en place », so the person does not search the
-full directory to find them. Once the key is saved, call
+Airtable does not open a login window. It uses a personal access token.
+Open that masked page the same way. Do not ask them to paste the key in this
+conversation, do not read a credential file, and do not print the key. The
+key stays in the operating-system keyring. Connectors already set up are
+listed apart, under « Déjà en place », so the person does not search the
+full directory to find them. Once `action wait` reports `stored`, call
 `airtable_list_bases`, `airtable_list_tables` (base_id) or
 `airtable_list_records` (base_id and table). Find them with
 `maurice tools list --query airtable` and call them with `maurice tools call`.
