@@ -3,11 +3,11 @@
   "name": "agentmaurice",
   "version": "2.0.18",
   "contract_bundle_sha256": "d05d138ddd5b293d3c82d36e1e320e89134a8853735874d3266cf63df4042c50",
-  "content_hash": "4109857452b8ec44ed402ff7a959c22de57eb9404b68a8bb2d4e877aaac24b35",
+  "content_hash": "97fedc1c9a6fa185ef62058035a34a6de99e38002ee78e74e2f04f9c7974e72c",
   "files": [
     {
       "path": "SKILL.md",
-      "sha256": "f97849b007e5a639f9ff7e07b3cebd055b5d6e849dbcca411ae932beb6caf7cb"
+      "sha256": "bc6479947b78e6c8583c20a88c832184700949d03c11761cccca6f2b9932ef56"
     },
     {
       "path": "agents/openai.yaml",
@@ -31,7 +31,7 @@
     },
     {
       "path": "references/expert-operations.md",
-      "sha256": "29c3af501250ad805302297685568706502023cc43fcdda0fd94910e68fd1ccc"
+      "sha256": "7d5714fd1457944abcf709fb21c35858e26c11cdfe74e389c8d81d4140a735de"
     },
     {
       "path": "references/frontend-starter.md",

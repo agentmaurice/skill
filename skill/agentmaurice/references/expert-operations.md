@@ -113,32 +113,41 @@ conversation. Keep the original task pending. Once the form reports a
 successful test, resume that same task and prove the LLM call ran; a saved
 secret reference alone is not proof of a usable model.
 
-**Models, once the account is paired.** Every chat model on the platform can
-be offered. Do not keep a short list in memory. Read the live catalog:
+**Models.** List only the models this account may use:
 
-```text
-https://llm.agentmaurice.app/v1/models
+```bash
+maurice catalog llm list
 ```
 
-Keep rows whose `model_kind` is `chat` or `decision`. Match the person’s words
-to one `label`. Name that model and ask them to use it. Each use is paid with
-credits they buy from the Maurice home page. If the account is not paired, say
-these models need that account first. A personal key stays a separate, local
-choice.
+Keep a row whose third column is `chat` or `decision`. Write that exact first
+column as `llm_model` on the workflow. Name it to the person. When the workflow
+runs, Maurice asks them to confirm that same model. Do not choose a different
+one.
+
+If the command says `account_not_paired` or `no authorized model`, stop. Ask
+the person which API key to use, or which local model. Do not read
+`https://llm.agentmaurice.app/v1/models`. Do not write a `hosted:` model.
+Direct them to **Connecter un modèle IA** on the Maurice home page, then **Ma
+clé API** or **Modèle local**. Never ask them to paste a key in the
+conversation. A saved key is not proof: wait until they say the test
+succeeded, then resume the same task. Each hosted use is paid with credits
+they buy. No purchase happens by itself.
 
 **Services the person already uses.** The connector directory is the full
-Nango catalog, the same one as the search on the Maurice home page. It is not a
-local MCP server, and Edge does not provide it. Do not keep a short list in
-memory. Read the live directory and match a top-level key to its
-`display_name`:
+Nango catalog, the same search as the Maurice home page. It is not a local MCP
+server, and Edge does not provide it. Do not keep a short list in memory, and
+do not download a provider file. Search it:
 
-```text
-https://raw.githubusercontent.com/NangoHQ/nango/master/packages/providers/providers.yaml
+```bash
+maurice catalog connector list --query "<service>"
 ```
 
-Propose one when the person’s words match a service and this Maurice is paired
-with an AgentMaurice account. The Maurice home page then shows Connecteurs, with
-a search. Name that one service in everyday words.
+The first column is the connector key. The third column is `api_key` or
+`connect`. Propose one when the person’s words match a service and this
+Maurice is paired with an AgentMaurice account. The Maurice home page then
+shows Connecteurs, with a search. Name that one service in everyday words.
+`api_key` is typed in the masked field on that page. `connect` is the Connect
+button there.
 
 Airtable does not open a login window. It uses a personal access token. Ask
 the person to type that key in the masked Airtable field on the Maurice home

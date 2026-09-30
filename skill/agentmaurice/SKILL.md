@@ -211,12 +211,32 @@ commit, redeploy. Success requires green verify before the lock is written.
 
 `spec verify` and `maurice doctor` do not prove a MiniApp page works. Doctor only checks the process, writable storage, and `/ready`. After a MiniApp deploy, follow the debug loop in [App delivery](references/app-delivery.md) before you report success. You create the Agent, its Workflows, and its MiniApp, then you launch them yourself from the Maurice home page. A missing control or a failed action means the delivery failed: fix the spec and repeat.
 
+## Find a model or a connector
+
+Do this before writing `llm_model`, or before naming a service the person
+already uses. Do not guess, and do not download a catalog.
+
+```bash
+maurice catalog llm list
+maurice catalog connector list --query "<service>"
+```
+
+A model row is `ref`, label, then `chat` or `decision`. Write that exact `ref`
+as `llm_model`. A connector row is key, label, then `api_key` or `connect`.
+`api_key` is a personal key typed in the masked field on the Maurice home
+page. `connect` is the Connect button there. Never paste a key or a session
+token in the chat.
+
+If either command says `account_not_paired`, stop. Ask which API key or local
+model to use, or say the service needs the account on the home page. Do not
+read `https://llm.agentmaurice.app/v1/models`. Do not write `hosted:`. Do not
+invent a connector key.
+
 ## Use expert operations only when needed
 
 Read [Expert operations](references/expert-operations.md) before choosing an
 MCP server for Maurice, and for diagnosis, drift, or unmanaged sandbox work. When
-the work needs a model, or a service the person already uses (mail, calendar,
-chat, cloud files), follow the live-catalog rules there and propose one match.
+the work needs a model or a connector, run the commands above and propose one match.
 Airtable is a personal key: ask them to type it in the masked field on the
 Maurice home page, never in the chat. Once they say it is saved, call
 `airtable_list_bases`, `airtable_list_tables` or `airtable_list_records`
