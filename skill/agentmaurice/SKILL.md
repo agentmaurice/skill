@@ -232,6 +232,16 @@ model to use, or say the service needs the account on the home page. Do not
 read `https://llm.agentmaurice.app/v1/models`. Do not write `hosted:`. Do not
 invent a connector key.
 
+A row in `catalog llm list` means the account is paired and that `ref` is
+allowed. Write it as `llm_model`. Maurice calls it and the Console wallet pays.
+Do not ask the home page to confirm that ref again. Do not create a provider,
+listen on a port, or write a stand-in server. If the call fails because
+credits are insufficient, report that and stop. Do not buy credits.
+
+If the workflow names no model, stop and ask the person to choose the default
+on the home page. A personal API key or a local model is only when the person
+asks for it. A local model must already be answering. Never start one yourself.
+
 ## Use expert operations only when needed
 
 Read [Expert operations](references/expert-operations.md) before choosing an

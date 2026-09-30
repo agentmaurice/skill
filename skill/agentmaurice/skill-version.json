@@ -1,13 +1,13 @@
 {
   "schema_version": "agentmaurice.skill/v2",
   "name": "agentmaurice",
-  "version": "2.0.18",
+  "version": "2.0.19",
   "contract_bundle_sha256": "d05d138ddd5b293d3c82d36e1e320e89134a8853735874d3266cf63df4042c50",
-  "content_hash": "97fedc1c9a6fa185ef62058035a34a6de99e38002ee78e74e2f04f9c7974e72c",
+  "content_hash": "b972fc2c28d44e803eca3a24a44d2270276ed9119580c4cd918dc7368b067816",
   "files": [
     {
       "path": "SKILL.md",
-      "sha256": "bc6479947b78e6c8583c20a88c832184700949d03c11761cccca6f2b9932ef56"
+      "sha256": "9e24089ba36a6948900d3180439d9ee2d4af317f1bc7e02f63c1892868587e80"
     },
     {
       "path": "agents/openai.yaml",
