@@ -23,11 +23,14 @@ When a Workflow needs a secret that is not stored yet, open the masked page
 and wait. Drop a `secret://` prefix. Run `maurice action request --kind
 secret_input --resource <secret_ref> --constraint secret_ref=<secret_ref>
 --json`, then `maurice viewer browser --human-action <action_id> --no-open`
-in the background. Open the printed loopback URL in the browser you already
-control. Leave the request's HTML `page_url` unused. Run `maurice action wait
+in the background. Navigate to the exact printed loopback URL (full load of
+host, port, and hash — not a hash-only edit on a previous secret page).
+Confirm Ressource shows this `<secret_ref>` before handoff. Leave the
+request's HTML `page_url` unused. Run `maurice action wait
 --id <action_id> --follow` until `stored` or `cancelled`. One request per
-secret. The value stays in the browser and the local keyring. It never
-enters the transcript, logs, Git, or MiniApp state.
+secret, each with its own printed URL. The value stays in the browser and
+the local keyring. It never enters the transcript, logs, Git, or MiniApp
+state.
 - Redact runner output before retention. A benchmark event must never contain a
   credential value.
 

@@ -241,16 +241,22 @@ maurice viewer browser --human-action <action_id> --no-open
 ```
 
 The command prints `Viewer served locally at http://127.0.0.1:<port>/#/human-action/<action_id>`.
-Open that exact URL in the browser you already control. Leave the HTML
-`page_url` from the request unused: that page does not collect the secret.
-Then wait:
+Navigate the browser you already control to that exact printed URL (full
+address bar load: host, port, and hash together). Do not keep a previous
+secret page and only change the hash. Leave the HTML `page_url` from the
+request unused: that page does not collect the secret.
+
+Before any handoff, read the page: under Ressource it must show this
+`<secret_ref>`. If it still shows another secret, open the newly printed
+URL again until the label matches. Then wait:
 
 ```bash
 maurice action wait --id <action_id> --follow
 ```
 
-Continue only after `stored` or `cancelled`. One request per secret. Never
-type the value and never resolve the request yourself.
+Continue only after `stored` or `cancelled`. One request per secret, each
+with its own printed URL. Never type the value and never resolve the
+request yourself.
 
 If either command says `account_not_paired`, stop. Ask which API key or local
 model to use, or say the service needs the account on the home page. Do not

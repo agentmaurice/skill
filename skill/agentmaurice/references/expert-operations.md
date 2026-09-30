@@ -148,9 +148,12 @@ everyday words. `connect` is the Connect button on the Maurice home page.
 `api_key` is a masked field you open yourself, with the secret page steps in
 SKILL.md: `maurice action request --kind secret_input`, then
 `maurice viewer browser --human-action <action_id> --no-open` in the
-background, then open the printed loopback URL in the browser you already
-control, then `maurice action wait --id <action_id> --follow` until `stored`
-or `cancelled`. Leave the HTML `page_url` unused. Never paste the key.
+background, then navigate to the exact printed loopback URL (full load of
+host, port, and hash — not a hash-only edit on a previous secret page) in
+the browser you already control. Confirm Ressource shows this secret before
+handoff. Then `maurice action wait --id <action_id> --follow` until
+`stored` or `cancelled`. Leave the HTML `page_url` unused. Never paste the
+key.
 
 Airtable does not open a login window. It uses a personal access token.
 Open that masked page the same way. Do not ask them to paste the key in this
