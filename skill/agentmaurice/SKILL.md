@@ -256,7 +256,10 @@ maurice action wait --id <action_id> --follow
 
 Continue only after `stored` or `cancelled`. One request per secret, each
 with its own printed URL. Never type the value and never resolve the
-request yourself.
+request yourself. A stored secret is not a Deno value. Read
+[Credential hygiene](references/credential-hygiene.md) before using it:
+call a tool that already attaches the key, and do not interpolate
+`secret://` inside `code_execution`.
 
 If either command says `account_not_paired`, stop. Ask which API key or local
 model to use, or say the service needs the account on the home page. Do not

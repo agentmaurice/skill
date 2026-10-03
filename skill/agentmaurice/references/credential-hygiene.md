@@ -34,6 +34,19 @@ state.
 - Redact runner output before retention. A benchmark event must never contain a
   credential value.
 
+## Using a stored secret
+
+`stored` means the human saved the value. The `secret://` reference is still not the value. Do not read the vault, the keyring, `action show`, or the browser to recover it.
+
+Consume it only through a tool that attaches it:
+
+- A catalog connector exposes tools that send the saved key. After `stored`, call those tools with `maurice tools call` or, inside a Workflow, `callTool` and the exact name from `maurice tools list`. Do not pass the reference as an argument.
+- Do not put `secret://…` in Deno `code_execution` context, code, or a `fetch` header. The sandbox keeps the reference unresolved. There is no `getSecret`, and a direct `fetch` cannot receive the raw credential.
+- Do not arm a schedule until one real tool call that needs the credential has succeeded.
+- Do not author `{"$binding":…}` until `maurice spec schema workflow` shows that expression. It is not in the current contract.
+
+If no listed tool attaches this credential, stop and say the Workflow cannot call that API with the stored secret. Do not paste the key into the Workflow, the prompt, or the chat.
+
 ## Approval identity
 
 An approval must identify a human principal and the exact immutable plan hash.

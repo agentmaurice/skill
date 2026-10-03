@@ -165,7 +165,10 @@ full directory to find them. Once `action wait` reports `stored`, call
 `airtable_list_records` (base_id and table). Find them with
 `maurice tools list --query airtable` and call them with `maurice tools call`.
 Do not print the key. Do not read the keyring, the `security` command, or
-the secret yourself. Those tools already send the saved key.
+the secret yourself. Those tools already send the saved key. Any other
+stored secret follows the same rule: read Credential hygiene, call a tool
+that attaches the key, and do not put `secret://` inside Deno
+`code_execution`.
 
 For any other service, ask them to press Connect there. Wait for them. Do not
 open the provider window, do not complete their login, and do not print a
