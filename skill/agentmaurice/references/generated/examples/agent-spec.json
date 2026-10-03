@@ -28,8 +28,11 @@
     "language": "fr",
     "max_candidates": 5
   },
+  "variable_references": {
+    "crm_base_url": "env://CRM_BASE_URL"
+  },
   "secret_references": {
-    "crm_token": "secret://integrations/crm-token"
+    "crm_token": "secret://deployment/CRM_TOKEN"
   },
   "policy_references": ["policy/customer-data/v2"]
 }

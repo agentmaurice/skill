@@ -2,7 +2,7 @@
 
 > Généré par `tools/contract_tool.py`. Ne pas modifier à la main.
 
-Bundle SHA-256 : `d05d138ddd5b293d3c82d36e1e320e89134a8853735874d3266cf63df4042c50`
+Bundle SHA-256 : `b38ce09f83b04145fbd223d3f17caca1df9b257a398913332a2679bd1c01c6c9`
 
 Charge le schéma ou l'exemple exact avec `maurice spec schema <contrat>` et
 `maurice spec example <contrat>`. Les copies ci-dessous sont validées à chaque génération.
@@ -12,7 +12,7 @@ Charge le schéma ou l'exemple exact avec `maurice spec schema <contrat>` et
 | `project` | `agentmaurice.project/v2` | [`examples/project.json`](examples/project.json) (`1a64d1c76cd0878a56e37be2112491fac6185193a33817e5583234952d9c45f7`) |
 | `environment` | `agentmaurice.environment/v2` | [`examples/environment.json`](examples/environment.json) (`6249b1dec781406f897453b28c5f0ff654cc70db5c1f54f2681688cc622d7285`) |
 | `lock` | `agentmaurice.lock/v2` | [`examples/lock.json`](examples/lock.json) (`8dc246ba536d786813134e8f0b0c6aef19e09b38f3ae6187a6221363a1b6876a`) |
-| `agent-spec` | `agentmaurice.agent_spec/v2` | [`examples/agent-spec.json`](examples/agent-spec.json) (`84ceaa709a6fd4c00875bd12b07171ba2d7905e601578d448517aac3e369f2de`) |
+| `agent-spec` | `agentmaurice.agent_spec/v2` | [`examples/agent-spec.json`](examples/agent-spec.json) (`1f6a8a5b2d501f49a31a681b46040aff9f3c91c4cb14291fb4446571f140cc70`) |
 | `workflow` | `agentmaurice.workflow/v2` | [`examples/workflow.json`](examples/workflow.json) (`8391ce2031a255c9db095cf8843b0a6ebc3bd969e0de807c8faaae48130066e1`) |
 | `miniapp` | `agentmaurice.miniapp/v2` | [`examples/miniapp.json`](examples/miniapp.json) (`62faa6dcef35553f5cc0013e037b007b1e78b937721aa28af23182e48ad78b37`) |
 | `test-plan` | `agentmaurice.test_plan/v2` | [`examples/test-plan.json`](examples/test-plan.json) (`bde2a560c4ad6986b6bddfac4e6ca83945b83f2472a304d9e77c5f3167e50844`) |
