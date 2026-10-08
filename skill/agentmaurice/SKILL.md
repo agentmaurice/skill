@@ -9,39 +9,32 @@ description: >-
 
 # AgentMaurice
 
-The local runtime is AgentMaurice One. After that first mention, call it Maurice.
-
-Use the **unified org builder**: one session (External Inception MCP or Studio)
-for architecture **and** Agent Spec. Repository is the reviewed source; typed
-plans + human approval govern mutations.
+The local runtime is AgentMaurice One; thereafter call it Maurice. Use the
+unified org builder: one External Inception MCP or Studio session for
+architecture and Agent Spec. The repository is the reviewed source; typed plans
+and a distinct human approval govern mutations.
 
 ## Keep the object model exact
 
-- **Builder session**: org-capable credential exposes
-  `inception_architecture_*` and `inception_agent_spec_*` together.
-- **Architecture plan**: `agentmaurice.architecture.plan/v1` by default
-  (Applications, members, surface, `llm.run_ref`, `mcp_grants`). Emit plan v2
-  only when creating an Agent (`create_agent` / `created_ref`). Approve in OS;
-  apply via MCP.
-- **Agent Spec**: declarative desired state for one Agent.
-- **Application**: product boundary (members + `public_surface` + Run config).
-  Revue Application in OS Builder, not a separate Compose tool.
-- **Agent**: deployed, operable product resource.
-- **Workflow**: executable business process managed by an Agent Spec.
-- **MiniApp**: interactive runtime surface managed by an Agent Spec.
-- **Skill**: instructions loaded by a coding agent. A Skill is never a runtime
-  action or deployable package.
-- **Module**: versioned executable package that contributes Workflows,
-  MiniApps, runtime schemas, assets, and documentation. Agent Specs and test
-  plans stay in the consuming Agent project.
-
-Never use `Skill` and `Module` interchangeably. Convert a package containing
-executable resources into a Module; keep instruction-only content in the Skill
-Catalog.
+- A builder session exposes `inception_architecture_*` and
+  `inception_agent_spec_*` together.
+- Architecture plans use `agentmaurice.architecture.plan/v1` by default
+  (Applications, members, surface, `llm.run_ref`, `mcp_grants`); emit v2 only
+  when creating an Agent (`create_agent`/`created_ref`). Approve in the OS and
+  apply through MCP.
+- Agent Spec is declarative desired state for one Agent. An Application is the
+  product boundary (members, `public_surface`, Run config), reviewed in OS
+  Builder. An Agent is deployed and operable; a Workflow is an executable
+  business process; a MiniApp is an interactive runtime surface.
+- A Skill is never a runtime action or deployable package. A Module is a
+  versioned executable package contributing Workflows, MiniApps, runtime
+  schemas, assets, and documentation. Agent Specs and test plans remain in the
+  consuming Agent project. Keep instruction-only content in the Skill Catalog
+  and do not use Skill and Module interchangeably.
 
 ## Follow one authoring rail
 
-Start with the org graph, then architecture and/or Agent Spec as needed:
+Start with the org graph, then use the needed rails:
 
 ```text
 connect (org-builder) -> architecture observe
@@ -50,255 +43,174 @@ connect (org-builder) -> architecture observe
   -> human approval (separate principal) -> apply -> verify
 ```
 
-CLI helpers: `maurice architecture observe|plan-get|approve|verify`,
-`maurice app …`, `maurice spec …` (Application authoring and runtime:
-[App delivery](references/app-delivery.md)).
-`init` may be replaced by `pull` when remote desired state already exists.
-Do not mutate managed Workflows or MiniApps via direct admin tools — use an
-Agent Spec plan (except an explicit unmanaged sandbox).
+Use `maurice architecture observe|plan-get|approve|verify`, `maurice app …`,
+and `maurice spec …`; see [App delivery](references/app-delivery.md) for
+Application/runtime details. `init` becomes `pull` when remote desired state
+already exists. Managed Workflows and MiniApps are changed only through an
+Agent Spec plan, except an explicitly unmanaged sandbox.
 
-### 1. Connect and inspect
+### Connect and inspect
 
-Classify the connection surface before running anything:
+Classify bootstrap input before running it:
 
-| Input | Purpose | Required action |
-|---|---|---|
-| `amb_...` URL or `bootstrap_kind: external_inception_mcp` | External Inception MCP setup | Consume it only through the MCP client setup instructions. Never pass it to MauriceCLI. |
-| `amc_...` URL or `bootstrap_kind: maurice_cli` | MauriceCLI project connection | Run the exact user- or OS-provided `maurice agent connect` command. |
-| External Inception already configured | Existing MCP connection | Use the exposed Agent scopes and tools without reconnecting MauriceCLI. |
+| Input | Action |
+|---|---|
+| `amb_...` or `bootstrap_kind: external_inception_mcp` | Consume only through MCP client setup; never pass to MauriceCLI. |
+| `amc_...` or `bootstrap_kind: maurice_cli` | Run the exact user/OS-provided `maurice agent connect` command. |
+| Existing External Inception | Use its exposed Agent scopes/tools; do not reconnect MauriceCLI. |
 
-An error reporting the other bootstrap family is not evidence of an outdated
-CLI. Never infer a client/server version mismatch from `wrong_bootstrap_kind`;
-use the remediation returned by the command.
-
-For a user- or OS-provided `amc_` bootstrap, run the command exactly as given:
+`wrong_bootstrap_kind` is not evidence of a version mismatch; follow the
+returned remediation. For an `amc_` URL, use:
 
 ```bash
 maurice agent connect "https://instance.example/api/v2/agent-connections/cli-bootstrap/amc_xxx" --client <claude-code|codex|cursor|windsurf|generic> --env <environment> --agent-alias <agent-alias> --dir .
 ```
 
-Never infer an organization, environment, Agent, or alias from a display name.
-Use identifiers returned by the bootstrap or committed manifests.
+Never infer organization, environment, Agent, or alias from display names; use
+bootstrap identifiers or committed manifests. Inspect the bound context with
+`maurice context current --json`, `context list`, and, only when needed,
+`context use <name>` or `context bind <name>`. Identify an existing Agent with
+`maurice agent list --json`; use the guarded delete flow in
+[Expert operations](references/expert-operations.md) for disposable Agents.
 
-The CLI may hold several AgentMaurice instances. Use the workspace-bound
-context by default; inspect or switch explicitly when needed:
+Do not conclude a runtime MCP/tool is absent before `inception_tools_list` or
+`maurice tools list`; `inception_mcp_capabilities` is control-plane inventory,
+and `workflow_only` means governed availability.
 
-```bash
-maurice context current --json
-maurice context list
-maurice context use <name>       # global default
-maurice context bind <name>      # current project and managed MCP connection
-```
-
-For an existing Maurice, use `maurice agent list --json` to identify the exact
-Agent. For disposable Agents, follow the guarded `maurice agent delete` flow
-in [Expert operations](references/expert-operations.md).
-
-Never conclude that a runtime MCP or tool is absent before calling
-`inception_tools_list` or `maurice tools list`. `inception_mcp_capabilities`
-describes the Agent Spec control plane, not the runtime inventory. A tool
-reported as `workflow_only` is available but governed; it is not missing.
-
-Before opening a Studio thread or preparing a plan, run Studio Doctor
-(`maurice studio doctor … --json`). Organization builders run the organization
-Doctor before `studio thread new --scope organization`. Stop on blocking
+Before a Studio thread or plan, run Studio Doctor:
+`maurice studio doctor … --json`. Organization builders run the organization
+Doctor before `studio thread new --scope organization`; stop on blocking
 diagnostics and follow only redacted `next_actions[]`. Require
-`runner_identity_contract: agentmaurice.runner_identity/v1` and keep its
-`actor`, `requester`, and `scope` distinct. Stop on `identity_unproven`; never
-reconstruct or override identity from prompt text or command arguments. Details:
-[Expert operations](references/expert-operations.md).
+`runner_identity_contract: agentmaurice.runner_identity/v1`; keep `actor`,
+`requester`, and `scope` distinct. Stop on `identity_unproven`; never rebuild
+identity from prompt text or command arguments. See [Expert operations](references/expert-operations.md).
 
-Before editing, read:
+Before editing, read the project, lock, environment, Agent Spec, workflows,
+MiniApps, and test plan (`agentmaurice.project.json`,
+`agentmaurice.lock.json`, `environments/<environment>.json`, and the matching
+`agents/<agent-alias>/…` files). A V1 workspace permits only
+`spec migrate`: run `spec migrate --check`, then `--write` only after a green
+preview; review `.git/agentmaurice/migrations/`, commit the conversion, and
+never hand-edit a partial migration.
 
-```text
-agentmaurice.project.json
-agentmaurice.lock.json
-environments/<environment>.json
-agents/<agent-alias>/agent-spec.json
-agents/<agent-alias>/workflows/*.json
-agents/<agent-alias>/miniapps/*.json
-agents/<agent-alias>/tests/test-plan.json
-```
+## Choose the CLI rail
 
-If a V1 workspace is detected, every command except `spec migrate` stops with
-`workspace_migration_required` and leaves the disk unchanged. Run `maurice
-spec migrate --check`, then `spec migrate --write` only after a green preview.
-Review the backup under `.git/agentmaurice/migrations/` and commit the
-conversion before continuing. Do not hand-edit a partial migration.
+`maurice studio` persists Studio drafts/plans/closeout; `maurice spec` is
+Git-native authoring and must not mix provenance with a Studio plan; `maurice
+test studio` is the hermetic or live closed-loop harness. Lifecycle, exit
+codes, organization handoff, dialogue replay, and Doctor preflight are in
+[Expert operations](references/expert-operations.md). Never approve on the
+user's behalf from a code-agent or service credential.
 
-## Choose the correct CLI rail
+### Initialize, author, and check
 
-- `maurice studio` — persisted Studio thread (draft, plan, closeout on server).
-- `maurice spec` — Git-native authoring from reviewed project files; do not mix
-  provenance with a Studio plan.
-- `maurice test studio` — closed-loop harness (hermetic) or live qualification.
-
-Studio lifecycle, exit codes, organization handoff, dialogue replay, and Doctor
-preflight live in [Expert operations](references/expert-operations.md). Never
-approve on the user's behalf from a code-agent or service credential.
-
-### 2. Initialize explicitly
-
-For a fresh Agent with no local or remote Agent Spec, run:
+For a fresh Agent:
 
 ```bash
 maurice spec init --env <environment> --agent-alias <agent-alias> --title "<title>" --dir . --json
 ```
 
-`spec init` creates authoring state only. It must not create runtime resources.
-If remote state already exists, use `maurice spec pull` instead of overwriting
-it. After a successful fresh `spec init`, do not run `spec pull`: the local
-manifest and lock changes are expected and must be committed with the Agent
-resource files.
+`spec init` creates authoring state only. If remote state exists, use
+`maurice spec pull`; after fresh init, commit the local manifest/lock with the
+resource files and do not pull.
 
-### 3. Load the contract, then edit
+When needed, retrieve schema/examples with `maurice spec schema workflow
+--json`, `maurice spec example workflow --json`, `maurice spec schema miniapp
+--json`, and `maurice spec explain contracts --json`. Author one resource per
+file with `$schema`, `schema_version: 2`, the right `kind`, Workflows under
+`workflows/`, MiniApps under `miniapps/`, and `workflow_call` for composition.
+Reference secrets by identifier; never put secret values in manifests, locks,
+prompts, logs, or answers. Read [Agent Spec V2 authoring](references/agent-spec-v2.md)
+for boundaries and side effects, and the generated contract reference only for
+offline identifiers; see `references/generated/agent-spec-v2.generated.md`,
+tied to `skill-version.json`.
 
-Retrieve the embedded contract and a canonical example when the shape is not
-already present locally:
-
-```bash
-maurice spec schema workflow --json
-maurice spec example workflow --json
-maurice spec schema miniapp --json
-maurice spec explain contracts --json
-```
-
-Author one resource per file. Require `$schema`, `schema_version: 2`, and the
-correct `kind`. Put Workflows under `workflows/` and MiniApps under `miniapps/`.
-Use `workflow_call` for Workflow composition. Reference secrets by identifier;
-never place secret values in manifests, locks, prompts, logs, or answers.
-
-Workflow `llm_call` is runtime-managed (no uncontracted `stream` field). For
-Deno `code_execution` LLM HTTP or `callTool` usage, read
-[Expert operations](references/expert-operations.md).
-
-Treat `agent-spec.json` as intent and desired state. Do not embed discovered
-runtime snapshots, generated editor state, or duplicate resource lists in it.
-
-Read [Agent Spec V2 authoring](references/agent-spec-v2.md) for file boundaries,
-ownership, dependencies, and MiniApp side-effect rules. Read
-[Generated contract reference](references/generated/agent-spec-v2.generated.md)
-only for offline contract identifiers; it is tied to `skill-version.json`.
-
-### 4. Check and commit
+Treat `agent-spec.json` as intent and desired state: do not embed runtime
+snapshots, generated editor state, or duplicate resource lists. Workflow
+`llm_call` is runtime-managed (no uncontracted `stream`); Deno LLM HTTP or
+`callTool` usage is documented in [Expert operations](references/expert-operations.md).
 
 ```bash
 maurice spec check --env <environment> --agent-alias <agent-alias> --dir . --json
-
 git diff --check
 git status --short
 git add <reviewed-files>
 git commit -m "Describe the Agent Spec change"
 ```
 
-Treat exit code `2` as an invalid contract. Repair from the diagnostic and run
-`check` again. Do not plan an invalid or dirty workspace.
+Exit code 2 means an invalid contract: repair from diagnostics and check
+again. Do not plan an invalid or dirty workspace.
 
-### 5. Deploy through the effective server policy
+### Plan, apply, and verify
 
 ```bash
 maurice spec deploy --env <environment> --agent-alias <agent-alias> --tests auto --dir . --json
 ```
 
-`deploy` performs check, plan, apply, and `maurice spec verify`. Sandbox,
+Deploy performs check, plan, apply, and `maurice spec verify`. Sandbox,
 development, and integration-test plans may continue under policy authorization.
-Exit `4` / `awaiting_approval`: present the Studio link and stop. Never approve on the user's behalf. Do not run `spec approve` with the code-agent credential.
-Never approve with an agent/service credential. After a human confirms the
-persisted plan, rerun the same `spec deploy`. Exit `3`: pull, merge/rebase,
-commit, redeploy. Success requires green verify before the lock is written.
+Exit 4 / `awaiting_approval` means present the Studio link and stop.
+Never approve with an agent/service credential. Never approve on the user's behalf.
+Do not run `spec approve` with the code-agent credential. After a distinct human confirms
+the persisted plan, rerun the same deploy. Exit 3 requires pull, merge/rebase,
+commit, and redeploy. Success is a green verify before the lock is written.
 
-### 6. Debug the MiniApp you just deployed
+After a MiniApp deploy, `spec verify` and `maurice doctor` do not prove the page
+works: follow the launch/debug loop in [App delivery](references/app-delivery.md)
+from the Maurice home page. A missing control or failed action is a failed
+delivery and requires a spec repair.
 
-`spec verify` and `maurice doctor` do not prove a MiniApp page works. Doctor only checks the process, writable storage, and `/ready`. After a MiniApp deploy, follow the debug loop in [App delivery](references/app-delivery.md) before you report success. You create the Agent, its Workflows, and its MiniApp, then you launch them yourself from the Maurice home page. A missing control or a failed action means the delivery failed: fix the spec and repeat.
+## Find models, connectors, and request secrets
 
-## Find a model or a connector
-
-Do this before writing `llm_model`, or before naming a service the person
-already uses. Do not guess, and do not download a catalog.
+Before writing `llm_model` or naming a service, query the live catalog; do not
+guess or download one:
 
 ```bash
 maurice catalog llm list
 maurice catalog connector list --query "<service>"
 ```
 
-A model row is `ref`, label, then `chat` or `decision`. Write that exact `ref`
-as `llm_model`. A connector row is key, label, then `api_key` or `connect`.
-`connect` is the Connect button on the Maurice home page. `api_key`, and any
-`secret://` name a Workflow needs, is a masked field. Open that page yourself.
-Never paste a key, never read another agent's secret store, and never finish
-by only telling the person to type the key.
+Use the exact model `ref` (chat/decision) as `llm_model`. A catalog row means
+the account is paired and that ref is allowed; Maurice calls it and the
+Console wallet pays. Do not ask the home page to confirm the ref again. A
+connector exposes a key/label and `api_key` or `connect`; `connect` is the
+home-page button and `api_key`/`secret://` is a masked field. Never paste keys,
+inspect another agent's secret store, or leave the person to type a key without
+opening the masked page.
 
-For each missing secret, drop a `secret://` prefix, then run:
+For each missing secret, use one request per `secret://` reference:
 
 ```bash
 maurice action request --kind secret_input --resource <secret_ref> --constraint secret_ref=<secret_ref> --json
-```
-
-Read `action_id`. Start the page in the background so it keeps serving:
-
-```bash
 maurice viewer browser --human-action <action_id> --no-open
-```
-
-The command prints `Viewer served locally at http://127.0.0.1:<port>/#/human-action/<action_id>`.
-Navigate the browser you already control to that exact printed URL (full
-address bar load: host, port, and hash together). Do not keep a previous
-secret page and only change the hash. Leave the HTML `page_url` from the
-request unused: that page does not collect the secret.
-
-Before any handoff, read the page: under Ressource it must show this
-`<secret_ref>`. If it still shows another secret, open the newly printed
-URL again until the label matches. Then wait:
-
-```bash
 maurice action wait --id <action_id> --follow
 ```
 
-Continue only after `stored` or `cancelled`. One request per secret, each
-with its own printed URL. Never type the value and never resolve the
-request yourself. A stored secret is not a Deno value. Read
-[Credential hygiene](references/credential-hygiene.md) before using it:
-call a tool that already attaches the key, and do not interpolate
-`secret://` inside `code_execution`.
+Remove the `secret://` prefix when passing `secret_ref` to the request. The
+viewer command starts in the background so it continues serving while waiting.
+Navigate to the exact printed `http://127.0.0.1:<port>/#/human-action/<action_id>`
+URL; `page_url` from the request does not collect the secret. Read Ressource:
+if its label is wrong, load the newly printed full host/port/hash URL, never only
+change the hash. Continue only on `stored` or `cancelled`; never type or resolve
+the value. Read [Credential hygiene](references/credential-hygiene.md): tools
+attach stored keys; never interpolate `secret://` in `code_execution`. On
+`account_not_paired`, stop and ask for a key/local model or home-page pairing.
+Do not read the hosted model endpoint, write `hosted:`, invent connector keys,
+start a local model/server, buy credits, or create a provider.
 
-If either command says `account_not_paired`, stop. Ask which API key or local
-model to use, or say the service needs the account on the home page. Do not
-read `https://llm.agentmaurice.app/v1/models`. Do not write `hosted:`. Do not
-invent a connector key.
-
-A row in `catalog llm list` means the account is paired and that `ref` is
-allowed. Write it as `llm_model`. Maurice calls it and the Console wallet pays.
-Do not ask the home page to confirm that ref again. Do not create a provider,
-listen on a port, or write a stand-in server. If the call fails because
-credits are insufficient, report that and stop. Do not buy credits.
-
-If the workflow names no model, stop and ask the person to choose the default
-on the home page. A personal API key or a local model is only when the person
-asks for it. A local model must already be answering. Never start one yourself.
-
-## Use expert operations only when needed
-
-Read [Expert operations](references/expert-operations.md) before choosing an
-MCP server for Maurice, and for diagnosis, drift, or unmanaged sandbox work. When
-the work needs a model or a connector, run the commands above and propose one match.
-Airtable is a personal key: open the masked secret page above, then call
-`airtable_list_bases`, `airtable_list_tables` or `airtable_list_records`
-with `maurice tools call`. Do not read the key yourself. Do not use a memorized short list, and do
-not deploy a local server in its place. Read
-[Modules](references/modules.md) when packaging executable resources, and
-[MiniApp user interface](references/miniapp-ui.md) before writing a MiniApp a
-person will use. For client
-delivery: [Credential hygiene](references/credential-hygiene.md),
+If no model is named, ask the person to choose the home-page default. A personal
+API key or local model is only used when requested; a local model must already
+be answering. If credits are insufficient, report it and stop. Do not create a
+provider or stand-in server. Airtable uses the same masked flow, then
+`maurice tools call` for its listed tools; see [Modules](references/modules.md),
+[MiniApp UI](references/miniapp-ui.md), [Credential hygiene](references/credential-hygiene.md),
 [End-user authentication](references/end-user-auth.md),
-[Frontend starter](references/frontend-starter.md),
-[App delivery](references/app-delivery.md).
+[Frontend starter](references/frontend-starter.md), and [App delivery](references/app-delivery.md).
 
 ## Stop conditions
 
-Stop when the Agent/environment is ambiguous; Studio Doctor blocks; a contract
-hash is incompatible; migration is ambiguous; a managed resource drifted;
-approval is absent/mismatched; the Studio plan is not the latest for the thread
-and revision; a mutation cannot be reconciled; someone asks you to paste,
-reveal, or invent a secret value; or
-verify detects drift/failed tests. Do not invent aliases, hidden mutations, or
-recovery commands.
+Stop on ambiguous Agent/environment, blocking Studio Doctor, incompatible
+contract hash, ambiguous migration, managed drift, absent/mismatched approval,
+stale Studio plan/thread revision, unreconciled mutation, any request to paste,
+reveal, or invent a secret, or failed/drifting verification. Do not invent
+aliases, hidden mutations, or recovery commands.
