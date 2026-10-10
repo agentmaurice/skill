@@ -84,6 +84,9 @@ execution always carries a validated Workflow reference, an idempotency key,
 and optionally the plan hash expected by the caller. Use the explicit local
 grant/revoke commands and keep the assistant grant distinct from the local
 provider identity. Do not use `maurice agent connect` for this front door.
+For declared Workflow results, read the pinned `output_schema` reported by
+`explain`; the front-door reference defines the 64 KiB limit, recursive
+redaction, invalid-after-redaction blocking, and legacy `{"ok":true}` fallback.
 
 For a local assistant client, follow [the connection contract](references/frontdoor.md):
 use `maurice assistant connect <codex|generic>` with an explicit private

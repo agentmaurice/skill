@@ -46,6 +46,11 @@ initialize and `tools/list` with a five-second timeout, and atomically writes
 either Codex TOML or generic `mcpServers` JSON. It does not create grants,
 start One, configure other clients, or copy bearer values into configuration.
 
+Workflow result semantics are documented in the front-door reference: declared
+`output` plus `output_schema` returns a pinned, redacted business result up to
+64 KiB; legacy Workflows retain `{"ok":true}`. This is a contract description,
+not evidence of a completed runtime qualification.
+
 ## Manual installation
 
 Copy the complete `skill/agentmaurice` directory to the client's skill

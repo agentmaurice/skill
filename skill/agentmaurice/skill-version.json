@@ -1,13 +1,13 @@
 {
   "schema_version": "agentmaurice.skill/v2",
   "name": "agentmaurice",
-  "version": "2.0.27",
+  "version": "2.0.28",
   "contract_bundle_sha256": "5335757aa60ca76b7218ee8d8a4131f5875f262571b47b803717c0107ff81979",
-  "content_hash": "ce1b1dca016280f80de24469d03b756754aecc4718969824ccf28ac166d209b6",
+  "content_hash": "396968cba2060bea3b8a121af784264635e1582c94426c0af2b37e4cfacbc110",
   "files": [
     {
       "path": "SKILL.md",
-      "sha256": "1c4caec65fc3d23277c5cfd6bd6cff4fc180fa8c2a29df3136a3c0fc929dc49a"
+      "sha256": "9527218b066ea8ec5616f32f6ea89e06ebd45739570597c89913da3d46af44cb"
     },
     {
       "path": "agents/openai.yaml",
@@ -35,7 +35,7 @@
     },
     {
       "path": "references/frontdoor.md",
-      "sha256": "49eab5ba8b77cd24e992619e59c4b83c9f095527dc60a2e67a8da2f6cff3adfa"
+      "sha256": "240d7fc54617731b7f9229e37a9b8a585e0422ea33c023b368b679a65d6dcdd4"
     },
     {
       "path": "references/frontend-starter.md",
