@@ -22,6 +22,22 @@ same operation, and pass `expected_plan_hash`
 when the caller is binding execution to a previously explained plan. Never
 choose an individual runtime step or call a raw tool behind a Workflow.
 
+### Declared Workflow results
+
+A Workflow that declares both `output` and `output_schema` returns its declared
+business result. The schema is pinned in the AgentJob when the Workflow is
+admitted from the applied Agent Spec; `explain` reports that effective schema.
+The result is limited to 64 KiB. Sensitive keys are redacted recursively before
+the result is returned. If redaction makes the result invalid against the
+pinned schema, the response is blocked without returning the result content.
+
+The legacy Workflow shape without `output_schema` keeps the M0 contract
+`{"ok":true}`. No internal execution context is propagated, and this does not
+add a new Workflow kind, LLM capability, or action surface. A retry with a new
+Job for this result profile is refused; replay of the same operation with the
+same idempotency key remains supported. This documents the contract only and
+is not runtime qualification evidence.
+
 The first contract is Workflow-only. References use the exact form
 `workflow:<agent-id>/<workflow-id>@<version>`. Unsupported reference kinds,
 out-of-scope references, invalid input, invalid grants, approval requirements,
