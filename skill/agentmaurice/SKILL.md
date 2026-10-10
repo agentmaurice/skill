@@ -77,6 +77,21 @@ Do not conclude a runtime MCP/tool is absent before `inception_tools_list` or
 `maurice tools list`; `inception_mcp_capabilities` is control-plane inventory,
 and `workflow_only` means governed availability.
 
+When the task is to use the local `maurice` MCP front door, read
+[Front door](references/frontdoor.md). The compact rail is
+`search → explain → execute`: discovery and explanation are read-only, while
+execution always carries a validated Workflow reference, an idempotency key,
+and optionally the plan hash expected by the caller. Use the explicit local
+grant/revoke commands and keep the assistant grant distinct from the local
+provider identity. Do not use `maurice agent connect` for this front door.
+
+Before relying on a local front door, run the bounded Doctor check with
+`--mcp-endpoint` and `--mcp-token-file` together and read the nested JSON fields
+`mcp_frontdoor.checked` and `mcp_frontdoor.ok`. It performs only authenticated MCP initialize and
+`tools/list` with a five-second timeout; `ok: true` is catalogue/reachability
+evidence, never Workflow, VM, or end-to-end proof. A missing pair, timeout, or
+catalogue error is a stop for this path.
+
 Before a Studio thread or plan, run Studio Doctor:
 `maurice studio doctor … --json`. Organization builders run the organization
 Doctor before `studio thread new --scope organization`; stop on blocking

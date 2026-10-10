@@ -26,6 +26,17 @@ when the user explicitly chooses to replace a locally modified copy.
 Credentials remain in the private MauriceCLI configuration. The project
 contains only non-secret manifests and credential references.
 
+## Local front door bridge
+
+For a local One, use the front-door grant and bridge commands documented in
+[`references/frontdoor.md`](../skill/agentmaurice/references/frontdoor.md).
+The bridge reads a private token file and connects to an already running
+loopback endpoint; it does not start the One. `maurice doctor --json` can check
+the authenticated MCP catalogue when both `--mcp-endpoint` and
+`--mcp-token-file` are supplied. This check is best effort and reports
+`mcp_frontdoor.checked`/`mcp_frontdoor.ok`; it is not Workflow or VM
+qualification.
+
 ## Manual installation
 
 Copy the complete `skill/agentmaurice` directory to the client's skill
