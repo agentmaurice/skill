@@ -33,12 +33,12 @@ The public CLI mirrors those three tools. Keep the endpoint and token file
 explicit, and supply the operation fields on `execute`:
 
 ```bash
-maurice frontdoor search --endpoint http://127.0.0.1:<mcp-port>/mcp/maurice \
+maurice search --endpoint http://127.0.0.1:<mcp-port>/mcp/maurice \
   --token-file <private-path>/assistant.token --query "<term>"
-maurice frontdoor explain 'workflow:<agent-id>/<workflow-id>@<version>' \
+maurice explain 'workflow:<agent-id>/<workflow-id>@<version>' \
   --endpoint http://127.0.0.1:<mcp-port>/mcp/maurice \
   --token-file <private-path>/assistant.token
-maurice frontdoor execute 'workflow:<agent-id>/<workflow-id>@<version>' \
+maurice execute 'workflow:<agent-id>/<workflow-id>@<version>' \
   --endpoint http://127.0.0.1:<mcp-port>/mcp/maurice \
   --token-file <private-path>/assistant.token \
   --input-file <private-path>/input.json \
@@ -105,3 +105,31 @@ not run or is invalid; do not silently fall back to an environment token.
 This reference does not qualify a Workflow, a VM, or an external assistant.
 Those require the separate runtime audit and the applicable AgentMaurice
 approval rail.
+
+## Assistant connection contract
+
+For an already running local One, the assistant connection rail is explicit:
+
+```bash
+maurice assistant connect codex \
+  --config-file <private-path>/codex-config.toml \
+  --token-file <private-path>/assistant.token \
+  --endpoint http://127.0.0.1:<mcp-port>/mcp/maurice \
+  --name maurice
+maurice assistant connect generic \
+  --config-file <private-path>/mcp.json \
+  --token-file <private-path>/assistant.token \
+  --endpoint http://127.0.0.1:<mcp-port>/mcp/maurice \
+  --name maurice
+```
+
+`--token-file` is required and remains private; `--endpoint` defaults to the
+loopback `/mcp/maurice` endpoint and `--name` defaults to `maurice`. The command
+first performs authenticated MCP initialize and `tools/list` with a five-second
+timeout, then writes the configuration atomically. It creates no grant, does
+not start One, does not configure another client, and does not inspect a VM.
+The Codex output is TOML (`mcp_servers.<name>`); the generic output is JSON
+(`mcpServers[<name>]`). Existing identical entries are a no-op after the
+preflight. A different existing entry is a conflict and is refused; all other
+entries are preserved. No bearer value is copied into configuration: clients
+must reference the private token file according to their format.

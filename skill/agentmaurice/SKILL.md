@@ -85,6 +85,14 @@ and optionally the plan hash expected by the caller. Use the explicit local
 grant/revoke commands and keep the assistant grant distinct from the local
 provider identity. Do not use `maurice agent connect` for this front door.
 
+For a local assistant client, follow [the connection contract](references/frontdoor.md):
+use `maurice assistant connect <codex|generic>` with an explicit private
+`--config-file` and required `--token-file`. It preflights authenticated MCP
+`initialize` and `tools/list` for five seconds, then atomically writes the
+client config; identical entries are no-op, different entries are conflicts,
+and unrelated entries are preserved. It creates no grant, starts no One, and
+does not configure other clients.
+
 Before relying on a local front door, run the bounded Doctor check with
 `--mcp-endpoint` and `--mcp-token-file` together and read the nested JSON fields
 `mcp_frontdoor.checked` and `mcp_frontdoor.ok`. It performs only authenticated MCP initialize and
