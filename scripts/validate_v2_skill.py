@@ -50,7 +50,7 @@ def main() -> None:
     manifest = read_json(MANIFEST_PATH)
     if manifest.get("schema_version") != "agentmaurice.skill/v2":
         raise SystemExit("invalid Skill schema_version")
-    if manifest.get("name") != "agentmaurice" or manifest.get("version") != "2.0.28":
+    if manifest.get("name") != "agentmaurice" or manifest.get("version") != "2.0.29":
         raise SystemExit("invalid Skill identity")
     contract_hash = manifest.get("contract_bundle_sha256", "")
     if not re.fullmatch(r"[0-9a-f]{64}", contract_hash):
