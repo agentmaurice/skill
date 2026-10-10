@@ -37,6 +37,15 @@ the authenticated MCP catalogue when both `--mcp-endpoint` and
 `mcp_frontdoor.checked`/`mcp_frontdoor.ok`; it is not Workflow or VM
 qualification.
 
+## Assistant connection
+
+The local assistant connection contract is also documented in
+[`references/frontdoor.md`](../skill/agentmaurice/references/frontdoor.md).
+It requires an explicit private `--token-file`, runs authenticated MCP
+initialize and `tools/list` with a five-second timeout, and atomically writes
+either Codex TOML or generic `mcpServers` JSON. It does not create grants,
+start One, configure other clients, or copy bearer values into configuration.
+
 ## Manual installation
 
 Copy the complete `skill/agentmaurice` directory to the client's skill
