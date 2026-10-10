@@ -2,7 +2,7 @@
 
 > Généré par `tools/contract_tool.py`. Ne pas modifier à la main.
 
-Bundle SHA-256 : `4359c37f982ba30b1575b8a3ac57b88343d6ff5c97644b2cf331f829f4ea9e52`
+Bundle SHA-256 : `5335757aa60ca76b7218ee8d8a4131f5875f262571b47b803717c0107ff81979`
 
 Charge le schéma ou l'exemple exact avec `maurice spec schema <contrat>` et
 `maurice spec example <contrat>`. Les copies ci-dessous sont validées à chaque génération.
@@ -32,3 +32,4 @@ Le schéma embarqué est normatif. La référence Skill ne doit jamais inventer 
 absent du schéma ni contourner `maurice spec check`.
 Chaque objet `capabilities[]` de `agent-spec.json` doit désigner explicitement son
 Workflow local avec `workflow_id`; aucune résolution par nom ou alias n'est autorisée.
+`allowed_agent_ids` accorde cette capacité aux seuls Agents listés (1 à 32 identifiants uniques de la même organisation). Absent : privé. Aucun wildcard. Le plan et chaque appel contrôlent les permissions courantes ; la révocation reste effective après compilation.
