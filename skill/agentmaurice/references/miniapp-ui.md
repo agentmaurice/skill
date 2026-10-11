@@ -27,8 +27,9 @@ layout for any screen richer than one form and one value.
 `ui.configuration.layout` is an array of components. The Maurice Viewer and the
 AgentMaurice OS render the same components, in light and dark themes. The
 compiler rejects an unknown `type`, a missing required property, a trigger
-that names no declared event, and a malformed binding, with the JSON path of
-the error: fix the MiniApp until `maurice spec check` or `app plan` is clean.
+that names no declared event, a malformed binding and a free colour, with the
+JSON path of the error, and warns on a second primary action: fix the MiniApp
+until `maurice spec check` or `app plan` is clean.
 
 Bind a value to the MiniApp state with `{"state": "path.to.value"}`: it keeps
 its type (number, array, object). Use it for data that Workflows write with
@@ -60,6 +61,35 @@ its type (number, array, object). Use it for data that Workflows write with
 `tone` is `info`, `success`, `warning`, `error` or `neutral`. A form is not a
 layout component: it comes from the Workflow a `form.submit` event targets
 and appears first, before the layout.
+
+### One primary action, no free colour
+
+The surface theme supplies every colour; a MiniApp only names semantic
+values: `tone`, `trend`, `chart_type` and the action `variant`.
+
+- **No free colour.** The compiler refuses, with severity `error`, code
+  `miniapp_free_color` and the JSON path, any colour property anywhere in
+  `ui.configuration` (`color`, `background`, `backgroundColor`, `bg`, `fill`,
+  `stroke`, `textColor`, `borderColor`, `palette`, any key ending in `color`,
+  including inside a `style` object and in chart `data` rows), any colour value
+  (`#6d28d9`, `rgb(…)`, `hsl(…)`, `oklch(…)`) and any `tone` outside the five
+  above. Table `rows`, `columns` and `column_labels` are data and are not
+  inspected. Example:
+  `free color property "color" is not allowed: MiniApps only carry semantic
+  tones (tone, trend, chart_type); the surface theme supplies every colour`
+  at `miniapps/<id>.json#/ui/configuration/layout/0/color`. Remove the
+  property; use `tone` where the component accepts it.
+- **One primary action per screen.** An `action_bar` action claims the accent
+  with `"variant": "primary"`, or with `on_click` and no `variant`. The first
+  claimant in layout order stays primary; every later one is compiled as
+  secondary and `maurice spec check` reports a warning (severity `warning`,
+  code `miniapp_multiple_primary_actions`, path of the surplus action), for
+  example `action "Export" also claims the primary accent: only "Validate"
+  (/ui/configuration/layout/0/actions/0) stays primary, one primary action
+  per screen; it is compiled as secondary`. The warning does not block
+  `check` or `plan` (`plan` lists it under `warnings`); fix it by setting
+  `"variant": "secondary"` on the other actions. `maurice spec check
+  --warnings-as-errors` turns it into a failure.
 
 ```json
 "configuration": {
