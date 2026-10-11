@@ -22,6 +22,41 @@ same operation, and pass `expected_plan_hash`
 when the caller is binding execution to a previously explained plan. Never
 choose an individual runtime step or call a raw tool behind a Workflow.
 
+### Bounded human approval
+
+A local Workflow may request approval only when all of these bounds hold:
+
+- exactly one tool action (`SINGLE`), under a `personal` mandate;
+- `require_approval: true`, `gesture_policy: confirm`, and a static plan with
+  no cost; and
+- no organization, `both`, quota, child, or multi-step scope.
+
+For this case, `explain` exposes the immutable `plan_hash` and approval policy.
+The first `execute` returns a pending action with `action_id`,
+`approval_ref: pending_action:<id>`, and `approval_surface: personal`; it does
+not admit a Job and has no external effect. The approval card shows the
+declared parameters and a server-side redacted input preview capped at 4 KiB;
+larger previews are refused. Key masking is presentation hygiene, not a
+free-text secret detector. The approval remains valid for at most 15 minutes,
+bounded by the grant and mandate; expiry is rechecked before every new effect.
+An already acquired result may still be read after its approval TTL. Present
+the exact action in the real approval surface with:
+
+```bash
+maurice viewer browser --human-action <action_id> --no-open
+```
+
+The assistant must leave the human to approve or refuse there and must never
+approve on the human's behalf. `explain` on `pending_action:<id>` is read-only
+and reports the current state and decision. After a distinct human approval,
+replay `execute` with the same approved reference, exact input, plan hash, and
+`idempotency_key`; only that replay may admit one Job. A different input with
+the same idempotency key is a conflict. Refused, revoked, or expired approval
+cannot produce an effect and requires a fresh plan/action. `approval_ref` is
+bound to the personal approval surface and cannot be moved to an organization
+or `both` surface. Doctor's checked/ok result covers only read-only
+`initialize` and `tools/list`; it never proves approval or execution.
+
 ### Declared Workflow results
 
 A Workflow that declares both `output` and `output_schema` returns its declared
