@@ -3,7 +3,7 @@
   "name": "agentmaurice",
   "version": "2.0.31",
   "contract_bundle_sha256": "5335757aa60ca76b7218ee8d8a4131f5875f262571b47b803717c0107ff81979",
-  "content_hash": "62de300048386b02ea9034d9512c9e26c56315fbe891e66ec16558070c570ed5",
+  "content_hash": "0f64156aa0624886bb3dae23b45604e61099bbbcae36278f80eb9d12ee4bc01f",
   "files": [
     {
       "path": "SKILL.md",
@@ -35,7 +35,7 @@
     },
     {
       "path": "references/frontdoor.md",
-      "sha256": "0f8dd970ff9dbff811f14e3682e4d93730875c4f4745c289b9c286893346f4e6"
+      "sha256": "91718962fbd362942c4833fc9e94c8bc5a3f556f15779136e45397f3ce1d5bf6"
     },
     {
       "path": "references/frontend-starter.md",

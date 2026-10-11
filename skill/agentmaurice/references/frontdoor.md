@@ -40,6 +40,9 @@ intermediate pending response includes `approval_phase: workflow_step`,
 `expires_at`, and `approval_surface: personal`. All cards belong
 to the same Job and execution. Resolve parameters at each gate from the
 immutable Workflow/input context; never let a later card change the plan.
+Dynamic runtime bindings such as `$binding`, `env://`, `secret://`,
+`vault://`, and `handle:sam-bind:` are refused in approval profiles; declared
+input and parameters are resolved before any effect.
 No gated effect runs without a distinct human decision for that card.
 
 The initial card shows declared parameters; each step card shows parameters
