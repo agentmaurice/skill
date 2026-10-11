@@ -77,13 +77,13 @@ and `workflow_only` means governed availability.
 When the task is to use the local `maurice` MCP front door, read
 [Front door](references/frontdoor.md). The compact rail is
 `search → explain → execute`: discovery and explanation are read-only, while
-execution always carries a validated Workflow reference, an idempotency key,
+execution always carries a validated resource reference, an idempotency key,
 and optionally the plan hash expected by the caller. Use the explicit local
 grant/revoke commands and keep the assistant grant distinct from the local
 provider identity. Do not use `maurice agent connect` for this front door.
-For bounded local approval, use the initial-plan then per-step gate rail in
-[Front door](references/frontdoor.md): 2–32 static local tool calls under a
-zero-cost personal mandate. Keep the Workflow ref, input, expected plan hash,
+For bounded approval, use the initial-plan then per-step gate rail in
+[Front door](references/frontdoor.md): 2–32 static tool calls, qualified zero
+cost, with personal/org/both competence. Keep ref, input, expected plan hash,
 and idempotency key on every replay; human decisions remain separate and
 Doctor never proves a gate, Job, or execution.
 For declared Workflow results, read the pinned `output_schema` reported by
@@ -96,10 +96,10 @@ identical entries are no-op, conflicts refuse, unrelated entries remain, and
 it creates no grant, starts no One, or configures other clients. One home
 “Brancher mon assistant local” is the no-account path: all, exact Workflow, or
 Application. Application scope covers only that Application’s published
-Workflows, after its members, roles, and tool grants are revalidated; it adds
+resources, after its members, roles, and tool grants are revalidated; it adds
 no rights. Tokens use private `assistant-grants` mode 0600, never browser;
-URL/path/command and list/revoke controls are shown. VMs remain out of scope;
-see [Front door](references/frontdoor.md).
+URL/path/command and list/revoke controls are shown. For HTTPS VM endpoints,
+read the separate server-observed profile check in [Front door](references/frontdoor.md).
 Before relying on it, run Doctor with both MCP options and read
 `mcp_frontdoor.checked`/`mcp_frontdoor.ok`; it proves catalogue reachability, not
 Application-scope qualification.
