@@ -22,6 +22,14 @@ same operation, and pass `expected_plan_hash`
 when the caller is binding execution to a previously explained plan. Never
 choose an individual runtime step or call a raw tool behind a Workflow.
 
+### Approval descriptions
+
+For an approved Workflow `tool_call`, keep the description clear about the action
+and its scope; it is declared provenance, never an attestation that the effect
+has happened. The human still reviews and approves the card, and Doctor
+`checked/ok` only reports connection and catalog discovery; it proves neither
+understanding nor approval.
+
 ### Bounded human approval
 
 The existing one static `tool_call` action remains valid for a local
