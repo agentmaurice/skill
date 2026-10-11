@@ -15,7 +15,6 @@ architecture and Agent Spec. The repository is the reviewed source; typed plans
 and a distinct human approval govern mutations.
 
 ## Keep the object model exact
-
 - A builder session exposes `inception_architecture_*` and
   `inception_agent_spec_*` together.
 - Architecture plans use `agentmaurice.architecture.plan/v1` by default
@@ -33,7 +32,6 @@ and a distinct human approval govern mutations.
   and do not use Skill and Module interchangeably.
 
 ## Follow one authoring rail
-
 Start with the org graph, then use the needed rails:
 
 ```text
@@ -50,7 +48,6 @@ already exists. Managed Workflows and MiniApps are changed only through an
 Agent Spec plan, except an explicitly unmanaged sandbox.
 
 ### Connect and inspect
-
 Classify bootstrap input before running it:
 
 | Input | Action |
@@ -84,6 +81,11 @@ execution always carries a validated Workflow reference, an idempotency key,
 and optionally the plan hash expected by the caller. Use the explicit local
 grant/revoke commands and keep the assistant grant distinct from the local
 provider identity. Do not use `maurice agent connect` for this front door.
+For bounded local approval, use only the SINGLE-tool/personal rail described in
+[Front door](references/frontdoor.md): `gesture_policy: confirm` yields a
+pending `action_id`/`pending_action:<id>` with no Job or effect. Open the exact
+viewer surface, leave approval to the human, then replay the same approved
+reference/input/idempotency key; Doctor never proves approval.
 For declared Workflow results, read the pinned `output_schema` reported by
 `explain`; the front-door reference defines the 64 KiB limit, recursive
 redaction, invalid-after-redaction blocking, and legacy `{"ok":true}` fallback.
@@ -96,10 +98,10 @@ and unrelated entries are preserved. It creates no grant, starts no One, and
 does not configure other clients.
 Before relying on a local front door, run the bounded Doctor check with
 `--mcp-endpoint` and `--mcp-token-file` together and read the nested JSON fields
-`mcp_frontdoor.checked` and `mcp_frontdoor.ok`. It performs only authenticated MCP initialize and
-`tools/list` with a five-second timeout; `ok: true` is catalogue/reachability
-evidence, never Workflow, VM, or end-to-end proof. A missing pair, timeout, or
-catalogue error is a stop for this path.
+`mcp_frontdoor.checked` and `mcp_frontdoor.ok`. It performs only authenticated
+MCP initialize and `tools/list` with a five-second timeout; `ok: true` is
+catalogue/reachability evidence, never Workflow, VM, or end-to-end proof. A
+missing pair, timeout, or catalogue error is a stop for this path.
 
 Before a Studio thread or plan, run Studio Doctor:
 `maurice studio doctor … --json`. Organization builders run the organization
@@ -118,7 +120,6 @@ preview; review `.git/agentmaurice/migrations/`, commit the conversion, and
 never hand-edit a partial migration.
 
 ## Choose the CLI rail
-
 `maurice studio` persists Studio drafts/plans/closeout; `maurice spec` is
 Git-native authoring and must not mix provenance with a Studio plan; `maurice
 test studio` is the hermetic or live closed-loop harness. Lifecycle, exit
@@ -127,7 +128,6 @@ codes, organization handoff, dialogue replay, and Doctor preflight are in
 user's behalf from a code-agent or service credential.
 
 ### Initialize, author, and check
-
 For a fresh Agent:
 
 ```bash
@@ -235,6 +235,6 @@ provider or stand-in server. Airtable uses the same masked flow, then
 
 Stop on ambiguous Agent/environment, blocking Studio Doctor, incompatible
 contract hash, ambiguous migration, managed drift, absent/mismatched approval,
-stale Studio plan/thread revision, unreconciled mutation, any request to paste,
-reveal, or invent a secret, or failed/drifting verification. Do not invent
-aliases, hidden mutations, or recovery commands.
+stale plan/thread revision, unreconciled mutation, secret disclosure requests,
+or failed/drifting verification. Do not invent aliases, hidden mutations, or
+recovery commands.
