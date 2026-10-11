@@ -51,9 +51,10 @@ The existing one static `tool_call` action remains valid for a local
 `execute` requests one human approval for the immutable plan before admitting
 a Job and has no external effect. A local Workflow may use the intermediate
 approval rail when it has 2–32 static `tool_call` actions with those same
-constraints. Hosted, organization, `both`, quota, child, and other dynamic
-scopes remain refused. `explain` exposes the immutable `plan_hash` and the
-initial plan.
+constraints. Hosted, organization, `both`, child, and other dynamic scopes
+remain refused. A local personal grant may carry a Workflow-run quota through
+the owner grant command below. `explain` exposes the immutable `plan_hash`,
+the initial plan, and the effective `effect_quota`.
 
 Each approved plan then yields one human card per gated Workflow step. Every
 intermediate pending response includes `approval_phase: workflow_step`,
@@ -149,6 +150,7 @@ maurice frontdoor grant \
   --organization <organization-id> \
   --ref 'workflow:<agent-id>/<workflow-id>@<version>' \
   --execute \
+  --max-effects <N> \
   --output <private-path>/assistant.token
 maurice frontdoor revoke --data-dir <one-data-dir> \
   --endpoint http://127.0.0.1:<mcp-port>/mcp/maurice <grant-id>
@@ -159,7 +161,17 @@ provider/owner identity. Revoke the grant when the assistant must lose access.
 Do not print, paste, or put the token in an argument, shared configuration, or
 log. The `--organization` scope identifies the owner organization; `--ref`
 keeps the allowed Workflow reference narrow. Do not invent a broader scope
-flag or infer identity from the command line.
+flag or infer identity from the command line. `--max-effects N` is available
+only for a local personal execution grant and bounds admitted Workflow runs;
+`0` keeps the existing unbounded behavior, and a positive value requires
+`--execute`. The quota unit is `workflow_run`, charged once at Job admission.
+Replays of the same idempotency key are free; pending initial approval is free;
+an admitted failure or cancellation is not refunded. `explain` reports the
+effective `effect_quota` object with `max_effects`, `used_effects`,
+`remaining_effects` (an integer or `null` when unbounded), `exhausted`,
+`charged_at: admission`, and `refund_policy: none`. A `quota_exhausted`
+response must not be bypassed by minting a new grant or starting a new
+idempotency key.
 
 The stdio bridge connects to an already running loopback MCP endpoint and does
 not start One or any service:
