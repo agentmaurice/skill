@@ -22,6 +22,20 @@ same operation, and pass `expected_plan_hash`
 when the caller is binding execution to a previously explained plan. Never
 choose an individual runtime step or call a raw tool behind a Workflow.
 
+`search` uses bounded local lexical matching over authorized Workflow
+references, titles, and descriptions. It does not use embeddings or an LLM.
+Its response includes `search_mode: local_lexical`, `limit: 50`, and
+`truncated`; results are deterministically ranked and capped at 50.
+
+`explain` includes the Workflow `title` and `description`, then a bounded
+history projection: `recent_executions` (at most 10), `usage_summary`,
+`history_scope: current_workflow_version_and_spec`, and `sample_window: 50`.
+History is restricted to the same user, organization, scope, exact reference,
+Workflow version, and Agent Spec. Drifted executions and other reference
+versions are omitted. Usage medians use at most 50 completed, validated
+results; an unknown value is `null`, never zero. Observed usage is an
+observation, not a quote or a cap; absent execution effects remain absent.
+
 ### Approval descriptions
 
 For an approved Workflow `tool_call`, keep the description clear about the action
@@ -78,6 +92,10 @@ and may create a new Job. Refused, revoked, expired, or ambiguous state blocks w
 after restart, reconcile the persisted Job/cards before continuing. Doctor's
 `checked/ok` covers only read-only `initialize` and `tools/list`; it never
 proves a plan, gate, human decision, Job, or execution.
+
+Qualify `search` and `explain` with distinct real calls after the Doctor
+handshake. Doctor catalogue/reachability evidence alone does not qualify either
+Workflow front-door operation.
 
 ### Declared Workflow results
 
