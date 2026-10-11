@@ -24,38 +24,49 @@ choose an individual runtime step or call a raw tool behind a Workflow.
 
 ### Bounded human approval
 
-A local Workflow may request approval only when all of these bounds hold:
+The existing one static `tool_call` action remains valid for a local
+`personal` mandate, zero cost, and `require_approval: true`; its first
+`execute` requests one human approval for the immutable plan before admitting
+a Job and has no external effect. A local Workflow may use the intermediate
+approval rail when it has 2–32 static `tool_call` actions with those same
+constraints. Hosted, organization, `both`, quota, child, and other dynamic
+scopes remain refused. `explain` exposes the immutable `plan_hash` and the
+initial plan.
 
-- exactly one tool action (`SINGLE`), under a `personal` mandate;
-- `require_approval: true`, `gesture_policy: confirm`, and a static plan with
-  no cost; and
-- no organization, `both`, quota, child, or multi-step scope.
+Each approved plan then yields one human card per gated Workflow step. Every
+intermediate pending response includes `approval_phase: workflow_step`,
+`action_id`, `approval_ref`, `workflow_action_id`, `occurrence_id`, `job_id`,
+`execution_id`, the initial Workflow `plan_hash`, the card's `step_plan_hash`,
+`expires_at`, and `approval_surface: personal`. All cards belong
+to the same Job and execution. Resolve parameters at each gate from the
+immutable Workflow/input context; never let a later card change the plan.
+No gated effect runs without a distinct human decision for that card.
 
-For this case, `explain` exposes the immutable `plan_hash` and approval policy.
-The first `execute` returns a pending action with `action_id`,
-`approval_ref: pending_action:<id>`, and `approval_surface: personal`; it does
-not admit a Job and has no external effect. The approval card shows the
-declared parameters and a server-side redacted input preview capped at 4 KiB;
-larger previews are refused. Key masking is presentation hygiene, not a
-free-text secret detector. The approval remains valid for at most 15 minutes,
-bounded by the grant and mandate; expiry is rechecked before every new effect.
-An already acquired result may still be read after its approval TTL. Present
-the exact action in the real approval surface with:
+The initial card shows declared parameters; each step card shows parameters
+resolved at that gate. Every card also carries a server-side redacted input
+preview capped at 4 KiB; larger previews are refused. Key masking is
+presentation hygiene, not a free-text secret detector. Each card expires at
+`min(15 minutes, grant expiry, mandate expiry, native gate expiry when
+configured, Job deadline)`; the existing 300-second deadline remains. Expiry
+is rechecked before every new effect. An acquired result may still be read
+after its approval TTL.
+
+Present each exact card in the real approval surface with:
 
 ```bash
 maurice viewer browser --human-action <action_id> --no-open
 ```
 
-The assistant must leave the human to approve or refuse there and must never
-approve on the human's behalf. `explain` on `pending_action:<id>` is read-only
-and reports the current state and decision. After a distinct human approval,
-replay `execute` with the same approved reference, exact input, plan hash, and
-`idempotency_key`; only that replay may admit one Job. A different input with
-the same idempotency key is a conflict. Refused, revoked, or expired approval
-cannot produce an effect and requires a fresh plan/action. `approval_ref` is
-bound to the personal approval surface and cannot be moved to an organization
-or `both` surface. Doctor's checked/ok result covers only read-only
-`initialize` and `tools/list`; it never proves approval or execution.
+The assistant must leave every decision to the human and never approve for
+them. `explain` on `pending_action:<id>` only observes that card. Replaying
+`execute` keeps the original Workflow `ref` (never `approval_ref`) and the same
+input, `idempotency_key`, and `expected_plan_hash`; it advances the same Job
+and execution to the next gate. Changed input with the same `idempotency_key`,
+or a changed plan, is a conflict. A new key starts a new explicit operation
+and may create a new Job. Refused, revoked, expired, or ambiguous state blocks without replay;
+after restart, reconcile the persisted Job/cards before continuing. Doctor's
+`checked/ok` covers only read-only `initialize` and `tools/list`; it never
+proves a plan, gate, human decision, Job, or execution.
 
 ### Declared Workflow results
 

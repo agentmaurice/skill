@@ -81,11 +81,11 @@ execution always carries a validated Workflow reference, an idempotency key,
 and optionally the plan hash expected by the caller. Use the explicit local
 grant/revoke commands and keep the assistant grant distinct from the local
 provider identity. Do not use `maurice agent connect` for this front door.
-For bounded local approval, use only the SINGLE-tool/personal rail described in
-[Front door](references/frontdoor.md): `gesture_policy: confirm` yields a
-pending `action_id`/`pending_action:<id>` with no Job or effect. Open the exact
-viewer surface, leave approval to the human, then replay the same approved
-reference/input/idempotency key; Doctor never proves approval.
+For bounded local approval, use the initial-plan then per-step gate rail in
+[Front door](references/frontdoor.md): 2–32 static local tool calls under a
+zero-cost personal mandate. Keep the Workflow ref, input, expected plan hash,
+and idempotency key on every replay; human decisions remain separate and
+Doctor never proves a gate, Job, or execution.
 For declared Workflow results, read the pinned `output_schema` reported by
 `explain`; the front-door reference defines the 64 KiB limit, recursive
 redaction, invalid-after-redaction blocking, and legacy `{"ok":true}` fallback.
