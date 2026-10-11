@@ -101,11 +101,21 @@ exceed an ancestor’s budget. `effect_quota.scope` is `mandate`; `quota_chain`
 lists every leaf/ancestor budget, and `effective_remaining_effects` is the
 minimum finite remainder (or `null` only if every mandate is unbounded).
 
-Present each exact card in the real approval surface with:
+Present each exact card in the real human approval surface. For a local One
+session, obtain its browser link with:
 
 ```bash
 maurice viewer browser --human-action <action_id> --no-open
 ```
+
+For a hosted One instance, give the human the instance link
+`https://<instance-origin>/one/#/human-action/<action_id>`. They open it with
+their own current Hanko session for that instance. The personal phase checks
+the requester identity; the organization phase checks current administrator
+authority in the exact organization. Never use the assistant grant token,
+code-agent credentials or a fabricated human identity to open or decide a
+card. If the human session or required authority is unavailable, leave the
+card pending and report that blocker.
 
 The assistant must leave every decision to the human and never approve for
 them. `explain` on `pending_action:<id>` only observes that card. Replaying
