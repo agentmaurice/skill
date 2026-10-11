@@ -96,6 +96,15 @@ use `maurice assistant connect <codex|generic>` with an explicit private
 client config; identical entries are no-op, different entries are conflicts,
 and unrelated entries are preserved. It creates no grant, starts no One, and
 does not configure other clients.
+From the One home, “Brancher mon assistant local” is a local personal path
+without a provider account: choose all Workflows or one exact Workflow, grant
+discover/explain or execute permission, and choose 1 hour, 24 hours, or 7 days.
+The quota is 0 to 1000 Workflow runs. The token is created automatically in
+the private `assistant-grants` keystore with mode `0600`, is never returned to
+the browser, and the home shows only the loopback URL, token-file path, and
+the explicit `maurice assistant connect codex|generic --config-file ...`
+command. Grants can be listed or revoked. This local path does not yet cover
+Applications or VMs.
 Before relying on a local front door, run the bounded Doctor check with
 `--mcp-endpoint` and `--mcp-token-file` together and read the nested JSON fields
 `mcp_frontdoor.checked` and `mcp_frontdoor.ok`. It performs only authenticated
