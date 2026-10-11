@@ -150,6 +150,7 @@ maurice frontdoor grant \
   --organization <organization-id> \
   --ref 'workflow:<agent-id>/<workflow-id>@<version>' \
   --execute \
+  --duration-hours 24 \
   --max-effects <N> \
   --output <private-path>/assistant.token
 maurice frontdoor revoke --data-dir <one-data-dir> \
@@ -172,6 +173,20 @@ effective `effect_quota` object with `max_effects`, `used_effects`,
 `charged_at: admission`, and `refund_policy: none`. A `quota_exhausted`
 response must not be bypassed by minting a new grant or starting a new
 idempotency key.
+
+### One home: Brancher mon assistant local
+
+The One home entry point is a local personal path that requires no provider
+account. It can grant access to all Workflows or to one exact Workflow, with
+either discover/explain permission or execute permission. The available
+durations are 1 hour, 24 hours, and 7 days; an execution grant may carry a
+quota from 0 through 1000 Workflow runs. The home creates the bearer token
+automatically in the private `assistant-grants` keystore with file mode `0600`.
+It never returns the token to the browser. After creation it displays only the
+loopback URL, the token-file path, and an explicit command using
+`maurice assistant connect codex` or `maurice assistant connect generic` with
+`--config-file`; use the list and revoke controls to manage grants. This path
+does not yet cover Applications or VMs.
 
 The stdio bridge connects to an already running loopback MCP endpoint and does
 not start One or any service:

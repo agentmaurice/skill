@@ -89,19 +89,17 @@ Doctor never proves a gate, Job, or execution.
 For declared Workflow results, read the pinned `output_schema` reported by
 `explain`; the front-door reference defines the 64 KiB limit, recursive
 redaction, invalid-after-redaction blocking, and legacy `{"ok":true}` fallback.
-For a local assistant client, follow [the connection contract](references/frontdoor.md):
-use `maurice assistant connect <codex|generic>` with an explicit private
-`--config-file` and required `--token-file`. It preflights authenticated MCP
-`initialize` and `tools/list` for five seconds, then atomically writes the
-client config; identical entries are no-op, different entries are conflicts,
-and unrelated entries are preserved. It creates no grant, starts no One, and
-does not configure other clients.
-Before relying on a local front door, run the bounded Doctor check with
-`--mcp-endpoint` and `--mcp-token-file` together and read the nested JSON fields
-`mcp_frontdoor.checked` and `mcp_frontdoor.ok`. It performs only authenticated
-MCP initialize and `tools/list` with a five-second timeout; `ok: true` is
-catalogue/reachability evidence, never Workflow, VM, or end-to-end proof. A
-missing pair, timeout, or catalogue error is a stop for this path.
+For a local assistant client, follow the [connection contract](references/frontdoor.md).
+`maurice assistant connect <codex|generic>` requires private config/token files,
+preflights authenticated `initialize`/`tools/list`, then writes atomically;
+identical entries are no-op, conflicts refuse, unrelated entries remain, and
+it creates no grant, starts no One, or configures other clients. One home
+“Brancher mon assistant local” is the no-account path: all/exact Workflow,
+discover/explain or execute, 1h/24h/7d, quota 0..1000. Tokens use private
+`assistant-grants` mode 0600, never browser; URL/path/command and list/revoke
+controls are shown. Applications and VMs are out of scope; see [Front door](references/frontdoor.md).
+Before relying on it, run Doctor with both MCP options and read
+`mcp_frontdoor.checked`/`mcp_frontdoor.ok`; it proves only catalogue reachability.
 
 Before a Studio thread or plan, run Studio Doctor:
 `maurice studio doctor … --json`. Organization builders run the organization
