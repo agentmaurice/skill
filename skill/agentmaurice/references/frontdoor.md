@@ -157,6 +157,15 @@ maurice frontdoor revoke --data-dir <one-data-dir> \
   --endpoint http://127.0.0.1:<mcp-port>/mcp/maurice <grant-id>
 ```
 
+Use exactly one of `--ref <workflow-ref>` and `--application <application-id>`;
+they are mutually exclusive: `maurice frontdoor grant --application
+<application-id>` must not also receive `--ref`. An Application grant is local to the owner and
+admits only that Application’s published Workflows. Its members, roles, and
+tool grants are revalidated against the Application, so an Application grant
+cannot add rights beyond those existing permissions. Grant list and revoke
+metadata retain the Application id/title, including when the Application is
+inactive. This scope does not expose VMs.
+
 The grant is the assistant's authority; it is distinct from the local
 provider/owner identity. Revoke the grant when the assistant must lose access.
 Do not print, paste, or put the token in an argument, shared configuration, or
@@ -177,16 +186,17 @@ idempotency key.
 ### One home: Brancher mon assistant local
 
 The One home entry point is a local personal path that requires no provider
-account. It can grant access to all Workflows or to one exact Workflow, with
-either discover/explain permission or execute permission. The available
-durations are 1 hour, 24 hours, and 7 days; an execution grant may carry a
-quota from 0 through 1000 Workflow runs. The home creates the bearer token
+account. It can grant access to all Workflows, one exact Workflow, or one
+Application’s published Workflows, with either discover/explain permission or
+execute permission. The available durations are 1 hour, 24 hours, and 7 days;
+an execution grant may carry a quota from 0 through 1000 Workflow runs. The home creates the bearer token
 automatically in the private `assistant-grants` keystore with file mode `0600`.
 It never returns the token to the browser. After creation it displays only the
 loopback URL, the token-file path, and an explicit command using
 `maurice assistant connect codex` or `maurice assistant connect generic` with
-`--config-file`; use the list and revoke controls to manage grants. This path
-does not yet cover Applications or VMs.
+`--config-file`; use the list and revoke controls to manage grants. Application
+metadata remains visible for listing and revocation, including for inactive
+Applications; this path does not cover VMs.
 
 The stdio bridge connects to an already running loopback MCP endpoint and does
 not start One or any service:
@@ -220,9 +230,10 @@ catalogue only. It does not call a Workflow, validate a VM profile, or prove
 the whole assistant-to-runtime path. If either option is omitted, the check is
 not run or is invalid; do not silently fall back to an environment token.
 
-This reference does not qualify a Workflow, a VM, or an external assistant.
-Those require the separate runtime audit and the applicable AgentMaurice
-approval rail.
+Doctor still checks only authenticated front-door reachability and catalogue
+availability. It does not qualify an Application scope, Workflow permission,
+VM, or external assistant. Those require the separate runtime audit and the
+applicable AgentMaurice approval rail.
 
 ## Assistant connection contract
 

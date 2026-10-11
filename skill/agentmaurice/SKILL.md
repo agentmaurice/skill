@@ -89,18 +89,20 @@ Doctor never proves a gate, Job, or execution.
 For declared Workflow results, read the pinned `output_schema` reported by
 `explain`; the front-door reference defines the 64 KiB limit, recursive
 redaction, invalid-after-redaction blocking, and legacy `{"ok":true}` fallback.
-For a local assistant client, follow the [connection contract](references/frontdoor.md).
+For a local assistant client, follow the [connection contract](references/frontdoor.md):
 `maurice assistant connect <codex|generic>` requires private config/token files,
 preflights authenticated `initialize`/`tools/list`, then writes atomically;
 identical entries are no-op, conflicts refuse, unrelated entries remain, and
 it creates no grant, starts no One, or configures other clients. One home
-“Brancher mon assistant local” is the no-account path: all/exact Workflow,
-discover/explain or execute, 1h/24h/7d, quota 0..1000. Tokens use private
-`assistant-grants` mode 0600, never browser; URL/path/command and list/revoke
-controls are shown. Applications and VMs are out of scope; see [Front door](references/frontdoor.md).
+“Brancher mon assistant local” is the no-account path: all, exact Workflow, or
+Application. Application scope covers only that Application’s published
+Workflows, after its members, roles, and tool grants are revalidated; it adds
+no rights. Tokens use private `assistant-grants` mode 0600, never browser;
+URL/path/command and list/revoke controls are shown. VMs remain out of scope;
+see [Front door](references/frontdoor.md).
 Before relying on it, run Doctor with both MCP options and read
-`mcp_frontdoor.checked`/`mcp_frontdoor.ok`; it proves only catalogue reachability.
-
+`mcp_frontdoor.checked`/`mcp_frontdoor.ok`; it proves catalogue reachability, not
+Application-scope qualification.
 Before a Studio thread or plan, run Studio Doctor:
 `maurice studio doctor … --json`. Organization builders run the organization
 Doctor before `studio thread new --scope organization`; stop on blocking
