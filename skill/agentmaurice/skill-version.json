@@ -1,9 +1,9 @@
 {
   "schema_version": "agentmaurice.skill/v2",
   "name": "agentmaurice",
-  "version": "2.0.31",
+  "version": "2.0.32",
   "contract_bundle_sha256": "a8cb6603d2498905350f160acf4d74c6d54a8b68fc397bf2550ee121cd8a1b98",
-  "content_hash": "51dfaab6a4fada2fac1fcdbf9b345ad7982cfa046e1ac611568265c4c319cac3",
+  "content_hash": "316913ecf55b88c4c5341db5d6512b098c42bd770356abbf07d833a600bc1550",
   "files": [
     {
       "path": "SKILL.md",
@@ -35,7 +35,7 @@
     },
     {
       "path": "references/frontdoor.md",
-      "sha256": "99e1c6ae4a909145af3da99e9f8a2eaca0e00b9c9216cc693b33aabacdbe6f3f"
+      "sha256": "abd57cd5d598a3d25bc8ec9f750987d8c2b04c708d5d8d0c242f28e241e92116"
     },
     {
       "path": "references/frontend-starter.md",
