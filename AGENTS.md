@@ -48,20 +48,47 @@ sous `_archive/` ou `_worktrees/`. Diagnostic et preuve :
 - Une spec pure s'écrit d'abord dans le wiki (article + `INDEX.md` + `LOG.md`
   + lint), sans fiche Plane préalable ni passage `In Progress` ; le ticket
   d'implémentation est créé ensuite, au `Backlog`.
+- Plane : utiliser exclusivement l’API ou le MCP pour toute lecture, écriture
+  et vérification. L’utilisation du site web Plane est interdite, y compris
+  via un navigateur automatisé ; un accès API/MCP manquant se signale sans
+  contournement par le site.
 - Une implémentation (code, configuration, infrastructure) exige une fiche
   Plane `In Progress`, puis `task work:start TICKET=AGENT-N PLANE_ID=<uuid>`
   depuis pilote-maurice avant toute branche ; ensuite `work:checkpoint`,
   `work:submit` et `work:closeout` avec les mêmes identifiants. Sans accès
   Plane, ne pas démarrer le chantier.
+- Une MR prête ne reste pas ouverte. `work:submit` dans le même tour arme
+  l'auto-merge : une CI verte fusionne sans relecture, une CI rouge laisse la
+  MR visible. Une attente de décision fondateur reste une Draft. Un conflit
+  limité à `wiki/INDEX.md` et `wiki/LOG.md` se rejoue sur la branche sans
+  réécrire le reste, puis l'auto-merge est réarmé. Une MR ouverte dont la
+  fiche Plane est Done se ferme sans fusion. `main` est protégée : pas de
+  push direct.
 - Ne jamais éditer `_archive/`. Ne jamais annoncer « terminé » ou « tests
   OK » sans la vérification correspondante.
 - Un changement d'interface ou de parcours utilisateur est rejoué dans
   l'interface réellement exécutable, ou déclaré explicitement non vérifié.
+- Un test de feature se joue sur le One du ticket (`agent-<n>`), là où
+  l'agent tourne. `am-dev-01` et `am-dev-02` sont les deux seules stacks
+  complètes (PostgreSQL, LiveKit, plusieurs processus, Console) : on n'y
+  touche qu'avec le label Plane de ce ticket déjà posé, et
+  `DEV_STACK_TICKET` égal à ce ticket. Un sous-agent ne démarre aucune
+  stack : il exécute sur la place nommée dans son prompt
+  (`one:agent-<n>`, un slot `am-dev` déjà tenu, ou `cloud`). La session
+  principale est seule à pousser et à lancer `work:submit`. Détail :
+  `wiki/operations/one-sandbox-generalization.md` et
+  `wiki/operations/dev-servers.md`.
 - Release produit/BOM : `task release:local` depuis la racine du workspace
   (runbook `wiki/operations/local-release-gate.md`).
-- Outils de graphe de code (MCP `code-review-graph`) : les utiliser d'abord
-  quand ils sont disponibles ; s'ils sont absents, en erreur ou incomplets,
-  revenir à Grep/Glob/Read et le dire dans le compte rendu.
+- Carte de code : si `ripwire` est dans le `PATH`, l’utiliser d’abord sur un
+  dépôt source (norme `wiki/operations/ripwire-code-context.md`) ; sinon MCP
+  `code-review-graph` s’il est disponible ; s’ils sont absents, en erreur ou
+  incomplets, revenir à Grep/Glob/Read et le dire dans le compte rendu.
+  Vérifiable, sous-agents compris : tout compte rendu qui a exploré du code
+  cite la commande ripwire lancée et ce qu’elle a apporté, ou porte la
+  mention « graphe indisponible, exploration par lecture ». Un agent qui
+  délègue recopie cette consigne dans le prompt et renvoie un compte rendu
+  qui n’a ni l’une ni l’autre.
 <!-- agentmaurice:common:end -->
 
 ## Sources à lire selon la tâche
