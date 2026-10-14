@@ -16,9 +16,7 @@ Bloc synchronisé depuis `pilote-maurice/workspace/AGENTS-common.md`. Ne pas l'�
 
 **Invariants.** Logiciel propriétaire, ni open source ni open core. Français, termes techniques en anglais. L'identifiant interne interdit (`wiki/SCHEMA.md`) n'apparaît pas dans un contenu public. Une question ne modifie aucun fichier. Ne jamais éditer `_archive/`. On n'annonce « terminé » ou « tests OK » qu'après la vérification.
 
-**Cycle.** Fiche Plane `In Progress`, puis `task work:start TICKET=AGENT-N PLANE_ID=<uuid>` avant toute branche. Trois chantiers créés depuis le 2026-10-14 au plus. `work:submit` arme l'auto-merge. `main` est protégée. Sans Plane, on ne démarre pas. La session principale seule pousse.
-
-**Preuve.** Un test de feature se joue sur le One du ticket (`agent-<n>`), là où l'agent tourne. `am-dev-01` et `am-dev-02` seulement avec le label Plane déjà posé et `DEV_STACK_TICKET` égal à ce ticket. Un sous-agent n'ouvre ni stack, ni push, ni `work:*` : il exécute sur la place nommée dans son prompt (`one:agent-<n>`, slot `am-dev` déjà tenu, ou `cloud`).
+**Cycle et preuve.** `WORKFLOW.md` à la racine de chatserver, de l'OS et de la Console.
 
 **Carte de code.** Si `ripwire` est dans le `PATH`, l'utiliser d'abord (`wiki/operations/ripwire-code-context.md`). Sinon le MCP `code-review-graph`. S'ils manquent, Grep, Glob ou Read. Vérifiable, sous-agents compris : le compte rendu cite la commande ripwire, ou porte la mention « graphe indisponible, exploration par lecture ».
 
