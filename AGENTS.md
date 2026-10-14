@@ -12,83 +12,19 @@ Article de référence : `wiki/projects/agent-maurice-skill.md` dans pilote-maur
 <!-- agentmaurice:common:start -->
 ## Socle commun AgentMaurice
 
-Bloc synchronisé depuis `pilote-maurice/workspace/AGENTS-common.md`
-(dépôt `mcpchatui/pilote-maurice`, branche `main`) ; ne pas l'éditer dans un
-autre dépôt. Contrôle : `python3 scripts/agents_sync.py --check` depuis
-pilote-maurice.
+Bloc synchronisé depuis `pilote-maurice/workspace/AGENTS-common.md`. Ne pas l'éditer dans un autre dépôt. Contrôle : `python3 scripts/agents_sync.py --check` depuis pilote-maurice. Le détail est dans `wiki/operations/usine-logicielle.md` et `wiki/operations/agent-coding-guidelines.md`, lus à la demande.
 
-**Où sont les règles.** Le wiki et la gouvernance vivent dans le dépôt
-pilote-maurice : `wiki/INDEX.md` (navigation, commencer ici pour toute
-question ou tâche AgentMaurice), `wiki/SCHEMA.md` (autorité des sources,
-statuts des articles, modes de travail), `wiki/operations/agent-coding-guidelines.md`
-(règles d'édition, cycle Plane/Git, gates), `wiki/design/interface-principles.md`
-(interfaces, selon le profil de la surface), `wiki/naming-conventions.md` et
-`wiki/glossaire-technique-marketing.md` (vocabulaire externe),
-`wiki/architecture/auth-security.md` (authentification cible ; ne pas
-l'inférer du code legacy). Citer les articles utilisés.
+**Invariants.** Logiciel propriétaire, ni open source ni open core. Français, termes techniques en anglais. L'identifiant interne interdit (`wiki/SCHEMA.md`) n'apparaît pas dans un contenu public. Une question ne modifie aucun fichier. Ne jamais éditer `_archive/`. On n'annonce « terminé » ou « tests OK » qu'après la vérification.
 
-**Trouver pilote-maurice depuis ce checkout**, dans l'ordre : 1) le
-répertoire `$AGENTMAURICE_PILOTE_DIR` s'il est défini ; 2) `../pilote-maurice`
-à côté de la racine Git de ce dépôt (workspace parent) ; 3) pour un worktree,
-le voisin `pilote-maurice` du checkout principal (première ligne de
-`git worktree list`) ; 4) sinon, cloner `git@gitlab.com:mcpchatui/pilote-maurice.git`
-hors de ce dépôt et exporter la variable. Ne jamais retenir une copie située
-sous `_archive/` ou `_worktrees/`. Diagnostic et preuve :
-`python3 <pilote-maurice>/scripts/agent_bootstrap.py`.
+**Cycle.** Fiche Plane `In Progress`, puis `task work:start TICKET=AGENT-N PLANE_ID=<uuid>` avant toute branche. Trois chantiers créés depuis le 2026-10-14 au plus. `work:submit` arme l'auto-merge. `main` est protégée. Sans Plane, on ne démarre pas. La session principale seule pousse.
 
-**Règles impératives.**
+**Preuve.** Un test de feature se joue sur le One du ticket (`agent-<n>`), là où l'agent tourne. `am-dev-01` et `am-dev-02` seulement avec le label Plane déjà posé et `DEV_STACK_TICKET` égal à ce ticket. Un sous-agent n'ouvre ni stack, ni push, ni `work:*` : il exécute sur la place nommée dans son prompt (`one:agent-<n>`, slot `am-dev` déjà tenu, ou `cloud`).
 
-- Logiciel propriétaire : ni open source, ni open core. Français par défaut,
-  termes techniques en anglais. L'identifiant interne interdit (périmètre dans
-  `wiki/SCHEMA.md`) n'apparaît jamais dans un contenu produit ou public.
-- Wiki-first est un ordre de navigation, pas une priorité de vérité : un écart
-  entre contrat, wiki et code se signale explicitement, il ne se tranche pas
-  en silence.
-- Une question, une revue ou un diagnostic ne modifie aucun fichier.
-- Une spec pure s'écrit d'abord dans le wiki (article + `INDEX.md` + `LOG.md`
-  + lint), sans fiche Plane préalable ni passage `In Progress` ; le ticket
-  d'implémentation est créé ensuite, au `Backlog`.
-- Plane : utiliser exclusivement l’API ou le MCP pour toute lecture, écriture
-  et vérification. L’utilisation du site web Plane est interdite, y compris
-  via un navigateur automatisé ; un accès API/MCP manquant se signale sans
-  contournement par le site.
-- Une implémentation (code, configuration, infrastructure) exige une fiche
-  Plane `In Progress`, puis `task work:start TICKET=AGENT-N PLANE_ID=<uuid>`
-  depuis pilote-maurice avant toute branche ; ensuite `work:checkpoint`,
-  `work:submit` et `work:closeout` avec les mêmes identifiants. Sans accès
-  Plane, ne pas démarrer le chantier.
-- Une MR prête ne reste pas ouverte. `work:submit` dans le même tour arme
-  l'auto-merge : une CI verte fusionne sans relecture, une CI rouge laisse la
-  MR visible. Une attente de décision fondateur reste une Draft. Un conflit
-  limité à `wiki/INDEX.md` et `wiki/LOG.md` se rejoue sur la branche sans
-  réécrire le reste, puis l'auto-merge est réarmé. Une MR ouverte dont la
-  fiche Plane est Done se ferme sans fusion. `main` est protégée : pas de
-  push direct.
-- Ne jamais éditer `_archive/`. Ne jamais annoncer « terminé » ou « tests
-  OK » sans la vérification correspondante.
-- Un changement d'interface ou de parcours utilisateur est rejoué dans
-  l'interface réellement exécutable, ou déclaré explicitement non vérifié.
-- Un test de feature se joue sur le One du ticket (`agent-<n>`), là où
-  l'agent tourne. `am-dev-01` et `am-dev-02` sont les deux seules stacks
-  complètes (PostgreSQL, LiveKit, plusieurs processus, Console) : on n'y
-  touche qu'avec le label Plane de ce ticket déjà posé, et
-  `DEV_STACK_TICKET` égal à ce ticket. Un sous-agent ne démarre aucune
-  stack : il exécute sur la place nommée dans son prompt
-  (`one:agent-<n>`, un slot `am-dev` déjà tenu, ou `cloud`). La session
-  principale est seule à pousser et à lancer `work:submit`. Détail :
-  `wiki/operations/one-sandbox-generalization.md` et
-  `wiki/operations/dev-servers.md`.
-- Release produit/BOM : `task release:local` depuis la racine du workspace
-  (runbook `wiki/operations/local-release-gate.md`).
-- Carte de code : si `ripwire` est dans le `PATH`, l’utiliser d’abord sur un
-  dépôt source (norme `wiki/operations/ripwire-code-context.md`) ; sinon MCP
-  `code-review-graph` s’il est disponible ; s’ils sont absents, en erreur ou
-  incomplets, revenir à Grep/Glob/Read et le dire dans le compte rendu.
-  Vérifiable, sous-agents compris : tout compte rendu qui a exploré du code
-  cite la commande ripwire lancée et ce qu’elle a apporté, ou porte la
-  mention « graphe indisponible, exploration par lecture ». Un agent qui
-  délègue recopie cette consigne dans le prompt et renvoie un compte rendu
-  qui n’a ni l’une ni l’autre.
+**Carte de code.** Si `ripwire` est dans le `PATH`, l'utiliser d'abord (`wiki/operations/ripwire-code-context.md`). Sinon le MCP `code-review-graph`. S'ils manquent, Grep, Glob ou Read. Vérifiable, sous-agents compris : le compte rendu cite la commande ripwire, ou porte la mention « graphe indisponible, exploration par lecture ».
+
+**Release.** `task release:local` depuis la racine du workspace (`wiki/operations/local-release-gate.md`). Ce n'est pas le cycle d'une feature.
+
+**Navigation.** `wiki/INDEX.md`, puis l'article du sujet.
 <!-- agentmaurice:common:end -->
 
 ## Sources à lire selon la tâche
