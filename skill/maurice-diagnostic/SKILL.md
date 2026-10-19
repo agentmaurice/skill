@@ -32,8 +32,10 @@ takes over from the report's JSON block.
 - Run no command that writes, installs, builds, starts a service or calls a
   paid API. Read-only `git` and file listing commands are fine.
 - Network: only the public AgentMaurice URLs listed in
-  [references/sources.md](references/sources.md). Nothing from the repository
-  leaves the machine.
+  [references/sources.md](references/sources.md), plus this Skill's own files.
+  If you read this file from a URL, resolve every `references/...` link
+  against https://agentmaurice.ai/skill/maurice-diagnostic/. Nothing from the
+  repository leaves the machine.
 - Every opportunity cites at least one `path:line` you actually read. No
   evidence, no opportunity: put it under Questions instead.
 - Recommend only capabilities marked available in the sources. Never promise

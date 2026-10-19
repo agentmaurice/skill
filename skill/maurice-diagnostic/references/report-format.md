@@ -87,6 +87,7 @@ Allowed `capability` values: `compiled_workflow`, `workflow`, `agent_mode`,
 `organisation`, `module`, `connected_service`, `entry_point`.
 Allowed `brick.kind`: `mcp`, `module`, `connected_service`, `none`.
 Allowed `needs`: `maurice`, `console_account`, `none`.
-Allowed `evidence.level`: `proven`, `likely` (`hypothesis` items go to
-`questions`). Exactly one opportunity has `"pilot": true`, unless the
-potential is `low` and none fits.
+Allowed `evidence.level`: `proven` (requires `line`), `likely`
+(`hypothesis` items go to `questions`). When the potential is `high` or
+`medium`, exactly one opportunity has `"pilot": true`; when it is `low`, at
+most one does.

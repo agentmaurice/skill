@@ -24,4 +24,11 @@ header.
   found in the code gives "connectable through the Console, to be checked";
   name the SDK and the provider, nothing more.
 
+This Skill's own files are also allowed: when you read `SKILL.md` from
+https://agentmaurice.ai/skill/maurice-diagnostic/SKILL.md, load each
+reference from the same base URL, for example
+https://agentmaurice.ai/skill/maurice-diagnostic/references/capability-grid.md
+(the editorial copy is https://github.com/agentmaurice/skill under
+`skill/maurice-diagnostic/`).
+
 Do not fetch any other URL, and never send repository content anywhere.

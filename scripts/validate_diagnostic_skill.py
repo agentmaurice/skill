@@ -7,6 +7,7 @@ import hashlib
 import json
 import re
 from pathlib import Path
+from urllib.parse import urlsplit
 
 REPO = Path(__file__).resolve().parents[1]
 ROOT = REPO / "skill" / "maurice-diagnostic"
@@ -34,10 +35,15 @@ CAPABILITIES = {
     "compiled_workflow", "workflow", "agent_mode", "channel", "miniapp", "human_approval",
     "vault", "mcp", "swarm", "organisation", "module", "connected_service", "entry_point",
 }
-ALLOWED_URL = re.compile(
-    r"https://(agentmaurice\.ai|github\.com/agentmaurice|raw\.githubusercontent\.com/agentmaurice"
-    r"|calendly\.com/mikaelmorvan-agentmaurice|json-schema\.org)[^\s)`\"']*"
-)
+# Host -> required path prefix. The host is compared exactly, never as a prefix.
+ALLOWED_HOSTS = {
+    "agentmaurice.ai": "/",
+    "github.com": "/agentmaurice/",
+    "raw.githubusercontent.com": "/agentmaurice/",
+    "calendly.com": "/mikaelmorvan-agentmaurice/",
+    "json-schema.org": "/",
+}
+SCORES = ("volume", "rules", "cost", "effort", "risk")
 
 
 def sha256(data: bytes) -> str:
@@ -46,6 +52,74 @@ def sha256(data: bytes) -> str:
 
 def fail(message: str) -> None:
     raise SystemExit(f"maurice-diagnostic: {message}")
+
+
+def url_allowed(url: str) -> bool:
+    parts = urlsplit(url)
+    prefix = ALLOWED_HOSTS.get(parts.hostname or "")
+    if parts.scheme != "https" or prefix is None or parts.port or parts.username:
+        return False
+    path = parts.path or "/"
+    return path.startswith(prefix) or path + "/" == prefix
+
+
+def report_errors(report: dict) -> list[str]:
+    """Rules of report.schema.json, checked without a third-party validator."""
+    errors: list[str] = []
+    required = ("schema", "generated_at", "repository", "sources", "potential", "opportunities", "anti_fit", "questions")
+    for key in required:
+        if key not in report:
+            errors.append(f"missing {key}")
+    if set(report) - set(required):
+        errors.append(f"unknown keys {sorted(set(report) - set(required))}")
+    if report.get("schema") != "agentmaurice.fit-diagnostic/v1":
+        errors.append("schema")
+    if not isinstance(report.get("sources"), dict) or report["sources"].get("mode") not in ("live", "snapshot", "mixed"):
+        errors.append("sources.mode")
+    potential = report.get("potential")
+    if potential not in ("high", "medium", "low"):
+        errors.append("potential")
+    opportunities = report.get("opportunities")
+    if not isinstance(opportunities, list):
+        return errors + ["opportunities"]
+    for index, item in enumerate(opportunities):
+        where = f"opportunities[{index}]"
+        if not re.fullmatch(r"opp-[0-9]+", str(item.get("id", ""))):
+            errors.append(f"{where}.id")
+        if item.get("capability") not in CAPABILITIES:
+            errors.append(f"{where}.capability")
+        if not isinstance(item.get("brick"), dict) or item["brick"].get("kind") not in ("mcp", "module", "connected_service", "none"):
+            errors.append(f"{where}.brick")
+        if item.get("needs") not in ("maurice", "console_account", "none"):
+            errors.append(f"{where}.needs")
+        evidence = item.get("evidence")
+        if not isinstance(evidence, list) or not evidence:
+            errors.append(f"{where}.evidence")
+        else:
+            for proof in evidence:
+                if proof.get("level") not in ("proven", "likely") or not proof.get("path"):
+                    errors.append(f"{where}.evidence")
+                line = proof.get("line")
+                if line is not None and (not isinstance(line, int) or isinstance(line, bool) or line < 1):
+                    errors.append(f"{where}.evidence.line")
+                if proof.get("level") == "proven" and line is None:
+                    errors.append(f"{where}.evidence proven without line")
+        scores = item.get("scores")
+        if not isinstance(scores, dict) or set(scores) != set(SCORES):
+            errors.append(f"{where}.scores")
+        else:
+            for name in SCORES:
+                value = scores[name]
+                if not isinstance(value, int) or isinstance(value, bool) or not 1 <= value <= 3:
+                    errors.append(f"{where}.scores.{name}")
+        if not isinstance(item.get("pilot"), bool):
+            errors.append(f"{where}.pilot")
+    pilots = sum(1 for item in opportunities if item.get("pilot") is True)
+    if potential in ("high", "medium") and pilots != 1:
+        errors.append(f"{potential} potential needs exactly one pilot, found {pilots}")
+    if potential == "low" and pilots > 1:
+        errors.append(f"low potential allows at most one pilot, found {pilots}")
+    return errors
 
 
 def main() -> None:
@@ -81,7 +155,7 @@ def main() -> None:
                 fail(f"{path.relative_to(ROOT)} contains forbidden term {forbidden!r}")
         if path.suffix == ".md":
             for url in re.findall(r"https?://[^\s)`\"'>]+", text):
-                if not ALLOWED_URL.fullmatch(url):
+                if not url_allowed(url.rstrip(".,;:")):
                     fail(f"{path.relative_to(ROOT)} links outside public AgentMaurice sources: {url}")
             for link in re.findall(r"\]\(([^)#]+)\)", text):
                 if not link.startswith("http") and not (path.parent / link).exists():
@@ -100,11 +174,9 @@ def main() -> None:
         fail("report schema capability enum drifted")
     report_format = (ROOT / "references" / "report-format.md").read_text(encoding="utf-8")
     example = json.loads(re.search(r"Example:\n\n```json\n(.*?)\n```", report_format, re.S).group(1))
-    if example["schema"] != "agentmaurice.fit-diagnostic/v1" or not example["opportunities"]:
-        fail("report example is invalid")
-    for opportunity in example["opportunities"]:
-        if opportunity["capability"] not in CAPABILITIES or not opportunity["evidence"]:
-            fail("report example opportunity is invalid")
+    errors = report_errors(example)
+    if errors or not example["opportunities"]:
+        fail(f"report example is invalid: {errors}")
 
     mcp = json.loads((ROOT / "references" / "generated" / "mcp-catalog.json").read_text(encoding="utf-8"))
     if mcp.get("schema_version") != "agentmaurice.diagnostic.mcp-catalog/v1" or not mcp.get("servers"):
