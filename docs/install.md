@@ -79,3 +79,13 @@ AGENTMAURICE_SKILL_DIR=/path/to/skill/agentmaurice \
 
 Do not validate the skill by copying real credentials, production plans, or
 runtime exports into fixtures.
+
+## Maurice diagnostic package
+
+`skill/maurice-diagnostic` installs the same way: copy the complete directory,
+without flattening `agents/` or `references/`, to the client's skill directory
+(for Claude Code, `.claude/skills/maurice-diagnostic/` in the project or
+`~/.claude/skills/maurice-diagnostic/`; for Codex, the configured Codex skill
+home). It needs no MauriceCLI and no credential. Without installation, the
+assistant can read the published copy at
+`https://agentmaurice.ai/skill/maurice-diagnostic/SKILL.md`.
