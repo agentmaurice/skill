@@ -125,6 +125,15 @@ class IntegerRules(unittest.TestCase):
         self.assertIn("opportunities[0].scores.rules", gate.report_errors(value))
 
 
+class ReplayFindings(unittest.TestCase):
+    """Real replays on three repositories with Claude Code and Codex (2026-10-19)."""
+
+    def test_only_catalog_slugs_are_mcp_bricks(self):
+        grid = (ROOT / "skill" / "maurice-diagnostic" / "references" / "capability-grid.md").read_text(encoding="utf-8")
+        self.assertIn("`ref` is a `slug` of the MCP catalog", FORMAT)
+        self.assertIn("Only catalog slugs\n  are bricks", grid)
+
+
 class UrlLaunch(unittest.TestCase):
     def test_skill_resolves_references_against_the_published_base(self):
         skill = (ROOT / "skill" / "maurice-diagnostic" / "SKILL.md").read_text(encoding="utf-8")
