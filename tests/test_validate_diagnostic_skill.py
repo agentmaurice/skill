@@ -134,6 +134,15 @@ class ReplayFindings(unittest.TestCase):
         self.assertIn("Only catalog slugs\n  are bricks", grid)
 
 
+class NoForcedPilot(unittest.TestCase):
+    def test_skill_allows_no_pilot_when_none_is_eligible(self):
+        skill = (ROOT / "skill" / "maurice-diagnostic" / "SKILL.md").read_text(encoding="utf-8")
+        self.assertIn("Choose at most one pilot", skill)
+        self.assertIn("recommend no pilot, set the potential to `low`", skill)
+        value = report(potential="low", opportunities=[])
+        self.assertEqual(gate.report_errors(value), [])
+
+
 class UrlLaunch(unittest.TestCase):
     def test_skill_resolves_references_against_the_published_base(self):
         skill = (ROOT / "skill" / "maurice-diagnostic" / "SKILL.md").read_text(encoding="utf-8")

@@ -67,8 +67,11 @@ takes over from the report's JSON block.
    share), current cost (a model called at each run), effort (inverted), risk
    (inverted). Mark evidence as `proven` (`path:line`), `likely` (dependency
    or name only) or `hypothesis` (goes to Questions).
-6. **Choose one pilot.** Start small: high volume, high rules, low effort, low
-   risk. One pilot only, with a measurable success criterion.
+6. **Choose at most one pilot.** Start small: high volume, high rules, low
+   effort, low risk, never a server marked not `one_compatible`. One pilot
+   only, with a measurable success criterion. When no opportunity has Rules
+   ≥ 2 and Effort ≥ 2, recommend no pilot, set the potential to `low`, and say
+   why.
 7. **Say where Maurice does not fit.** Use the anti-signals of the grid.
 8. **Report.** Follow [references/report-format.md](references/report-format.md)
    exactly, in chat. Then offer to save it as `maurice-diagnostic.md`; write
