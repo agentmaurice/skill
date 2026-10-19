@@ -1,0 +1,112 @@
+{
+  "schema_version": "agentmaurice.diagnostic.cib-modules/v1",
+  "generated_at": "2026-10-19",
+  "source_revision": "dc935630764b24c819defd03cc487bddf8f87399",
+  "installation": "Guided: composed into the consuming project, then deployed through the Agent Spec rail. Installation by URL is not offered.",
+  "not_delivered": [
+    "HR",
+    "Sales",
+    "sector-specific packs"
+  ],
+  "modules": [
+    {
+      "key": "cib-work-dossiers",
+      "name": "Company-in-a-Box — dossiers communs",
+      "version": "0.2.2",
+      "workflows": 6,
+      "miniapps": 2,
+      "summary": "Shared case files: goal, owner, references, next action, blocker and internal closing proof; management sees only the files each person may access.",
+      "use_when": "Teams track shared files or cases in spreadsheets or ad hoc tables."
+    },
+    {
+      "key": "cib-daily-routine",
+      "name": "Routine quotidienne — dossiers, mémoire et temps",
+      "version": "0.1.0",
+      "workflows": 4,
+      "miniapps": 3,
+      "summary": "Daily routine: prepares the day's context, consults a chosen memory revision, reviews a file and records declared active time.",
+      "use_when": "People start each day by gathering the same context by hand."
+    },
+    {
+      "key": "cib-enterprise-admin",
+      "name": "Company-in-a-Box — administration entreprise",
+      "version": "0.2.2",
+      "workflows": 7,
+      "miniapps": 3,
+      "summary": "Bounded administration of people, existing identities, access per department and revocation of mandates.",
+      "use_when": "Directory, roles and per-department rights are rebuilt by hand around internal tools."
+    },
+    {
+      "key": "cib-marketing-launch",
+      "name": "Company in a Box — Marketing de lancement",
+      "version": "0.1.0",
+      "workflows": 9,
+      "miniapps": 6,
+      "summary": "Launch marketing journey: campaign, content, trial request, follow-up and first confirmed result.",
+      "use_when": "A launch is run through scattered scripts, forms and spreadsheets."
+    },
+    {
+      "key": "cib-accompagnement-memory",
+      "name": "Company-in-a-Box — Accompagnement — raccordement mémoire",
+      "version": "0.2.0",
+      "workflows": 3,
+      "miniapps": 3,
+      "summary": "Connects the follow-up role to company memory: search, consult and propose a selected extract.",
+      "use_when": "Combined with cib-accompagnement and company-memory."
+    },
+    {
+      "key": "cib-contenu-memory",
+      "name": "Company-in-a-Box — Contenu — raccordement mémoire",
+      "version": "0.2.0",
+      "workflows": 4,
+      "miniapps": 4,
+      "summary": "Connects the content role to company memory, including a draft prepared from a validated, cited revision.",
+      "use_when": "Combined with cib-contenu and company-memory."
+    },
+    {
+      "key": "cib-veille-memory",
+      "name": "Company-in-a-Box — Veille — raccordement mémoire",
+      "version": "0.2.0",
+      "workflows": 3,
+      "miniapps": 3,
+      "summary": "Connects the watch role to company memory: search, consult and propose a selected extract.",
+      "use_when": "Combined with cib-veille and company-memory."
+    },
+    {
+      "key": "cib-accompagnement",
+      "name": "Company-in-a-Box — Accompagnement",
+      "version": "0.2.4",
+      "workflows": 6,
+      "miniapps": 2,
+      "summary": "Customer follow-up role: save and share follow-up files, with guarded actions.",
+      "use_when": "Follow-up of customers or users is tracked by hand."
+    },
+    {
+      "key": "cib-contenu",
+      "name": "Company-in-a-Box — Contenu",
+      "version": "0.2.4",
+      "workflows": 6,
+      "miniapps": 2,
+      "summary": "Content role: save, share and review content drafts with completion checks.",
+      "use_when": "Content drafts move between people without a shared review step."
+    },
+    {
+      "key": "cib-veille",
+      "name": "Company-in-a-Box — Veille",
+      "version": "0.2.4",
+      "workflows": 7,
+      "miniapps": 2,
+      "summary": "Manual watch: explicit import of sources and facts, manual assignment, field and freshness checks.",
+      "use_when": "Scripts import and sort sources for a watch or monitoring activity."
+    },
+    {
+      "key": "company-memory",
+      "name": "Company Memory",
+      "version": "0.2.0",
+      "workflows": 9,
+      "miniapps": 6,
+      "summary": "Company memory: capture of sources, proposals, manual review, cited consultation and indexing for search.",
+      "use_when": "Knowledge lives in scattered documents and answers must cite reviewed sources."
+    }
+  ]
+}

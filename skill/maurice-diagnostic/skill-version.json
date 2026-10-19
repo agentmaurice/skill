@@ -1,0 +1,40 @@
+{
+  "schema_version": "agentmaurice.skill/v2",
+  "name": "maurice-diagnostic",
+  "version": "0.1.0",
+  "content_hash": "7fdb0f45372bd3774cae5c414e3a2e9cc2eb8bedd268f81e25be3850b8ccb418",
+  "files": [
+    {
+      "path": "SKILL.md",
+      "sha256": "e5d8e46dba1888616e2eb790ff0a4c49535e9e2ed49435b12a9b1481c1052903"
+    },
+    {
+      "path": "agents/openai.yaml",
+      "sha256": "f3c22356cb6919bf228cd3092afcc75167387421704235e2af84d99d6687c0c8"
+    },
+    {
+      "path": "references/capability-grid.md",
+      "sha256": "31c94c9bf127416300656f8da280b2b65116067866889f2910b1c338ca6dc052"
+    },
+    {
+      "path": "references/generated/cib-modules.json",
+      "sha256": "bc7ea7ebb412e406c9ec48c2d812fae42500d6afed75ae277301e870c287ea3f"
+    },
+    {
+      "path": "references/generated/mcp-catalog.json",
+      "sha256": "ab97248f096dec23a1e88d43f6b4e41c525f5f0b3972355f2d14647a406d16f8"
+    },
+    {
+      "path": "references/report-format.md",
+      "sha256": "0af45f39b999628bfc506786c02dd58fcf8c550d6684cb0db3c1ec5613effeb3"
+    },
+    {
+      "path": "references/report.schema.json",
+      "sha256": "e48ca64e5b327f8fe2df3141eb0c8d62239cad79da216bf07eb8488dfd6ccc2f"
+    },
+    {
+      "path": "references/sources.md",
+      "sha256": "20c479e2e819d7ca1ce6b58d50b658e81a74ff7fe907dda3f6648f0c21b05d0f"
+    }
+  ]
+}

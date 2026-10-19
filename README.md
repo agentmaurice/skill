@@ -64,6 +64,31 @@ maurice spec schema workflow --json
 maurice spec example workflow --json
 ```
 
+## Maurice diagnostic
+
+[`skill/maurice-diagnostic`](skill/maurice-diagnostic) is a second, separate
+package: a read-only fit diagnostic that a Claude Code or Codex user runs on
+their own repository before installing anything. It maps signals found in the
+code to Maurice capabilities, AgentMaurice MCP servers and Company in a Box
+Modules, recommends one first pilot, says where Maurice brings nothing, and
+ends with an `agentmaurice.fit-diagnostic/v1` block that the authoring Skill
+can pick up after `maurice doctor`.
+
+Zero install: paste this into the assistant, from the repository folder:
+
+```text
+Read https://agentmaurice.ai/skill/maurice-diagnostic/SKILL.md and follow it
+to run a read-only Maurice diagnostic of this repository.
+```
+
+Refresh its snapshots (public MCP catalog, Company in a Box inventory) and
+inventory, then validate:
+
+```bash
+python3 scripts/generate_diagnostic_snapshots.py --cib-dir ../company-in-a-box-modules
+python3 scripts/validate_diagnostic_skill.py
+```
+
 ## Install
 
 See [`docs/install.md`](docs/install.md). MauriceCLI normally installs the

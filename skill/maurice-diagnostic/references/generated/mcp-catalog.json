@@ -1,0 +1,345 @@
+{
+  "schema_version": "agentmaurice.diagnostic.mcp-catalog/v1",
+  "generated_at": "2026-10-01T08:59:19Z",
+  "repository": "https://github.com/agentmaurice/mcp",
+  "live_url": "https://raw.githubusercontent.com/agentmaurice/mcp/main/catalog.json",
+  "servers": [
+    {
+      "slug": "api",
+      "version": "v0.1.4",
+      "description": "Go MCP server for calling internal APIs described by an approved OpenAPI 3.0 or 3.1 contract. It only invokes a known `operationId`; it is not a generic HTTP proxy.",
+      "one_compatible": true,
+      "tags": [
+        "api",
+        "openapi",
+        "http",
+        "integration"
+      ],
+      "tools": [
+        {
+          "name": "api_health_v1",
+          "description": "Check the API MCP"
+        },
+        {
+          "name": "api_capabilities_v1",
+          "description": "Describe OpenAPI support and egress safety controls"
+        },
+        {
+          "name": "api_describe_v1",
+          "description": "List approved operations or describe one operationId"
+        },
+        {
+          "name": "api_call_v1",
+          "description": "Call one approved OpenAPI operationId"
+        }
+      ]
+    },
+    {
+      "slug": "artifact",
+      "version": "v0.1.4",
+      "description": "Go MCP server for creating, patching, rendering and inspecting deterministic deliverables. Every result carries a provenance manifest with format, MIME type, size, renderer and SHA-256.",
+      "one_compatible": true,
+      "tags": [
+        "artifact",
+        "document",
+        "render",
+        "pdf",
+        "export"
+      ],
+      "tools": [
+        {
+          "name": "artifact_health_v1",
+          "description": "Check the Artifact MCP"
+        },
+        {
+          "name": "artifact_capabilities_v1",
+          "description": "Describe supported formats, renderer and limits"
+        },
+        {
+          "name": "artifact_create_v1",
+          "description": "Create a deterministic bounded artifact"
+        },
+        {
+          "name": "artifact_patch_v1",
+          "description": "Apply structured changes to an artifact"
+        },
+        {
+          "name": "artifact_render_v1",
+          "description": "Render an artifact to a deterministic preview"
+        },
+        {
+          "name": "artifact_inspect_v1",
+          "description": "Validate an artifact and return its provenance"
+        }
+      ]
+    },
+    {
+      "slug": "brain",
+      "version": "v1.1.7",
+      "description": "Go MCP server that indexes an organization's knowledge (code, documentation, configuration) and retrieves the relevant context for AgentMaurice agents. It combines BM25 full-text search, vector search, a knowledge graph and hybrid fusion, with AST-aware chunking for code. Brain returns results, not generated answers: an agent uses it to locate context, and can then hand that context to MCP RAG for a reasoned answer.",
+      "one_compatible": true,
+      "tags": [],
+      "tools": []
+    },
+    {
+      "slug": "browser",
+      "version": "v1.0.30",
+      "description": "A Model Context Protocol (MCP) server for browser automation, built in Go. This server enables AI agents to control a web browser through a standardized protocol.",
+      "one_compatible": true,
+      "tags": [],
+      "tools": []
+    },
+    {
+      "slug": "data",
+      "version": "v0.1.4",
+      "description": "Go MCP server for profiling and running one-off queries on CSV or JSON tables, without arbitrary SQL and without ingestion into MCP Memory.",
+      "one_compatible": true,
+      "tags": [
+        "data",
+        "csv",
+        "json",
+        "analytics",
+        "export"
+      ],
+      "tools": [
+        {
+          "name": "data_health_v1",
+          "description": "Check the Data MCP"
+        },
+        {
+          "name": "data_capabilities_v1",
+          "description": "Describe supported formats, query operations and limits"
+        },
+        {
+          "name": "data_profile_v1",
+          "description": "Infer columns and calculate bounded profiles"
+        },
+        {
+          "name": "data_query_v1",
+          "description": "Apply a closed JSON query plan"
+        },
+        {
+          "name": "data_export_v1",
+          "description": "Export a closed-plan result as bounded CSV or JSON"
+        }
+      ]
+    },
+    {
+      "slug": "decision",
+      "version": "v0.1.1",
+      "description": "Classify short, already extracted content, score it on an ordered scale, or ask a yes/no question using TypeSafe System One. Receive typed values and confidence without parsing generated prose. This server never executes a branch or writes to another system.",
+      "one_compatible": true,
+      "tags": [
+        "decision",
+        "classification",
+        "scoring",
+        "typesafe"
+      ],
+      "tools": [
+        {
+          "name": "decision_health_v1",
+          "description": "Check local readiness without provider calls"
+        },
+        {
+          "name": "decision_capabilities_v1",
+          "description": "Describe question types, bounds and confidence"
+        },
+        {
+          "name": "decision_ask_v1",
+          "description": "Evaluate multiple questions in one provider call"
+        },
+        {
+          "name": "decision_choice_v1",
+          "description": "Choose a category with an uncertainty threshold"
+        },
+        {
+          "name": "decision_score_v1",
+          "description": "Score ordered levels, returning null below the threshold"
+        },
+        {
+          "name": "decision_noul_v1",
+          "description": "Evaluate the probability of yes"
+        }
+      ]
+    },
+    {
+      "slug": "document",
+      "version": "v0.1.1",
+      "description": "MCP Document converts office documents to Markdown locally for AgentMaurice agents. The service uses AnyDoc and exposes an MCP server over STDIO, designed to run behind the standard MCP sidecar.",
+      "one_compatible": false,
+      "tags": [],
+      "tools": []
+    },
+    {
+      "slug": "guard",
+      "version": "v0.1.4",
+      "description": "Deterministic Go MCP server for detecting, masking and classifying sensitive data. It complements MCP Moderator without replacing it: Moderator handles content safety, Guard handles PII, secrets and enterprise classification.",
+      "one_compatible": true,
+      "tags": [
+        "guard",
+        "pii",
+        "secrets",
+        "redaction",
+        "classification"
+      ],
+      "tools": [
+        {
+          "name": "guard_health_v1",
+          "description": "Check the Guard MCP"
+        },
+        {
+          "name": "guard_capabilities_v1",
+          "description": "Describe sensitive-data categories, redaction modes and limits"
+        },
+        {
+          "name": "guard_scan_v1",
+          "description": "Locate PII and secrets without returning their values"
+        },
+        {
+          "name": "guard_redact_v1",
+          "description": "Redact PII and secrets"
+        },
+        {
+          "name": "guard_classify_v1",
+          "description": "Classify text by sensitivity"
+        }
+      ]
+    },
+    {
+      "slug": "memory",
+      "version": "v1.0.16",
+      "description": "MCP server providing a multi-tenant, read-safe SQL memory backed by DuckDB or PostgreSQL. Writes are handled by strict ingestion tools (no arbitrary SQL writes).",
+      "one_compatible": true,
+      "tags": [],
+      "tools": []
+    },
+    {
+      "slug": "observe",
+      "version": "v0.1.4",
+      "description": "Deterministic diagnostic Go MCP server for OTLP JSON exports and already redacted run summaries. It normalizes a timeline, computes the critical path and highlights errors, retries and regressions between two runs.",
+      "one_compatible": true,
+      "tags": [
+        "observe",
+        "traces",
+        "diagnostics",
+        "otel",
+        "runtime"
+      ],
+      "tools": [
+        {
+          "name": "observe_health_v1",
+          "description": "Check the Observe MCP"
+        },
+        {
+          "name": "observe_capabilities_v1",
+          "description": "Describe supported trace inputs and limits"
+        },
+        {
+          "name": "observe_run_v1",
+          "description": "Normalize a trace and return its bounded timeline"
+        },
+        {
+          "name": "observe_explain_v1",
+          "description": "Explain errors, retries and the critical path"
+        },
+        {
+          "name": "observe_compare_v1",
+          "description": "Compare two run traces"
+        }
+      ]
+    },
+    {
+      "slug": "ocr",
+      "version": "v0.1.3",
+      "description": "Managed, synchronous OCR MCP server. The service holds no provider key: it calls the authenticated bridge of the AgentMaurice instance, which forwards the request to the hosted LLM Gateway.",
+      "one_compatible": true,
+      "tags": [],
+      "tools": []
+    },
+    {
+      "slug": "rag",
+      "version": "v1.0.20",
+      "description": "A standalone RAG (Retrieval-Augmented Generation) server implementing the Model Context Protocol (MCP). Use it to ingest a document corpus and answer questions with source citations. It requires PostgreSQL, Qdrant and an embedding/generation provider; it is distinct from document conversion and simple full-text search.",
+      "one_compatible": false,
+      "tags": [],
+      "tools": []
+    },
+    {
+      "slug": "search",
+      "version": "v0.1.1",
+      "description": "AgentMaurice MCP server for hybrid search on Meilisearch. It returns passages and their provenance, without an LLM answer.",
+      "one_compatible": false,
+      "tags": [
+        "search",
+        "hybrid",
+        "meilisearch",
+        "preview"
+      ],
+      "tools": [
+        {
+          "name": "search_health_v1",
+          "description": "Vérifier la disponibilité du moteur"
+        },
+        {
+          "name": "search_capabilities_v1",
+          "description": "Décrire le corpus autorisé et les modes"
+        },
+        {
+          "name": "search_query_v1",
+          "description": "Rechercher des passages par mots-clés et sens"
+        },
+        {
+          "name": "search_get_v1",
+          "description": "Lire un passage cité dans le même périmètre"
+        }
+      ]
+    },
+    {
+      "slug": "ssh",
+      "version": "v0.1.2",
+      "description": "Go MCP server for governed remote administration over published SSH targets. The Run only picks a known `target_id`; the destination, identity, host key and credential reference stay in the local projection.",
+      "one_compatible": true,
+      "tags": [
+        "ssh",
+        "remote",
+        "operations",
+        "legacy",
+        "governed"
+      ],
+      "tools": [
+        {
+          "name": "ssh_health_v1",
+          "description": "Check the SSH server, target projection and credential-provider boundary"
+        },
+        {
+          "name": "ssh_capabilities_v1",
+          "description": "Describe SSH functions, limits, mode and target revision"
+        },
+        {
+          "name": "ssh_targets_v1",
+          "description": "List visible published SSH targets with redacted metadata"
+        },
+        {
+          "name": "ssh_target_check_v1",
+          "description": "Verify DNS, host key and handshake for a known Build target"
+        },
+        {
+          "name": "ssh_session_open_v1",
+          "description": "Open a bounded connection to one published target"
+        },
+        {
+          "name": "ssh_exec_v1",
+          "description": "Execute one synchronous command without PTY or persistent shell state"
+        },
+        {
+          "name": "ssh_session_status_v1",
+          "description": "Read bounded session status and expiry"
+        },
+        {
+          "name": "ssh_session_close_v1",
+          "description": "Close a session and destroy its in-memory connection state"
+        }
+      ]
+    }
+  ]
+}

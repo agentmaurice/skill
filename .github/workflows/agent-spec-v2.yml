@@ -17,3 +17,4 @@ jobs:
         with:
           python-version: "3.13"
       - run: python scripts/validate_v2_skill.py
+      - run: python scripts/validate_diagnostic_skill.py

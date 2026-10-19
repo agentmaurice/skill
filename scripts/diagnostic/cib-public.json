@@ -1,0 +1,49 @@
+{
+  "$comment": "Public summaries of the Company in a Box Modules, cited by the maurice-diagnostic Skill. Keys must match company-in-a-box-modules/modules.json. Organisation bricks only: no business-specific pack.",
+  "modules": {
+    "cib-enterprise-admin": {
+      "summary": "Bounded administration of people, existing identities, access per department and revocation of mandates.",
+      "use_when": "Directory, roles and per-department rights are rebuilt by hand around internal tools."
+    },
+    "cib-work-dossiers": {
+      "summary": "Shared case files: goal, owner, references, next action, blocker and internal closing proof; management sees only the files each person may access.",
+      "use_when": "Teams track shared files or cases in spreadsheets or ad hoc tables."
+    },
+    "company-memory": {
+      "summary": "Company memory: capture of sources, proposals, manual review, cited consultation and indexing for search.",
+      "use_when": "Knowledge lives in scattered documents and answers must cite reviewed sources."
+    },
+    "cib-daily-routine": {
+      "summary": "Daily routine: prepares the day's context, consults a chosen memory revision, reviews a file and records declared active time.",
+      "use_when": "People start each day by gathering the same context by hand."
+    },
+    "cib-marketing-launch": {
+      "summary": "Launch marketing journey: campaign, content, trial request, follow-up and first confirmed result.",
+      "use_when": "A launch is run through scattered scripts, forms and spreadsheets."
+    },
+    "cib-veille": {
+      "summary": "Manual watch: explicit import of sources and facts, manual assignment, field and freshness checks.",
+      "use_when": "Scripts import and sort sources for a watch or monitoring activity."
+    },
+    "cib-contenu": {
+      "summary": "Content role: save, share and review content drafts with completion checks.",
+      "use_when": "Content drafts move between people without a shared review step."
+    },
+    "cib-accompagnement": {
+      "summary": "Customer follow-up role: save and share follow-up files, with guarded actions.",
+      "use_when": "Follow-up of customers or users is tracked by hand."
+    },
+    "cib-veille-memory": {
+      "summary": "Connects the watch role to company memory: search, consult and propose a selected extract.",
+      "use_when": "Combined with cib-veille and company-memory."
+    },
+    "cib-contenu-memory": {
+      "summary": "Connects the content role to company memory, including a draft prepared from a validated, cited revision.",
+      "use_when": "Combined with cib-contenu and company-memory."
+    },
+    "cib-accompagnement-memory": {
+      "summary": "Connects the follow-up role to company memory: search, consult and propose a selected extract.",
+      "use_when": "Combined with cib-accompagnement and company-memory."
+    }
+  }
+}

@@ -1,0 +1,7 @@
+interface:
+  display_name: "Maurice diagnostic"
+  short_description: "Read-only AgentMaurice fit diagnostic of this codebase"
+  default_prompt: "Use $maurice-diagnostic to run a read-only AgentMaurice fit diagnostic of this repository and report opportunities, one first pilot, and where Maurice brings nothing."
+
+policy:
+  allow_implicit_invocation: true
