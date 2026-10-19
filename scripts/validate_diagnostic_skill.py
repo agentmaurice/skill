@@ -56,6 +56,11 @@ def fail(message: str) -> None:
     raise SystemExit(f"maurice-diagnostic: {message}")
 
 
+def is_integer(value: object) -> bool:
+    """JSON Schema integer: 3 and 3.0 are integers, True is not."""
+    return not isinstance(value, bool) and (isinstance(value, int) or (isinstance(value, float) and value.is_integer()))
+
+
 def url_allowed(url: str) -> bool:
     parts = urlsplit(url)
     prefix = ALLOWED_HOSTS.get(parts.hostname or "")
@@ -132,7 +137,7 @@ def report_errors(report: dict) -> list[str]:
                 if proof.get("level") not in ("proven", "likely") or not isinstance(proof.get("path"), str) or not proof["path"]:
                     errors.append(f"{where}.evidence")
                 line = proof.get("line")
-                if "line" in proof and (not isinstance(line, int) or isinstance(line, bool) or line < 1):
+                if "line" in proof and (not is_integer(line) or line < 1):
                     errors.append(f"{where}.evidence.line")
                 if proof.get("level") == "proven" and "line" not in proof:
                     errors.append(f"{where}.evidence proven without line")
@@ -142,7 +147,7 @@ def report_errors(report: dict) -> list[str]:
         else:
             for name in SCORES:
                 value = scores[name]
-                if not isinstance(value, int) or isinstance(value, bool) or not 1 <= value <= 3:
+                if not is_integer(value) or not 1 <= value <= 3:
                     errors.append(f"{where}.scores.{name}")
         if not isinstance(item.get("pilot"), bool):
             errors.append(f"{where}.pilot")

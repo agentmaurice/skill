@@ -115,6 +115,16 @@ class ThirdReview(unittest.TestCase):
         self.assertIn("opportunities[0]", errors)
 
 
+class IntegerRules(unittest.TestCase):
+    def test_integral_floats_are_integers_and_booleans_are_not(self):
+        value = report()
+        value["opportunities"][0]["scores"]["volume"] = 3.0
+        value["opportunities"][0]["evidence"][0]["line"] = 42.0
+        self.assertEqual(gate.report_errors(value), [])
+        value["opportunities"][0]["scores"]["rules"] = True
+        self.assertIn("opportunities[0].scores.rules", gate.report_errors(value))
+
+
 class UrlLaunch(unittest.TestCase):
     def test_skill_resolves_references_against_the_published_base(self):
         skill = (ROOT / "skill" / "maurice-diagnostic" / "SKILL.md").read_text(encoding="utf-8")
