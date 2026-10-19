@@ -85,7 +85,10 @@ The block validates against [report.schema.json](report.schema.json)
 Allowed `capability` values: `compiled_workflow`, `workflow`, `agent_mode`,
 `channel`, `miniapp`, `human_approval`, `vault`, `mcp`, `swarm`,
 `organisation`, `module`, `connected_service`, `entry_point`.
-Allowed `brick.kind`: `mcp`, `module`, `connected_service`, `none`.
+Allowed `brick.kind`: `mcp`, `module`, `connected_service`, `none`. With
+`mcp`, `ref` is a `slug` of the MCP catalog; with `module`, a Module `key`.
+An MCP server that already lives in the analysed repository is not a brick:
+use `capability: "mcp"` with `brick.kind: "none"`.
 Allowed `needs`: `maurice`, `console_account`, `none`.
 Allowed `evidence.level`: `proven` (requires `line`), `likely`
 (`hypothesis` items go to `questions`). Every opportunity has at least one

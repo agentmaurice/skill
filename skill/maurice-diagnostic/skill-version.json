@@ -2,7 +2,7 @@
   "schema_version": "agentmaurice.skill/v2",
   "name": "maurice-diagnostic",
   "version": "0.1.0",
-  "content_hash": "799e75c838e31a3a61a56aa338f6748ba1eb9652011472eebf4b1dd9a05da9d1",
+  "content_hash": "c3570b891ecf14cd1cdf93492f68964b99c92a17b3e090a0bb439508d68c6641",
   "files": [
     {
       "path": "SKILL.md",
@@ -26,7 +26,7 @@
     },
     {
       "path": "references/report-format.md",
-      "sha256": "8601fb2dffb0023a74c4ba3bfd674bebec0494c6b16e2610159fef0def4b0214"
+      "sha256": "5152206c23fb356411f4db5ccef3b7aa224e10f9236e3b20cb164f5405850b57"
     },
     {
       "path": "references/report.schema.json",
