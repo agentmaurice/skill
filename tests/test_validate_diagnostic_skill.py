@@ -96,6 +96,25 @@ class UrlAllowList(unittest.TestCase):
             self.assertTrue(gate.url_allowed(url), url)
 
 
+class ThirdReview(unittest.TestCase):
+    def test_null_line_is_refused(self):
+        value = report()
+        value["opportunities"][0]["evidence"].append({"path": "README.md", "level": "likely", "line": None})
+        self.assertIn("opportunities[0].evidence.line", gate.report_errors(value))
+
+    def test_dot_segments_cannot_leave_the_organisation(self):
+        for url in (
+            "https://github.com/agentmaurice/../autre-organisation/depot",
+            "https://github.com/agentmaurice/%2e%2e/autre",
+            "https://raw.githubusercontent.com/agentmaurice/./../x",
+        ):
+            self.assertFalse(gate.url_allowed(url), url)
+
+    def test_null_opportunity_is_reported_not_crashing(self):
+        errors = gate.report_errors(report(opportunities=[None]))
+        self.assertIn("opportunities[0]", errors)
+
+
 class UrlLaunch(unittest.TestCase):
     def test_skill_resolves_references_against_the_published_base(self):
         skill = (ROOT / "skill" / "maurice-diagnostic" / "SKILL.md").read_text(encoding="utf-8")

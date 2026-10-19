@@ -61,8 +61,10 @@ def url_allowed(url: str) -> bool:
     prefix = ALLOWED_HOSTS.get(parts.hostname or "")
     if parts.scheme != "https" or prefix is None or parts.port or parts.username:
         return False
-    path = parts.path or "/"
-    return path.startswith(prefix) or path + "/" == prefix
+    raw = parts.path or "/"
+    if any(segment in ("..", ".") for segment in raw.split("/")) or "%2e" in raw.lower():
+        return False
+    return raw.startswith(prefix) or raw + "/" == prefix
 
 
 def report_errors(report: dict) -> list[str]:
@@ -130,9 +132,9 @@ def report_errors(report: dict) -> list[str]:
                 if proof.get("level") not in ("proven", "likely") or not isinstance(proof.get("path"), str) or not proof["path"]:
                     errors.append(f"{where}.evidence")
                 line = proof.get("line")
-                if line is not None and (not isinstance(line, int) or isinstance(line, bool) or line < 1):
+                if "line" in proof and (not isinstance(line, int) or isinstance(line, bool) or line < 1):
                     errors.append(f"{where}.evidence.line")
-                if proof.get("level") == "proven" and line is None:
+                if proof.get("level") == "proven" and "line" not in proof:
                     errors.append(f"{where}.evidence proven without line")
         scores = item.get("scores")
         if not isinstance(scores, dict) or set(scores) != set(SCORES):
@@ -144,7 +146,7 @@ def report_errors(report: dict) -> list[str]:
                     errors.append(f"{where}.scores.{name}")
         if not isinstance(item.get("pilot"), bool):
             errors.append(f"{where}.pilot")
-    pilots = sum(1 for item in opportunities if item.get("pilot") is True)
+    pilots = sum(1 for item in opportunities if isinstance(item, dict) and item.get("pilot") is True)
     if potential in ("high", "medium") and pilots != 1:
         errors.append(f"{potential} potential needs exactly one pilot, found {pilots}")
     if potential == "low" and pilots > 1:
