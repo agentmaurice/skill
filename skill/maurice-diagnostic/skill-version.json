@@ -2,7 +2,7 @@
   "schema_version": "agentmaurice.skill/v2",
   "name": "maurice-diagnostic",
   "version": "0.1.0",
-  "content_hash": "b5ef4aa7eba91c5ea7721ff87b1a6cf5a26aba9f55701f5e75d80f6737c06b98",
+  "content_hash": "799e75c838e31a3a61a56aa338f6748ba1eb9652011472eebf4b1dd9a05da9d1",
   "files": [
     {
       "path": "SKILL.md",
@@ -14,7 +14,7 @@
     },
     {
       "path": "references/capability-grid.md",
-      "sha256": "31c94c9bf127416300656f8da280b2b65116067866889f2910b1c338ca6dc052"
+      "sha256": "7880cc5cdc854fe128388c46045b7eb7b7e2d5288dc14afb3e356e6257fe42fb"
     },
     {
       "path": "references/generated/cib-modules.json",
@@ -26,11 +26,11 @@
     },
     {
       "path": "references/report-format.md",
-      "sha256": "d6b83fa15312f610aa8e9c97b250ad83e7335cd875eec949df8d11d19824446a"
+      "sha256": "8601fb2dffb0023a74c4ba3bfd674bebec0494c6b16e2610159fef0def4b0214"
     },
     {
       "path": "references/report.schema.json",
-      "sha256": "ed0d53dc6b1d03be8d5f7e011db4eb2ef2a6af701fad153f07c54c2555d1ffa1"
+      "sha256": "01f39cf25e73c9e511d327e725227b557e4691916b46041c952306923fb442cf"
     },
     {
       "path": "references/sources.md",

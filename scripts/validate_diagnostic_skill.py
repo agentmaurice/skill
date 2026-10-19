@@ -44,6 +44,8 @@ ALLOWED_HOSTS = {
     "json-schema.org": "/",
 }
 SCORES = ("volume", "rules", "cost", "effort", "risk")
+SOURCE_KEYS = {"agent_guide_version", "mcp_catalog_generated_at", "cib_modules_generated_at", "mode"}
+OPPORTUNITY_KEYS = {"id", "title", "capability", "brick", "needs", "evidence", "scores", "pilot"}
 
 
 def sha256(data: bytes) -> str:
@@ -74,8 +76,18 @@ def report_errors(report: dict) -> list[str]:
         errors.append(f"unknown keys {sorted(set(report) - set(required))}")
     if report.get("schema") != "agentmaurice.fit-diagnostic/v1":
         errors.append("schema")
-    if not isinstance(report.get("sources"), dict) or report["sources"].get("mode") not in ("live", "snapshot", "mixed"):
+    if not isinstance(report.get("generated_at"), str) or len(report["generated_at"]) < 10:
+        errors.append("generated_at")
+    if not isinstance(report.get("repository"), str) or not report["repository"]:
+        errors.append("repository")
+    for key in ("anti_fit", "questions"):
+        if not isinstance(report.get(key), list) or not all(isinstance(item, str) for item in report[key]):
+            errors.append(key)
+    sources = report.get("sources")
+    if not isinstance(sources, dict) or sources.get("mode") not in ("live", "snapshot", "mixed"):
         errors.append("sources.mode")
+    elif set(sources) - SOURCE_KEYS or not all(isinstance(value, str) for value in sources.values()):
+        errors.append("sources")
     potential = report.get("potential")
     if potential not in ("high", "medium", "low"):
         errors.append("potential")
@@ -84,11 +96,24 @@ def report_errors(report: dict) -> list[str]:
         return errors + ["opportunities"]
     for index, item in enumerate(opportunities):
         where = f"opportunities[{index}]"
+        if not isinstance(item, dict):
+            errors.append(where)
+            continue
+        if set(item) != OPPORTUNITY_KEYS:
+            errors.append(f"{where} keys")
+        if not isinstance(item.get("title"), str) or not item["title"]:
+            errors.append(f"{where}.title")
         if not re.fullmatch(r"opp-[0-9]+", str(item.get("id", ""))):
             errors.append(f"{where}.id")
         if item.get("capability") not in CAPABILITIES:
             errors.append(f"{where}.capability")
-        if not isinstance(item.get("brick"), dict) or item["brick"].get("kind") not in ("mcp", "module", "connected_service", "none"):
+        brick = item.get("brick")
+        if (
+            not isinstance(brick, dict)
+            or brick.get("kind") not in ("mcp", "module", "connected_service", "none")
+            or set(brick) - {"kind", "ref"}
+            or not isinstance(brick.get("ref", ""), str)
+        ):
             errors.append(f"{where}.brick")
         if item.get("needs") not in ("maurice", "console_account", "none"):
             errors.append(f"{where}.needs")
@@ -96,8 +121,13 @@ def report_errors(report: dict) -> list[str]:
         if not isinstance(evidence, list) or not evidence:
             errors.append(f"{where}.evidence")
         else:
+            if not any(isinstance(proof, dict) and proof.get("level") == "proven" for proof in evidence):
+                errors.append(f"{where}.evidence needs a proven item")
             for proof in evidence:
-                if proof.get("level") not in ("proven", "likely") or not proof.get("path"):
+                if not isinstance(proof, dict) or set(proof) - {"path", "line", "level"}:
+                    errors.append(f"{where}.evidence")
+                    continue
+                if proof.get("level") not in ("proven", "likely") or not isinstance(proof.get("path"), str) or not proof["path"]:
                     errors.append(f"{where}.evidence")
                 line = proof.get("line")
                 if line is not None and (not isinstance(line, int) or isinstance(line, bool) or line < 1):

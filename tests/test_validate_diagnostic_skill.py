@@ -55,6 +55,25 @@ class ReportRules(unittest.TestCase):
         self.assertIn("missing sources", errors)
 
 
+class ReportRulesSecondReview(unittest.TestCase):
+    def test_likely_only_evidence_is_refused(self):
+        value = report()
+        value["opportunities"][0]["evidence"] = [{"path": "src/inexistant.py", "level": "likely"}]
+        self.assertIn("opportunities[0].evidence needs a proven item", gate.report_errors(value))
+
+    def test_wrong_types_and_missing_title_are_refused(self):
+        value = report(generated_at=None, repository=[], anti_fit="aucun")
+        del value["opportunities"][0]["title"]
+        errors = gate.report_errors(value)
+        for expected in ("generated_at", "repository", "anti_fit", "opportunities[0].title", "opportunities[0] keys"):
+            self.assertIn(expected, errors)
+
+    def test_grid_never_asks_to_invent_a_tool_name(self):
+        grid = (ROOT / "skill" / "maurice-diagnostic" / "references" / "capability-grid.md").read_text(encoding="utf-8")
+        self.assertIn("never invent", grid)
+        self.assertIn("`tools` list is empty", grid)
+
+
 class UrlAllowList(unittest.TestCase):
     def test_lookalike_hosts_are_refused(self):
         for url in (

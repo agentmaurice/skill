@@ -25,8 +25,10 @@ prerequisite: **Maurice** (free, on the computer, or on a hosted plan) or a
 
 ## Reading the bricks
 
-- **MCP servers**: use `catalog.json`. Cite the server `slug`, its version and
-  one relevant tool. If `one_compatible` is false, say "not yet available on
+- **MCP servers**: use `catalog.json`. Cite the server `slug` and its
+  version, plus one relevant tool when the catalog lists tools for it; when
+  its `tools` list is empty, cite the slug and version only and never invent
+  a tool name. If `one_compatible` is false, say "not yet available on
   Maurice on the computer" and do not make it the pilot.
 - **Company in a Box Modules**: reusable Modules of Workflows and MiniApps for
   the organisation of a company, never business-specific packs. Installation

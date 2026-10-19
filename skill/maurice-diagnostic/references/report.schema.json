@@ -164,7 +164,19 @@
                   "line"
                 ]
               }
-            }
+            },
+            "contains": {
+              "type": "object",
+              "required": [
+                "level"
+              ],
+              "properties": {
+                "level": {
+                  "const": "proven"
+                }
+              }
+            },
+            "minContains": 1
           },
           "scores": {
             "type": "object",
