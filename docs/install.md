@@ -122,14 +122,16 @@ maurice assistant connect codex \
 ```
 
 Le chemin du fichier de jeton reste privé et son contenu n'est jamais lu dans
-le parcours documentaire. AGENT-613 ne livre pas de commande d'installation
-automatique, de nouveau wrapper ou serveur MCP, de mode Claude, de build de
-nouveaux Agents/Workflows, ni le lifecycle du swarm.
+le parcours documentaire. Le lot Codex AGENT-613 ne livre pas de commande
+d’installation automatique ni de nouveau serveur MCP. Le plugin Claude
+provient du lot distinct AGENT-1034, documenté ci-dessus.
 
 ## Verify
 
-Confirm that the client can invoke `$agentmaurice` and that the following
-relative references resolve from `SKILL.md`:
+For the canonical standalone Skill, confirm `$agentmaurice`. For the Codex
+plugin, confirm `$use-maurice`. For the Claude plugin, confirm
+`/maurice:maurice` and `/maurice:agentmaurice`. Then check that the following
+relative references resolve from the canonical `SKILL.md`:
 
 - `references/agent-spec-v2.md`
 - `references/expert-operations.md`
