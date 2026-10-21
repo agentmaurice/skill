@@ -6,6 +6,48 @@ Qualification locale du 21 octobre 2026, backend `chatserver`
 Les nouvelles sessions Claude sont des sous-processus du shell interne ; les
 sessions utilisateur et les autres One ne sont pas utilisés.
 
+## État final après relecture adverse
+
+Le backend final est `fb0b0d679d01dd81ce94fa9e8a984d2833d80971`, à jour de
+`main` (`69f34c96`). Les éléments ci-dessous au commit `0df11b39` restent
+historiques ; les nouveaux parcours réels sont aussi rejoués au HEAD final.
+
+La relecture adverse utilise un nouveau Claude CLI Anthropic, avec uniquement
+le diff et les critères Plane. Son [reçu et les résolutions](AGENT-1034-adverse-review.json)
+conservent tous les constats. Le validateur de gouvernance courant confirme
+zéro bloquant ouvert, sans exemption. Seul le test de résolution a changé après
+la revue, conformément au contrat officiel de reçu.
+
+Les défauts réels corrigés sont le filtre d’organisation après pagination de
+`swarm nodes`, la course de cible entre snapshot et première sonde, les entrées
+Job/curseur invalides et les limites HTTP non numériques. Les filtres nodes
+existent aussi en MCP ; les alias racine `job list/get/events` sont qualifiés
+contre `maurice_swarm_jobs/job_get/logs`. L’ancien curseur HTTP à séquence seule
+reste compatible. Le scaffold invalide ne crée aucun dossier, le manifeste
+partiel est retiré sur erreur et le diagnostic MCP comporte du texte lisible.
+La régression de course utilise un exécutable Go, sans dépendance Python.
+
+La suite courte CLI/API/frontdoor/controllers et les tests complémentaires
+passent. Un nouveau plan partagé et son test PASSED 1/1, apply rejoué et verify
+sans dérive sont vérifiés sur le backend final. Une nouvelle lecture fictive
+front door est `completed`, avec un outil, zéro LLM et quota1 après les rejeux.
+Le lifecycle est de nouveau qualifié par Claude CLI : arrêt puis démarrage du
+seul runtime de test, running et ready. Les identifiants finaux sont dans le
+rapport JSON, sous `post_review`.
+
+Les réfutations documentées distinguent le nom historique du runtime et ses
+identifiants internes des domaines du plugin ; le résultat de test rejoué est
+explicitement marqué et ne prétend pas relancer un test ; les autorités MCP
+locale et front door restent distinctes. Le même résultat métier est vérifié
+avec le même grant, pas en élargissant un credential.
+
+La qualification Hanko historique garde son état expiré après délai, distinct
+du Workflow front door terminé. Le profil local exige un contexte lié à une
+organisation ; les copies privées de configuration sont supprimées à la fin
+normale de la session. Un arrêt brutal reste une limite de nettoyage locale,
+pas une qualification d’isolation OS. Aucun replay Claude Desktop ni release
+n’est revendiqué. La fiche reste In Progress jusqu’au closeout gouverné.
+
 ## Livré et vérifié
 
 - CLI `swarm status|start|stop|nodes|run|jobs|logs`, lectures `job list|get|events`.

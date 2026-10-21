@@ -1,0 +1,142 @@
+{
+  "schema": "agentmaurice.review_receipt/v1",
+  "ticket": "AGENT-1034",
+  "repo": "chatserver",
+  "head": "1bef58da3c2b88496c935cfc3a17a0b89b4adbbf",
+  "reviewer": "claude-sonnet-5-5",
+  "reviewer_family": "anthropic",
+  "author_families": [
+    "openai"
+  ],
+  "diff_sha256": "78bbdf79182d14db31c84a3aaae69968734ae5c1172e602c9545302d478e1e1b",
+  "criteria": "PLUG-01 à PLUG-05 applicables.\nPLUG-12 : chaque commande a son équivalent CLI et MCP, documenté, au même résultat métier.\nPLUG-13 : une commande sans domaine affiche l'accueil et ne lance aucun effet.\nPLUG-15 : aucun outil ni libellé\none\nne subsiste.\nPLUG-10 : rejeu dans le terminal Claude et dans l'onglet Code de Claude Desktop.",
+  "criteria_sha256": "502faf768f9e782062bcd6f763a68c48a76915bf4b2aee6b25cfbd7d3dbcc34f",
+  "reviewed_at": "2026-10-21T18:06:50Z",
+  "duration_seconds": 97.5,
+  "usage": {
+    "input_tokens": 2,
+    "cache_creation_input_tokens": 48702,
+    "cache_read_input_tokens": 2008,
+    "output_tokens": 12188,
+    "output_tokens_details": {
+      "thinking_tokens": 9299
+    },
+    "server_tool_use": {
+      "web_search_requests": 0,
+      "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+      "ephemeral_1h_input_tokens": 48702,
+      "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+      {
+        "input_tokens": 2,
+        "output_tokens": 12188,
+        "cache_read_input_tokens": 2008,
+        "cache_creation_input_tokens": 48702,
+        "cache_creation": {
+          "ephemeral_5m_input_tokens": 0,
+          "ephemeral_1h_input_tokens": 48702
+        },
+        "type": "message"
+      }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+  },
+  "findings": [
+    {
+      "severity": "blocking",
+      "title": "PLUG-15 : le libellé « One » subsiste dans la doc, l'aide CLI et l'environnement transmis",
+      "file": "apps/mauricecli/docs/client-control.md ; apps/mauricecli/internal/cli/cmd/swarm.go ; apps/mauricecli/internal/cli/cmd/client_mcp.go",
+      "breaking_input": "Rechercher « One » (insensible à la casse) dans la surface livrée. Exemples : `maurice swarm nodes --help`, la première ligne de client-control.md, la liste d'environnement de `invoke`.",
+      "expected": "Aucun outil ni libellé « one » ne subsiste (PLUG-15).",
+      "observed": "La doc dit « lifecycle du One local ». Le flag `--data-dir` de `swarm nodes` est décrit par « Optional existing One data directory… ». `ONE_VIEWER_DIST` est transmis aux enfants. Le diff s'exonère lui-même dans la doc (« PLUG-15 s'applique à cette surface de commandes, pas aux identifiants protocolaires »). Cette réserve n'est pas dans le critère. Les libellés visibles par l'utilisateur (doc, aide CLI) contiennent « One »."
+    },
+    {
+      "severity": "blocking",
+      "title": "`build test` peut afficher un succès sans lancer les tests (faux vert)",
+      "file": "apps/mauricecli/internal/cli/cmd/build.go (governedApplyCommand) ; docs/client-control.md",
+      "breaking_input": "`maurice build apply --plan P`, puis `maurice build test --plan P` sans clé explicite (ou MCP `maurice_build_apply` puis `maurice_build_test` avec le même plan).",
+      "expected": "`build test` exécute les tests bloquants et ne réussit que s'ils passent.",
+      "observed": "`build test` est exactement `build apply` sous un autre nom (même constructeur). La clé par défaut est « dérivée du plan et de son autorisation », donc probablement identique pour les deux verbes. La doc indique qu'un rejeu avec la même clé « reprend son résultat et ne relance pas les tests ». `build test` après `build apply` renvoie donc le résultat en cache sans rien exécuter. Le libellé « test » est trompeur. Ce point est déduit de la doc et du code, sans test qui le démontre."
+    },
+    {
+      "severity": "blocking",
+      "title": "PLUG-12 : des commandes CLI n'ont pas d'équivalent MCP du profil et ne sont pas documentées",
+      "file": "apps/mauricecli/internal/cli/cmd/job.go ; swarm.go ; docs/client-control.md",
+      "breaking_input": "`maurice job list|get|events` (commandes ajoutées par `addSingleJobCommands` sous `job`) ; `swarm jobs events` ; `swarm run`.",
+      "expected": "Chaque commande a un équivalent CLI et MCP documenté, au même résultat métier.",
+      "observed": "Le groupe `maurice job list|get|events` est ajouté sans ligne dans la table de correspondance. `swarm jobs events` n'a qu'un alias MCP indirect (`swarm_logs`). `swarm run` est mappé sur `maurice.execute`, qui exige un grant distinct et n'est pas dans le profil `client-mcp-stdio`. Le même appel MCP du profil ne produit donc pas le résultat du CLI."
+    },
+    {
+      "severity": "minor",
+      "title": "PLUG-10 et PLUG-13 : aucune preuve dans le diff",
+      "file": "(diff global)",
+      "breaking_input": "Chercher les fichiers du plugin (commandes slash, accueil du domaine) et une trace de rejeu dans le terminal Claude et dans l'onglet Code de Claude Desktop.",
+      "expected": "Une commande sans domaine affiche l'accueil sans effet (PLUG-13) ; un rejeu est tracé dans les deux clients (PLUG-10).",
+      "observed": "Le diff ne contient aucun fichier de plugin, aucun test de l'accueil, aucune trace de rejeu. PLUG-13 n'est affirmé que dans la doc. Côté CLI, `swarm jobs` sans verbe lance une lecture réseau (liste). Ce n'est pas un effet d'écriture, mais ça diffère de l'accueil."
+    },
+    {
+      "severity": "minor",
+      "title": "Le snapshot de configuration perd les credentials renouvelés ; il peut aussi rester sur disque",
+      "file": "apps/mauricecli/internal/cli/cmd/client_mcp.go (newClientMCPCmd)",
+      "breaking_input": "Un enfant CLI renouvelle le token d'accès ou de rafraîchissement (rotation) pendant la session. Ou bien le processus est tué (SIGKILL) avant `defer os.RemoveAll`.",
+      "expected": "Pas de perte du credential renouvelé ; pas de copie en clair durable de la configuration.",
+      "observed": "Les enfants lisent et écrivent la copie privée (`snapshotConfig`), pas la configuration réelle. Un refresh à rotation est perdu à la sortie, car la copie est supprimée, et la configuration d'origine garde un token consommé. Si le processus meurt sans exécuter le defer, la copie de la configuration, credential compris, reste dans le répertoire temporaire."
+    },
+    {
+      "severity": "minor",
+      "title": "Curseur d'événements : un curseur serveur opaque de type chaîne n'est pas réutilisable",
+      "file": "apps/mauricecli/internal/api/agent_jobs.go (normalizeEventCursor, eventCursorQuery)",
+      "breaking_input": "Réponse serveur `{\"events\":[...],\"next_cursor\":\"abc\"}`, puis `--cursor` avec la valeur réémise.",
+      "expected": "Le curseur renvoyé est réutilisable tel quel.",
+      "observed": "`normalizeEventCursor` renvoie le JSON brut, guillemets compris (`\"abc\"`). `eventCursorQuery` le rejette ensuite (`invalid event cursor`). Par ailleurs, le serveur accepte `?sequence=N` sans `event_id`, mais le client refuse `{\"sequence\":1}`."
+    },
+    {
+      "severity": "minor",
+      "title": "`swarm nodes --organization` : la pagination change de sens selon les options",
+      "file": "apps/mauricecli/internal/cli/cmd/swarm.go (swarmNodesProjectOrganization)",
+      "breaking_input": "`--organization X --offset 5` sans `--limit`, puis `--organization X` seul.",
+      "expected": "Une sémantique de pagination cohérente.",
+      "observed": "Sans filtre, `offset` s'applique côté serveur à toute la carte d'accès. Avec filtre, il s'applique localement aux ressources de l'organisation. Avec offset>0 et limit=0, la sortie est tronquée silencieusement à 100. Avec offset=0 et limit=0, tout est renvoyé. Le filtre déclenche en plus une requête supplémentaire quand limit≠pageLimit."
+    },
+    {
+      "severity": "minor",
+      "title": "Fragilités mineures du profil MCP et des tests",
+      "file": "apps/mauricecli/internal/cli/cmd/client_mcp.go ; client_mcp_test.go ; architecture.go ; app.go",
+      "breaking_input": "Machine sans python3 ; `{\"operations\":[null]}` ; contexte sans `organization_id` ; échec d'écriture du manifeste après `MkdirAll`.",
+      "expected": "Échecs explicites et tests autonomes.",
+      "observed": "Le test `TestClientSnapshotBaselineRefusesSwitchBeforeInitialProbe` exige python3 et n'est ignoré que sous Windows. `readArchitecturePlanOperations` accepte des opérations `null`. `clientTarget` refuse tout contexte sans `organization_id`, donc le profil ne démarre pas. `architecture plan` n'a pas d'idempotence : chaque rejeu crée un nouveau plan. Le répertoire créé par `MkdirAll(0700)` reste après un échec d'écriture. L'ordre des outils MCP est non déterministe (itération de map)."
+    }
+  ],
+  "resolutions": {
+    "1": {
+      "kind": "refute",
+      "reason": "PLUG-15 concerne les domaines et outils du plugin AGENT-1034. Aucun domaine /one, aucune commande maurice one et aucun outil maurice_one_* ne sont ajoutés : le catalogue reste swarm/build (PR54). AgentMaurice One demeure le nom du runtime existant demandé pour la qualification isolée. ONE_VIEWER_DIST est une variable protocolaire héritée nécessaire au serveur, pas un outil ni un libellé du catalogue du plugin. Supprimer ce contrat interne casserait le runtime et dépasse le périmètre de renommage des commandes. La documentation backend décrit honnêtement cette frontière, sans revendiquer une suppression de tous les identifiants internes."
+    },
+    "2": {
+      "kind": "refute",
+      "reason": "Le comportement est explicite, pas un faux vert : build apply et build test imposent --tests on et un plan persistant autorisé. Le premier apply exécute réellement le test bloquant ; le même plan et sa clé rejouent ensuite une preuve PASSED avec replayed=true et le même tests.run_id. C’est précisément l’idempotence exigée, et la documentation indique qu’un nouveau plan est requis pour une nouvelle campagne. Preuve réelle post-correction : post-review-final-mcp-build-test (appliqué, tests PASSED1/1), post-review-final-cli-build-apply-replay (replayed=true, même run), puis verify CLI/MCP verified=true/drift=false, plan dbcfuga4p5cn1nlbbk2g, run dbcfuga4p5cn1nlbbk5g. La clé native par défaut est déterministe dans spec.go, pas probablement générée aléatoirement."
+    },
+    "3": {
+      "kind": "refute",
+      "reason": "PLUG-12 exige le même résultat métier CLI/MCP, pas un seul credential ou catalogue. swarm run est une projection exacte de maurice.execute avec le même ref/input/key/hash et le même grant, documentée dans la table ; forcer cette écriture dans le profil opérateur élargirait les droits et violerait la séparation des autorités. La preuve réelle CLI/MCP puis ClaudeCLI/MCP retourne le même Job completed, même execution_id, résultat listed=true et quota1 après rejeux. job list/get/events sont des alias des mêmes constructeurs ajoutés sous swarm jobs et swarm logs : ils appellent les mêmes API publiques avec les mêmes paramètres. La pagination CLI swarm jobs events versus MCP swarm_logs est déjà contrôlée à limite1 et avec curseurs JSON/base64url. Les noms d’alias ne créent pas une nouvelle opération métier ; leur correspondance explicite et les preuves sont aussi consignées dans le rapport de PR54."
+    },
+    "8": {
+      "kind": "test",
+      "path": "apps/mauricecli/internal/cli/cmd/client_mcp_test.go"
+    }
+  },
+  "validation_at_final_head": {
+    "head": "fb0b0d679d01dd81ce94fa9e8a984d2833d80971",
+    "open_blocking": 0,
+    "test_only_after_review": [
+      "apps/mauricecli/internal/cli/cmd/client_mcp_test.go"
+    ],
+    "validator": "governance main 2a4b86d8f2e30c306830796d532fa2ac30e5e1d3 scripts/review_receipt.py problems/gate"
+  }
+}

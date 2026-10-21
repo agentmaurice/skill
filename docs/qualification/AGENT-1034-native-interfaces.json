@@ -301,5 +301,84 @@
     "no new Codex campaign; AGENT-613 historical evidence retained",
     "no Claude Desktop, marketplace, production or general release qualification",
     "public Hanko legacy job retrieval is qualified separately from completed frontdoor execution"
-  ]
+  ],
+  "post_review": {
+    "backend_final": "fb0b0d679d01dd81ce94fa9e8a984d2833d80971",
+    "merged_main": "69f34c96f6d1000288b07e4e033d8f67ed06d814",
+    "governance_snapshot": "2a4b86d8f2e30c306830796d532fa2ac30e5e1d3",
+    "reviewed_head": "1bef58da3c2b88496c935cfc3a17a0b89b4adbbf",
+    "reviewer": "claude-sonnet-5-5",
+    "reviewer_family": "anthropic",
+    "findings": 8,
+    "blocking_findings": 3,
+    "open_blocking": 0,
+    "resolutions": {
+      "1": {
+        "kind": "refute",
+        "reason": "PLUG-15 concerne les domaines et outils du plugin AGENT-1034. Aucun domaine /one, aucune commande maurice one et aucun outil maurice_one_* ne sont ajoutés : le catalogue reste swarm/build (PR54). AgentMaurice One demeure le nom du runtime existant demandé pour la qualification isolée. ONE_VIEWER_DIST est une variable protocolaire héritée nécessaire au serveur, pas un outil ni un libellé du catalogue du plugin. Supprimer ce contrat interne casserait le runtime et dépasse le périmètre de renommage des commandes. La documentation backend décrit honnêtement cette frontière, sans revendiquer une suppression de tous les identifiants internes."
+      },
+      "2": {
+        "kind": "refute",
+        "reason": "Le comportement est explicite, pas un faux vert : build apply et build test imposent --tests on et un plan persistant autorisé. Le premier apply exécute réellement le test bloquant ; le même plan et sa clé rejouent ensuite une preuve PASSED avec replayed=true et le même tests.run_id. C’est précisément l’idempotence exigée, et la documentation indique qu’un nouveau plan est requis pour une nouvelle campagne. Preuve réelle post-correction : post-review-final-mcp-build-test (appliqué, tests PASSED1/1), post-review-final-cli-build-apply-replay (replayed=true, même run), puis verify CLI/MCP verified=true/drift=false, plan dbcfuga4p5cn1nlbbk2g, run dbcfuga4p5cn1nlbbk5g. La clé native par défaut est déterministe dans spec.go, pas probablement générée aléatoirement."
+      },
+      "3": {
+        "kind": "refute",
+        "reason": "PLUG-12 exige le même résultat métier CLI/MCP, pas un seul credential ou catalogue. swarm run est une projection exacte de maurice.execute avec le même ref/input/key/hash et le même grant, documentée dans la table ; forcer cette écriture dans le profil opérateur élargirait les droits et violerait la séparation des autorités. La preuve réelle CLI/MCP puis ClaudeCLI/MCP retourne le même Job completed, même execution_id, résultat listed=true et quota1 après rejeux. job list/get/events sont des alias des mêmes constructeurs ajoutés sous swarm jobs et swarm logs : ils appellent les mêmes API publiques avec les mêmes paramètres. La pagination CLI swarm jobs events versus MCP swarm_logs est déjà contrôlée à limite1 et avec curseurs JSON/base64url. Les noms d’alias ne créent pas une nouvelle opération métier ; leur correspondance explicite et les preuves sont aussi consignées dans le rapport de PR54."
+      },
+      "8": {
+        "kind": "test",
+        "path": "apps/mauricecli/internal/cli/cmd/client_mcp_test.go"
+      }
+    },
+    "build": {
+      "final_plan": "dbcg2g24p5cgjgvbm01g",
+      "final_plan_hash": "a814d5bda51759b78ede4e435908e4b9393c2e5779ad82e2bd8590cf25b1fdd2",
+      "final_test_run": "dbcg2g24p5cgjgvbm04g",
+      "idempotency_key": "native-1034-final-build",
+      "qualified_spec_hash": "36eb72546e747206bb485f719401a3dda10579f3455aa227917f44a2a4493528"
+    },
+    "runtime": {
+      "runtime_ref": "workflow:dbcehma4p5cvd8sl2bug/native-list-proof@1.1",
+      "runtime_job_id": "dbcg2ga4p5cgjgvbm0pg",
+      "runtime_execution_id": "e8s7jmp38r8gl4tco9q0",
+      "runtime_plan_hash": "e89a5354ec1848ece91150b7beabc3a705f14cd630f8a6b8b45f63f14be76697",
+      "runtime_idempotency_key": "native-1034-runtime-post-review"
+    },
+    "runtime_assertions": {
+      "completed": true,
+      "tool_calls": 1,
+      "llm_calls": 0,
+      "used_effects_after_replay": 1
+    },
+    "lifecycle": {
+      "real_claude": true,
+      "process_exit": 0,
+      "model": "claude-sonnet-5-5",
+      "cli_version": "2.1.306",
+      "duration_seconds": 56.69
+    },
+    "tests": {
+      "short_packages": [
+        "CLI",
+        "API",
+        "frontdoor",
+        "controllers"
+      ],
+      "short_exit": 0,
+      "sequence_only_http_compatibility_exit": 0,
+      "go_only_snapshot_process_regression_exit": 0
+    },
+    "private_proof_sha256": {
+      "post-final-replay-records.json": "56657f264146eb0d50b222b702474045dce8f64db185c7cebcee8084c3fc2e8a",
+      "post-review-control-guards.json": "08c16d96851276a80393c0a35156cf52cb6141b9b21f63aa8a675ea20eb073a7",
+      "artifacts/post-final-aliases-parity.json": "3fc068267c6f0b6fd63cb14b33145e39b38c523201f2855a6fcf71c3f8414ad4",
+      "artifacts/post-final-swarm-list-run.json": "bb3fdca1b71cfbfac23905d12c3361688902941e94bcb9693f7d690c12c6d6ff",
+      "artifacts/post-final-swarm-list-mcp-replay.json": "21c816ee85ca9c388bacbd712eedcfb5fd4f386633a283c62ba8e2e77aa19e65",
+      "artifacts/post-final-swarm-list-quota-after.json": "3848748634e276fd5d2729dd9fd6916d3047f192f93065f6d67188e4118d0c7b",
+      "review-consolidated-tests.log": "0c1ecef3990d499955ff9e71a23a47fc9da93f34d8dcc69f6eba671a51d82b46",
+      "controller-compat-tests.log": "07ba0dcedbfdbea04bbed955d2194cce0b1776474c9e03908da48368cea3f1bf",
+      "snapshot-go-fixture-test.log": "cfd06ea6cad64a2a7ea8fb5fb6d1025bfa8d68aed62dc8cba8e938ac62e0bf56"
+    },
+    "final_common_receipt": "generated after this report commit; see PR54 and backend MR523"
+  }
 }
