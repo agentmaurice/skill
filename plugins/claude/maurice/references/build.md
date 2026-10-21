@@ -1,8 +1,9 @@
 # Build AgentMaurice depuis Claude
 
-Cette référence décrit le raccourci conversationnel « build » pour les
-interfaces publiques AgentMaurice V2. Il n'existe pas de commande publique
-`maurice build`. Un build est un parcours ciblé qui doit toujours nommer
+Cette référence décrit le raccourci conversationnel `maurice build` pour les
+interfaces CLI AgentMaurice V2 exposées dans le backend de qualification
+AGENT-1034. La qualification dépend du binaire et du One utilisés ; consulter les preuves AGENT-1034. La release générale reste distincte.
+Un build est un parcours ciblé qui doit toujours nommer
 l'organisation, l'Agent ou l'Application, l'environnement, le répertoire de
 projet et la source de connexion.
 
@@ -133,9 +134,17 @@ même Agent, avec un contexte autorisé : `spec init --agent-id <created-id>
 Ce scaffold ne déploie aucun Workflow ; un Agent `draft` n'est pas une
 livraison runtime. Si une Spec distante existe, utilise `spec pull`.
 
-Il n'existe pas de commande CLI publique `maurice architecture plan`. Le CLI
-expose seulement la lecture, l'approbation humaine, l'apply et la vérification
-d'un plan existant. N'invente pas cette commande.
+La commande CLI publique de préparation d'architecture est :
+
+```text
+maurice architecture plan --file <operations.json> \
+  [--organization <organization-id>] --json
+```
+
+Le fichier doit être un objet JSON contenant un tableau `operations`. Le plan
+est ensuite relu avec `architecture plan-get`, approuvé par le principal
+humain et appliqué avec le `plan_hash` et l'`approval_id` exacts. Ne confonds
+pas ce rail avec `maurice build plan`, qui prépare un plan Agent Spec.
 
 ### Agent existant
 
@@ -299,6 +308,11 @@ admission serveur limitée par sa portée, son expiry, ses quotas et ses
 preuves ; il n'est pas une approbation automatique inventée par l'agent.
 `--tests off` est interdit en production et exige `--skip-reason` hors
 production. Utilise `--tests auto` pour exécuter le test plan attaché au plan.
+
+La façade `maurice build apply` reprend ce rail mais exige explicitement
+`--plan <plan-id-ou-fichier>` et `--tests on`. `maurice build test` impose les
+mêmes deux paramètres ; il sert à qualifier le test plan du plan approuvé.
+Un plan absent ou `--tests auto|off` sont refusés avant l'appel serveur.
 
 Arrête sur `approval_required`, `approval_plan_mismatch`, une cible non
 prouvée, un plan stale, une admission de mandat refusée, une erreur d'apply ou
@@ -551,3 +565,25 @@ sortie ou le statut structuré, les identifiants `plan_id`/`plan_hash`/job si
 retournés, les tests exécutés et la preuve de `verify`. Distingue toujours
 raccordement, check, plan, décision humaine, apply, tests, verify, exécution
 Workflow et qualification publique.
+
+## Reprendre une Spec déjà initialisée
+
+Une création d’Agent par plan d’architecture peut déjà initialiser sa Spec.
+`build new agent` renvoie alors `remote_agent_spec_exists` ; conserver cet
+Agent et utiliser le pull explicite, sans recommencer la création :
+
+```text
+maurice build pull --agent-id <agent-id> --agent-alias <alias> \
+  --env <environment> --dir <project-directory> --json
+```
+
+Le profil local expose `maurice_build_pull` avec `dir`, `agent_id`,
+`agent_alias` et `env`. L’opt-in `--allow-local-write` est nécessaire.
+Aucun `force` n’est exposé par MCP : les modifications locales restent protégées.
+Les paramètres de cible viennent du plan appliqué ou du contexte explicite.
+
+Avant un appel du profil natif, lire `maurice_client_context` et comparer sa
+cible publique avec l’intention. Pour un pull vers un dossier vide, les trois
+paramètres `agent_id`, `agent_alias` et `env` sont obligatoires. Le serveur
+fournit les fichiers et la classification ; ne pas fabriquer un fichier
+d’environnement pour forcer une policy plus permissive.

@@ -1,10 +1,33 @@
 # Référence opératoire : intentions swarm
 
-Ce document décrit les interfaces publiques existantes pour les intentions
-conversationnelles `swarm status`, `swarm nodes`, `swarm run`, `swarm jobs`,
-`swarm logs`, `start` et `stop`. Il n'existe pas de groupe natif
-`maurice swarm`, ni d'outil `maurice_swarm_*`. Ne fabrique pas une façade, une
-route privée ou un accès direct à la base.
+Ce document décrit les interfaces CLI exposées dans le backend de qualification
+AGENT-1034 pour les intentions conversationnelles `swarm status`, `swarm
+nodes`, `swarm run`, `swarm jobs`, `swarm logs`, `start` et `stop`. La qualification dépend du binaire et du One utilisés ; consulter les preuves AGENT-1034. La release générale reste distincte. Ne fabrique pas
+une route privée, un accès direct à la base ou un outil MCP absent du catalogue.
+
+Le groupe natif CLI est `maurice swarm`. Le profil optionnel
+`maurice client-mcp-stdio` ne constitue pas un nouveau backend : il projette
+seulement les opérations locales explicitement autorisées par sa configuration.
+Par défaut il expose les lectures ; `--allow-local-write` ajoute les scaffolds
+et apply locaux, et `--allow-local-lifecycle` ajoute start/stop. Il ne fournit
+pas `swarm run`, n'accepte pas de shell RPC et n'effectue aucune approbation.
+
+Exemples de commandes natives à privilégier :
+
+```text
+maurice swarm status --json
+maurice swarm nodes --json
+maurice swarm run <ref> --input-file <input.json> --idempotency-key <key> --json
+maurice swarm jobs list --json
+maurice swarm jobs get <job-id> --json
+maurice swarm jobs events <job-id> --json
+maurice swarm logs <job-id> --json
+maurice swarm start --data-dir <one-data-dir> --json
+maurice swarm stop --data-dir <one-data-dir> --json
+```
+
+Les alias historiques `maurice status`, `maurice node show`, `maurice start`
+et `maurice stop` restent utilisables lorsque leur cible explicite est adaptée.
 
 Toutes les actions doivent nommer leur cible. Pour une commande locale,
 fournis `--data-dir <path>` quand le chemin n'est pas déjà explicite. Pour un
@@ -150,13 +173,35 @@ GET /api/v2/organizations/:organizationId/jobs
 ```
 
 Elle est réservée aux intégrations autorisées par clé d'Application ou aux
-routes humaines Hanko. Le CLI public n'a pas de `maurice job list` et le Skill
-ne l'invoque pas en HTTP brut. Sans `job_id` ou `graph_id`, signale donc ce gap
-au lieu d'inventer une liste.
+routes humaines Hanko. `maurice swarm jobs list` existe comme projection CLI,
+mais son accès humain peut exiger le principal Hanko ; le principal opérateur
+local ne peut pas s'en attribuer les droits. Un refus `404` opaque ou une
+absence de projection signifie que les droits manquent : n'élargis pas le
+mandat et ne remplace pas ce refus par une route HTTP brute. Sans `job_id` ou
+`graph_id`, signale donc la limite au lieu d'inventer une liste.
 
 Sur D1, les équivalents sont `inception_tasks_submit`,
 `inception_tasks_get` et `inception_tasks_cancel`. `get` exige exactement un
 `job_id` ou un `graph_id`; `cancel` exige en plus `revision` pour un graphe.
+
+Le groupe natif `maurice swarm jobs` expose aussi une liste bornée et paginée,
+ainsi que `get` et `events` sur un Job explicite :
+
+```text
+maurice swarm jobs [--organization <org-id>] [--application <app-id>] \
+  [--cursor <cursor>] [--limit <1..100>] --json
+maurice swarm jobs list [--organization <org-id>] [--application <app-id>] \
+  [--cursor <cursor>] [--limit <1..100>] --json
+maurice swarm jobs get <job-id> [--organization <org-id>] \
+  [--application <app-id>] --json
+maurice swarm jobs events <job-id> [--organization <org-id>] \
+  [--application <app-id>] [--cursor <cursor>] [--limit <1..100>] --json
+```
+
+La liste est une projection autorisée et paginée, pas un inventaire implicite
+de toutes les organisations. Le profil `client-mcp-stdio` reprend ces
+opérations avec les outils `maurice_swarm_jobs`, `maurice_swarm_job_get` et
+`maurice_swarm_logs` lorsqu'il est lancé avec les droits correspondants.
 
 ## `swarm logs`
 
@@ -166,6 +211,11 @@ un fichier de logs arbitraire :
 ```text
 maurice job graph events <graph-id> --after <sequence> --json
 ```
+
+Pour D1, le curseur est un objet `{ "sequence": <number>, "event_id": "" }`;
+la CLI le sérialise selon son contrat de page et le serveur peut le représenter
+en chaîne/base64url. Réutilise exactement le curseur retourné, sans le décoder,
+le fabriquer ou le remplacer par un offset inventé.
 
 Répète l'appel avec le curseur `sequence` renvoyé et arrête-toi lorsqu'il n'y
 a plus de page ou lorsque le graphe est terminal. `--follow` existe pour le

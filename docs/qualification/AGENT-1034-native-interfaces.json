@@ -1,0 +1,303 @@
+{
+  "schema": "agentmaurice.client_qualification/v1",
+  "ticket": "AGENT-1034",
+  "plane_id": "19afd14d-949f-400a-8051-98cd5485b080",
+  "recorded_at": "2026-10-21T17:42:11.626137+00:00",
+  "backend_commit": "0df11b39c716d710ed01fd405db2a4da90b0294f",
+  "sandbox": "agent-1034-interfaces",
+  "api_port": 43700,
+  "frontdoor_port": 43731,
+  "os_started": false,
+  "archive_sha256": "6d112a1797faf80a0084ad0217937a9910de9daf59ee4214a251cc60068536ba",
+  "canonical_skill": {
+    "source": "skill/agentmaurice",
+    "version": "2.0.39",
+    "content_hash": "ef85a08bc3e34b153e1db7667524326c53e2701b11c10d1b2a5f2473508eb96d",
+    "contract_bundle_sha256": "7edd3dc380babcdad0fd999dc15faa50ee55aabcf655a20b2fe876193d439c2d"
+  },
+  "governance": {
+    "plane": "In Progress",
+    "work_start_exit": 0,
+    "wip_waiver": "explicit targeted continuation; all other gates preserved",
+    "receipt": "generated after this report commit at the final two repository heads; see PR54"
+  },
+  "build": {
+    "qualified_spec_hash": "36eb72546e747206bb485f719401a3dda10579f3455aa227917f44a2a4493528",
+    "final_plan": "dbcfena4p5cngjnub190",
+    "final_plan_hash": "65cd0158001dd6eaeff72d15c1cc6043f9d915a1689d31370ff895dfde418af6",
+    "final_test_run": "dbcfeni4p5cngjnub1og",
+    "idempotency_key": "native-1034-final-build"
+  },
+  "runtime": {
+    "runtime_ref": "workflow:dbcehma4p5cvd8sl2bug/native-list-proof@1.1",
+    "runtime_job_id": "dbcffm24p5ch4u6j1l6g",
+    "runtime_execution_id": "q37eoearbp89mjs3rns0",
+    "runtime_plan_hash": "e89a5354ec1848ece91150b7beabc3a705f14cd630f8a6b8b45f63f14be76697",
+    "runtime_idempotency_key": "native-1034-swarm-list-versioned"
+  },
+  "runtime_assertions": {
+    "status": "completed",
+    "result": {
+      "listed": true
+    },
+    "tool_calls": 1,
+    "llm_calls": 0,
+    "used_effects_after_replays": 1
+  },
+  "public_jobs": {
+    "job_id": "dbcfh424p5ch4u6j1mgg",
+    "status": "blocked",
+    "blocked_reason": "validation_failed",
+    "legacy_output_contract": "ok:true; Workflow output listed:true",
+    "parity_exception": "snapshot revision changes between sequential server reads; other captured fields equal",
+    "event_cursor_page1": {
+      "sequence": 1,
+      "event_id": "dbcfh424p5ch4u6j1mhg"
+    },
+    "page_limit_tested": [
+      1,
+      2
+    ],
+    "cursor_encodings": [
+      "compact JSON string",
+      "base64url JSON"
+    ]
+  },
+  "catalogues": {
+    "native_default_readonly": 10,
+    "native_with_explicit_opt_ins": 21,
+    "runtime_frontdoor": 3,
+    "D1_unchanged": 5
+  },
+  "claude_cases": [
+    {
+      "case": "control",
+      "process_exit": 0,
+      "duration_seconds": 43.29,
+      "model": "claude-sonnet-5-5",
+      "claude_code_version": "2.1.306",
+      "tools": [
+        {
+          "name": "Skill",
+          "expected_error": false
+        },
+        {
+          "name": "Read",
+          "expected_error": false
+        },
+        {
+          "name": "mcp__maurice_local__maurice_client_context",
+          "expected_error": false
+        },
+        {
+          "name": "Read",
+          "expected_error": false
+        },
+        {
+          "name": "Read",
+          "expected_error": false
+        },
+        {
+          "name": "Bash",
+          "expected_error": false
+        },
+        {
+          "name": "Bash",
+          "expected_error": false
+        },
+        {
+          "name": "Bash",
+          "expected_error": false
+        },
+        {
+          "name": "Bash",
+          "expected_error": false
+        },
+        {
+          "name": "mcp__maurice_local__maurice_swarm_status",
+          "expected_error": false
+        },
+        {
+          "name": "mcp__maurice_local__maurice_swarm_nodes",
+          "expected_error": false
+        },
+        {
+          "name": "mcp__maurice_local__maurice_swarm_jobs",
+          "expected_error": false
+        },
+        {
+          "name": "Bash",
+          "expected_error": false
+        },
+        {
+          "name": "mcp__maurice_local__maurice_build_new_module",
+          "expected_error": false
+        },
+        {
+          "name": "Bash",
+          "expected_error": false
+        },
+        {
+          "name": "mcp__maurice_local__maurice_build_new_application",
+          "expected_error": false
+        }
+      ],
+      "assertions_source_sha256": "dcf6398adcecb1b104abc671ddab7cad7e3d1e2541f915aecbb9e130b52b8eb9"
+    },
+    {
+      "case": "builder-final",
+      "process_exit": 0,
+      "duration_seconds": 37.25,
+      "model": "claude-sonnet-5-5",
+      "claude_code_version": "2.1.306",
+      "tools": [
+        {
+          "name": "Read",
+          "expected_error": false
+        },
+        {
+          "name": "Read",
+          "expected_error": false
+        },
+        {
+          "name": "Read",
+          "expected_error": false
+        },
+        {
+          "name": "mcp__maurice_local__maurice_client_context",
+          "expected_error": false
+        },
+        {
+          "name": "mcp__maurice_local__maurice_build_check",
+          "expected_error": false
+        },
+        {
+          "name": "Bash",
+          "expected_error": false
+        },
+        {
+          "name": "Bash",
+          "expected_error": false
+        },
+        {
+          "name": "mcp__maurice_local__maurice_build_test",
+          "expected_error": false
+        },
+        {
+          "name": "Bash",
+          "expected_error": false
+        },
+        {
+          "name": "mcp__maurice_local__maurice_build_verify",
+          "expected_error": false
+        }
+      ],
+      "assertions_source_sha256": "dcf6398adcecb1b104abc671ddab7cad7e3d1e2541f915aecbb9e130b52b8eb9"
+    },
+    {
+      "case": "lifecycle-final",
+      "process_exit": 0,
+      "duration_seconds": 64.06,
+      "model": "claude-sonnet-5-5",
+      "claude_code_version": "2.1.306",
+      "tools": [
+        {
+          "name": "Skill",
+          "expected_error": false
+        },
+        {
+          "name": "mcp__maurice_local__maurice_client_context",
+          "expected_error": false
+        },
+        {
+          "name": "Read",
+          "expected_error": false
+        },
+        {
+          "name": "Read",
+          "expected_error": false
+        },
+        {
+          "name": "Bash",
+          "expected_error": false
+        },
+        {
+          "name": "Bash",
+          "expected_error": false
+        },
+        {
+          "name": "mcp__maurice_local__maurice_swarm_start",
+          "expected_error": false
+        },
+        {
+          "name": "mcp__maurice_local__maurice_swarm_status",
+          "expected_error": false
+        },
+        {
+          "name": "Bash",
+          "expected_error": false
+        }
+      ],
+      "assertions_source_sha256": "dcf6398adcecb1b104abc671ddab7cad7e3d1e2541f915aecbb9e130b52b8eb9"
+    },
+    {
+      "case": "runtime-final",
+      "process_exit": 0,
+      "duration_seconds": 23.28,
+      "model": "claude-sonnet-5-5",
+      "claude_code_version": "2.1.306",
+      "tools": [
+        {
+          "name": "Read",
+          "expected_error": false
+        },
+        {
+          "name": "Bash",
+          "expected_error": false
+        },
+        {
+          "name": "mcp__maurice_runtime__maurice_execute",
+          "expected_error": false
+        },
+        {
+          "name": "mcp__maurice_runtime__maurice_explain",
+          "expected_error": false
+        }
+      ],
+      "assertions_source_sha256": "dcf6398adcecb1b104abc671ddab7cad7e3d1e2541f915aecbb9e130b52b8eb9"
+    },
+    {
+      "case": "revocation-final",
+      "process_exit": 0,
+      "duration_seconds": 16.54,
+      "model": "claude-sonnet-5-5",
+      "claude_code_version": "2.1.306",
+      "tools": [
+        {
+          "name": "Bash",
+          "expected_error": true
+        }
+      ],
+      "assertions_source_sha256": "dcf6398adcecb1b104abc671ddab7cad7e3d1e2541f915aecbb9e130b52b8eb9"
+    }
+  ],
+  "private_evidence_sha256": {
+    "final-replay-records.json": "3602d9e571850a5d6dde214dbc3e20ea22b9a5663a14cf6557366485944447d4",
+    "final-build-c8bda712-records.json": "94d6cb8295d99c81e8b4fc0aa68025cbba9baf82c8aab134c43deb9973743a8a",
+    "control-guards.json": "08c16d96851276a80393c0a35156cf52cb6141b9b21f63aa8a675ea20eb073a7",
+    "revocation-records.json": "c8c1538c0a83aebc95c796d66c8936f23de06cac9f71f9b371d19f2829f45a51",
+    "artifacts/swarm-list-run.json": "4dc756411d8e16805e9d35309b5735d61df6a846969d41bcc7af1ce287ffab7f",
+    "artifacts/swarm-list-mcp-replay.json": "488bc4fb5b8abfa6611d5a46c1498b064440e75590ed50a268cf60ee75cab029",
+    "artifacts/swarm-list-quota-after.json": "3df93700d4dfb388e6e79d9bbd8a35eff7ab5788f4e77c02e96f82717ed109c7",
+    "artifacts/jobs-parity-final.json": "b5cff25db135d3876d383d038bcbbbe52289cdc5e882949fda29205df6f519f2",
+    "artifacts/list-repaired-lifecycle.json": "8f9f3412d002d969486528ba5e1db9b63c9eb4be1fe50fdf85c83d70f28bd433"
+  },
+  "limits": [
+    "local native control uses owner-selected CLI credential; it is not a remote frontdoor grant extension",
+    "nodes is a principal access projection, not generic fleet inventory",
+    "fresh third-party HTTP MCP SDK may return its own authentication error; HTTP401 preserved",
+    "no new Codex campaign; AGENT-613 historical evidence retained",
+    "no Claude Desktop, marketplace, production or general release qualification",
+    "public Hanko legacy job retrieval is qualified separately from completed frontdoor execution"
+  ]
+}

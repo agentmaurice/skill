@@ -65,6 +65,27 @@ Les outils du plugin portent le préfixe `maurice_` (ou les trois noms publics
 Inception restent ceux réellement publiés par le catalogue ; ne les renomme
 pas côté modèle et ne fabrique jamais un outil absent.
 
+Le binaire CLI AGENT-1034 expose aussi les groupes natifs `maurice swarm` et
+`maurice build`. Ils sont disponibles dans le code de qualification, mais
+dépendent de la version installée. Lire les preuves AGENT-1034 avant de
+conclure à une qualification ; la release générale reste distincte. Le profil
+optionnel `maurice client-mcp-stdio` projette une liste fermée de ces commandes
+locales en MCP ; il exige une configuration, un contexte et un workspace
+explicitement choisis par le propriétaire. Il n'expose ni shell RPC ni
+approbation et n'élargit aucun droit.
+
+Son invocation explicite est :
+
+```text
+maurice --config <private-config> --context <context> client-mcp-stdio \
+  --workspace-root <workspace> [--data-dir <one-data-dir>] \
+  [--server-bin <server-binary>] [--allow-local-write] \
+  [--allow-local-lifecycle]
+```
+
+`--data-dir` et `--server-bin` sont requis avec l'opt-in lifecycle et doivent
+être absolus. Le client MCP ne lit ni n'imprime de secret.
+
 ## Doctor
 
 Pour diagnostiquer la porte MCP locale, les deux options sont obligatoires et
@@ -87,13 +108,14 @@ AgentMaurice. Ne les confonds pas avec les commandes d'usine du domaine `dev`.
 
 | Domaine | Commandes | Guide à lire avant l'appel |
 | --- | --- | --- |
-| `swarm` | `status`, `nodes`, `run`, `jobs`, `logs`, `start`, `stop` | [Swarm](references/swarm.md) |
-| `build` | `new`, `check`, `plan`, `apply`, `verify`, `test` | [Build](references/build.md) |
+| `swarm` | `status`, `start`, `stop`, `nodes`, `run`, `jobs list|get|events`, `logs` | [Swarm](references/swarm.md) |
+| `build` | `new module|application|agent`, `check`, `plan`, `apply`, `test`, `verify` | [Build](references/build.md) |
 
 Ces commandes sont des intentions conversationnelles. Utilise les invocateurs
-publics du guide ; n'appelle pas de groupe natif `maurice swarm` ou
-`maurice build` qui n'est pas présent dans l'aide du binaire. N'installe pas
-une CLI lorsque la connexion MCP autorisée suffit.
+publics du guide et vérifie l'aide du binaire réellement ciblé. N'installe pas
+une CLI lorsque la connexion MCP autorisée suffit. Les interfaces nouvellement
+exposées dans le backend AGENT-1034 ne sont pas encore une preuve de release
+générale.
 
 Pour une commande inconnue ou une cible manquante, présente la syntaxe et
 l'information requise avant tout effet. `swarm jobs` sans ID montre seulement
@@ -116,3 +138,9 @@ cible explicite, le code de sortie, le statut structuré et la preuve obtenue.
 Sépare toujours raccordement, plan, approbation, apply, verify, exécution et
 qualification. Si l'interface demandée n'existe pas, indique l'invocateur
 public le plus proche et le manque exact, sans fabriquer une équivalence.
+
+Pour le préflight du profil natif, `maurice_client_context` renvoie la cible
+publique validée, sans credential. Après une création d’Agent ayant déjà
+initialisé sa Spec, préférer `maurice build pull` / `maurice_build_pull` à une
+seconde initialisation. Un dossier vide exige `agent_id`, `agent_alias` et
+`env` explicites ; le serveur fournit les fichiers et leur classification.
