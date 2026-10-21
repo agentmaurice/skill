@@ -61,6 +61,57 @@ project's native skill directory. Cursor, Windsurf, and generic clients may use
 the bootstrap prompt and MCP contract when they do not expose a stable native
 skill format.
 
+## Codex Agent Plugin (privé)
+
+```bash
+python3 scripts/build_client_plugin.py --client codex --output /tmp/maurice-plugin
+codex plugin marketplace add /tmp/maurice-plugin
+codex plugin add maurice@maurice-local
+```
+
+Le paquet contient le Skill canonique et `use-maurice`. Il réutilise le MCP
+déjà connecté et ne démarre pas le One ni ne crée de mandat. Si la connexion
+manque, le Skill guide explicitement `maurice assistant connect codex` avec un
+fichier de jeton privé. La qualification sur un One réel est séparée du
+packaging.
+
+Pour les cartes humaines, conserver aussi l’URL explicite de l’accueil du One.
+Le port MCP ne permet pas de déduire le port de cette page. Si le serveur ne
+retourne qu’une référence d’action, fournir cette origine au Skill pour obtenir
+le lien documenté ; la décision reste dans l’interface humaine existante.
+
+## Vocabulaire et parcours Codex
+
+Dans Codex, l'accueil et l'usage passent par `$use-maurice` (sans syntaxe
+Claude) : le guide enchaîne `maurice.search`, `maurice.explain`, puis
+`maurice.execute` avec une référence exacte, le `plan_hash` attendu et une
+`idempotency_key`. Les mêmes opérations sont disponibles par les commandes
+CLI publiques `maurice search`, `maurice explain` et `maurice execute`.
+
+Pour un diagnostic de connexion, utiliser :
+
+```bash
+maurice doctor --mcp-endpoint <endpoint> --mcp-token-file <token-file> --json
+```
+
+Les champs `checked` et `ok` indiquent seulement la connexion et la découverte
+du catalogue MCP ; ils ne prouvent pas une exécution, une approbation humaine
+ou une qualification métier.
+
+Si le MCP manque, le branchement explicite est :
+
+```bash
+maurice assistant connect codex \
+  --endpoint <endpoint> \
+  --config-file <config> \
+  --token-file <token-file>
+```
+
+Le chemin du fichier de jeton reste privé et son contenu n'est jamais lu dans
+le parcours documentaire. AGENT-613 ne livre pas de commande d'installation
+automatique, de nouveau wrapper ou serveur MCP, de mode Claude, de build de
+nouveaux Agents/Workflows, ni le lifecycle du swarm.
+
 ## Verify
 
 Confirm that the client can invoke `$agentmaurice` and that the following

@@ -1,0 +1,589 @@
+{
+  "ticket": "AGENT-613",
+  "date": "2026-10-21",
+  "platform": {
+    "os": "macOS 27.0.1 (26A434)",
+    "codex_cli": "0.163.0",
+    "model": "gpt-6.1-sol",
+    "plugin": "maurice 0.1.0",
+    "backend_source_sha": "4fd020849d7fa52361d371bd5dfbfceb48991e3c",
+    "one_version": "plugin-qualification-4fd02084",
+    "skill": {
+      "source": "skill/agentmaurice",
+      "version": "2.0.39",
+      "content_hash": "ef85a08bc3e34b153e1db7667524326c53e2701b11c10d1b2a5f2473508eb96d",
+      "contract_bundle_sha256": "7edd3dc380babcdad0fd999dc15faa50ee55aabcf655a20b2fe876193d439c2d"
+    },
+    "runtime_skill_sha256": "c4e3f0003e5acfaf35e9349dd742871444598d4b9e4bb5a2a3a6457ce3a6a5e6",
+    "archive_sha256": "3a26bd9977ab40b9651ccee765642bfcb31c976024d108e0c602c07b4c5472f8"
+  },
+  "scenarios": {
+    "codex-real-qualified": {
+      "final_message": "Écriture terminée sur le Maurice connecté : `recorded: true`.\n\n- Fichier : `/qualification/codex-real.txt`\n- Contenu : `Codex plugin réel`\n- Job : `dbcb83a4p5cn1ijqabt0`\n- Exécution : `mr5r41acogtsdj3tvc10`\n- Clé d’idempotence : `agent-613-codex-real-1`\n\nLe Workflow a effectué l’écriture puis la relecture, sans demander de décision humaine.",
+      "calls": [
+        {
+          "tool": "maurice.search",
+          "result": {
+            "visible_count": 2
+          }
+        },
+        {
+          "tool": "maurice.explain",
+          "result": {
+            "plan_hash": "5a46fdf300ba3f57df50f992a990c6c9f8a0228b1a0788b07eea0931c523e200",
+            "usage_summary": {
+              "cost": null,
+              "duration_ms": null,
+              "input_tokens": null,
+              "llm_calls": null,
+              "method": "median",
+              "output_tokens": null,
+              "sample_size": 0,
+              "source": "agent_job_results",
+              "tool_calls": null
+            }
+          }
+        },
+        {
+          "tool": "maurice.execute",
+          "result": {
+            "execution_id": "mr5r41acogtsdj3tvc10",
+            "job_id": "dbcb83a4p5cn1ijqabt0",
+            "result": {
+              "message": "Codex plugin réel",
+              "path": "/qualification/codex-real.txt",
+              "recorded": true
+            },
+            "status": "completed",
+            "usage_summary": {
+              "duration_ms": 136,
+              "tool_calls": 2,
+              "llm_calls": 0,
+              "input_tokens": 0,
+              "output_tokens": 0
+            }
+          }
+        }
+      ],
+      "transcript_sha256": "80380ecd45c1a60028e21616025f97bbe11d4edd5667a269587f2a796ee5c9f0"
+    },
+    "codex-replay-after-restart": {
+      "final_message": "Maurice confirme l’enregistrement : `recorded: true`, statut `completed`.\n\n- Fichier : `/qualification/codex-real.txt`\n- Contenu : « Codex plugin réel »\n- Job : `dbcb83a4p5cn1ijqabt0`\n- Exécution : `mr5r41acogtsdj3tvc10`\n- Clé d’idempotence : `agent-613-codex-real-1`\n\nLe Workflow prévoit l’écriture puis la relecture. Aucune décision humaine n’a été demandée.",
+      "calls": [
+        {
+          "tool": "maurice.search",
+          "result": {
+            "visible_count": 2
+          }
+        },
+        {
+          "tool": "maurice.explain",
+          "result": {
+            "plan_hash": "5a46fdf300ba3f57df50f992a990c6c9f8a0228b1a0788b07eea0931c523e200",
+            "usage_summary": {
+              "cost": {
+                "amount_minor": 0,
+                "cost_sample_size": 1,
+                "currency": "EUR",
+                "status": "qualified_zero"
+              },
+              "duration_ms": 136,
+              "input_tokens": 0,
+              "llm_calls": 0,
+              "method": "median",
+              "output_tokens": 0,
+              "sample_size": 1,
+              "source": "agent_job_results",
+              "tool_calls": 2
+            }
+          }
+        },
+        {
+          "tool": "maurice.execute",
+          "result": {
+            "execution_id": "mr5r41acogtsdj3tvc10",
+            "job_id": "dbcb83a4p5cn1ijqabt0",
+            "result": {
+              "message": "Codex plugin réel",
+              "path": "/qualification/codex-real.txt",
+              "recorded": true
+            },
+            "status": "completed",
+            "usage_summary": {
+              "duration_ms": 136,
+              "tool_calls": 2,
+              "llm_calls": 0,
+              "input_tokens": 0,
+              "output_tokens": 0
+            }
+          }
+        }
+      ],
+      "transcript_sha256": "7754f8b13561ac10b87a6253a32f22648f3227a67b738dd6bd4896fa748974a5"
+    },
+    "codex-human-pending": {
+      "final_message": "La demande est en attente humaine (`waiting`). Aucune action du Workflow n’a été exécutée ; la preuve n’est pas encore enregistrée.\n\n- Surface humaine : `personal`, pour `local-operator`.\n- Référence : `pending_action:ha_dbcb8r24p5cn1ijqadhg`.\n- Carte : « Autoriser le démarrage ». Un accord distinct sera ensuite requis avant l’écriture.\n- Clé : `agent-613-human-1`.\n- Entrée conservée : `{\"path\":\"/qualification/codex-human.txt\",\"message\":\"Accord humain Codex\"}`.\n\nJe m’arrête ici, sans approuver aucune carte.",
+      "calls": [
+        {
+          "tool": "maurice.search",
+          "result": {
+            "visible_count": 3
+          }
+        },
+        {
+          "tool": "maurice.explain",
+          "result": {
+            "plan_hash": "71cfe733515bcc53c9365ad00afbc1703230cf7cacfe97be6054cbcf4a8812d5",
+            "usage_summary": {
+              "cost": null,
+              "duration_ms": null,
+              "input_tokens": null,
+              "llm_calls": null,
+              "method": "median",
+              "output_tokens": null,
+              "sample_size": 0,
+              "source": "agent_job_results",
+              "tool_calls": null
+            }
+          }
+        },
+        {
+          "tool": "maurice.execute",
+          "result": {
+            "action_id": "ha_dbcb8r24p5cn1ijqadhg",
+            "approval_phase": "personal",
+            "approval_ref": "pending_action:ha_dbcb8r24p5cn1ijqadhg",
+            "approval_surface": "personal",
+            "plan_hash": "71cfe733515bcc53c9365ad00afbc1703230cf7cacfe97be6054cbcf4a8812d5",
+            "status": "pending"
+          }
+        },
+        {
+          "tool": "maurice.explain",
+          "result": {
+            "action_id": "ha_dbcb8r24p5cn1ijqadhg",
+            "approval_surface": "personal",
+            "plan_hash": "71cfe733515bcc53c9365ad00afbc1703230cf7cacfe97be6054cbcf4a8812d5",
+            "status": "waiting"
+          }
+        }
+      ],
+      "transcript_sha256": "a9fd10e3ba3e2a50f5bb2bd8323a6c28cd92bfe7dc55c6c57b8347391287650d"
+    },
+    "codex-human-resume": {
+      "final_message": "Le rejeu identique avec la clé `agent-613-human-1` attend un nouvel accord humain avant l’étape `write`. L’écriture reste en attente.\n\n- Référence : `pending_action:ha_dbcbcoi4p5cn9l46j4lg`\n- Surface humaine : `personal`\n- État : `waiting`\n\nJe m’arrête ici, sans approuver la carte.",
+      "calls": [
+        {
+          "tool": "maurice.explain",
+          "result": {
+            "action_id": "ha_dbcb8r24p5cn1ijqadhg",
+            "approval_surface": "personal",
+            "decision": "approved",
+            "plan_hash": "71cfe733515bcc53c9365ad00afbc1703230cf7cacfe97be6054cbcf4a8812d5",
+            "status": "completed"
+          }
+        },
+        {
+          "tool": "maurice.search",
+          "result": {
+            "visible_count": 3
+          }
+        },
+        {
+          "tool": "maurice.explain",
+          "result": {
+            "plan_hash": "71cfe733515bcc53c9365ad00afbc1703230cf7cacfe97be6054cbcf4a8812d5",
+            "usage_summary": {
+              "cost": null,
+              "duration_ms": null,
+              "input_tokens": null,
+              "llm_calls": null,
+              "method": "median",
+              "output_tokens": null,
+              "sample_size": 0,
+              "source": "agent_job_results",
+              "tool_calls": null
+            }
+          }
+        },
+        {
+          "tool": "maurice.execute",
+          "result": {
+            "action_id": "ha_dbcbcoi4p5cn9l46j4lg",
+            "approval_phase": "workflow_step",
+            "approval_ref": "pending_action:ha_dbcbcoi4p5cn9l46j4lg",
+            "approval_surface": "personal",
+            "execution_id": "u83a5ahl3o7ro714to3g",
+            "job_id": "dbcbcoi4p5cn9l46j3u0",
+            "plan_hash": "71cfe733515bcc53c9365ad00afbc1703230cf7cacfe97be6054cbcf4a8812d5",
+            "status": "pending",
+            "step_plan_hash": "fc922e411d5ac6862d03af50033f0d4e89f6f3b0e0f560c30cac934ed0f73ed4"
+          }
+        },
+        {
+          "tool": "maurice.explain",
+          "result": {
+            "action_id": "ha_dbcbcoi4p5cn9l46j4lg",
+            "approval_phase": "workflow_step",
+            "approval_surface": "personal",
+            "execution_id": "u83a5ahl3o7ro714to3g",
+            "job_id": "dbcbcoi4p5cn9l46j3u0",
+            "plan_hash": "71cfe733515bcc53c9365ad00afbc1703230cf7cacfe97be6054cbcf4a8812d5",
+            "status": "waiting",
+            "step_plan_hash": "fc922e411d5ac6862d03af50033f0d4e89f6f3b0e0f560c30cac934ed0f73ed4"
+          }
+        }
+      ],
+      "transcript_sha256": "81a235184e60d0175a4cd505d167aa05f63c9a2246f50bc3b4add7ca5f805c34"
+    },
+    "codex-human-finish": {
+      "final_message": "La reprise a réussi : le Workflow `approve-proof@1` confirme `recorded: true` pour « Accord humain Codex » dans `/qualification/codex-human.txt`.\n\nL’action humaine était déjà approuvée. Le rejeu avec la clé `agent-613-human-1` a retourné l’exécution existante `u83a5ahl3o7ro714to3g`, terminée. Aucune nouvelle carte humaine n’est attendue ; je n’ai pris aucune décision humaine.",
+      "calls": [
+        {
+          "tool": "maurice.explain",
+          "result": {
+            "action_id": "ha_dbcbcoi4p5cn9l46j4lg",
+            "approval_phase": "workflow_step",
+            "approval_surface": "personal",
+            "decision": "approved",
+            "execution_id": "u83a5ahl3o7ro714to3g",
+            "job_id": "dbcbcoi4p5cn9l46j3u0",
+            "plan_hash": "71cfe733515bcc53c9365ad00afbc1703230cf7cacfe97be6054cbcf4a8812d5",
+            "status": "completed",
+            "step_plan_hash": "fc922e411d5ac6862d03af50033f0d4e89f6f3b0e0f560c30cac934ed0f73ed4"
+          }
+        },
+        {
+          "tool": "maurice.search",
+          "result": {
+            "visible_count": 3
+          }
+        },
+        {
+          "tool": "maurice.explain",
+          "result": {
+            "plan_hash": "71cfe733515bcc53c9365ad00afbc1703230cf7cacfe97be6054cbcf4a8812d5",
+            "usage_summary": {
+              "cost": {
+                "amount_minor": 0,
+                "cost_sample_size": 1,
+                "currency": "EUR",
+                "status": "qualified_zero"
+              },
+              "duration_ms": 179,
+              "input_tokens": 0,
+              "llm_calls": 0,
+              "method": "median",
+              "output_tokens": 0,
+              "sample_size": 1,
+              "source": "agent_job_results",
+              "tool_calls": 2
+            }
+          }
+        },
+        {
+          "tool": "maurice.execute",
+          "result": {
+            "execution_id": "u83a5ahl3o7ro714to3g",
+            "job_id": "dbcbcoi4p5cn9l46j3u0",
+            "result": {
+              "message": "Accord humain Codex",
+              "path": "/qualification/codex-human.txt",
+              "recorded": true
+            },
+            "status": "completed",
+            "usage_summary": {
+              "duration_ms": 179,
+              "tool_calls": 2,
+              "llm_calls": 0,
+              "input_tokens": 0,
+              "output_tokens": 0
+            }
+          }
+        }
+      ],
+      "transcript_sha256": "29f92ee10afddfdc16f0ec2615d570c1622e7583fb72d8829b2cb8f41e36123c"
+    },
+    "codex-human-refuse": {
+      "final_message": "Demande soumise via MCP Maurice, arrêtée à `pending` (attente humaine confirmée).\n\n- Preuve : « Refus humain Codex »\n- Chemin : `/qualification/codex-refused.txt`\n- Clé : `agent-613-human-refuse-1`\n- Carte : `pending_action:ha_dbcbdha4p5cn9l46j740`\n- Décision : surface personnelle de `local-operator`\n\nAucune action du Workflow exécutée, aucune carte approuvée, aucun grant créé, aucune configuration ni aucun jeton lus.",
+      "calls": [
+        {
+          "tool": "maurice.search",
+          "result": {
+            "visible_count": 3
+          }
+        },
+        {
+          "tool": "maurice.explain",
+          "result": {
+            "plan_hash": "cf79ca75f1269a9c3e45c0c73c363aed46a683cc2b411da2801d3623971aa7d5",
+            "usage_summary": {
+              "cost": {
+                "amount_minor": 0,
+                "cost_sample_size": 1,
+                "currency": "EUR",
+                "status": "qualified_zero"
+              },
+              "duration_ms": 179,
+              "input_tokens": 0,
+              "llm_calls": 0,
+              "method": "median",
+              "output_tokens": 0,
+              "sample_size": 1,
+              "source": "agent_job_results",
+              "tool_calls": 2
+            }
+          }
+        },
+        {
+          "tool": "maurice.execute",
+          "result": {
+            "action_id": "ha_dbcbdha4p5cn9l46j740",
+            "approval_phase": "personal",
+            "approval_ref": "pending_action:ha_dbcbdha4p5cn9l46j740",
+            "approval_surface": "personal",
+            "plan_hash": "cf79ca75f1269a9c3e45c0c73c363aed46a683cc2b411da2801d3623971aa7d5",
+            "status": "pending"
+          }
+        },
+        {
+          "tool": "maurice.explain",
+          "result": {
+            "action_id": "ha_dbcbdha4p5cn9l46j740",
+            "approval_surface": "personal",
+            "plan_hash": "cf79ca75f1269a9c3e45c0c73c363aed46a683cc2b411da2801d3623971aa7d5",
+            "status": "waiting"
+          }
+        }
+      ],
+      "transcript_sha256": "719746838a687e3320aa03b55ef6b4c169cc33a356e15a826c2c60710625ea3c"
+    },
+    "codex-human-refused": {
+      "final_message": "L’observation MCP de `pending_action:ha_dbcbdha4p5cn9l46j740` n’a renvoyé aucun état lisible. Je ne peux donc pas confirmer un refus humain.\n\nJe m’arrête sans réessayer, sans autre clé ni autre parcours. Aucune configuration ni aucun jeton n’a été lu.",
+      "calls": [
+        {
+          "tool": "maurice.explain",
+          "result": {
+            "action_id": "ha_dbcbdha4p5cn9l46j740",
+            "approval_surface": "personal",
+            "decision": "rejected",
+            "plan_hash": "cf79ca75f1269a9c3e45c0c73c363aed46a683cc2b411da2801d3623971aa7d5",
+            "status": "completed"
+          }
+        }
+      ],
+      "transcript_sha256": "9348dc39d29f40f56fcf4a632fd6acfcf93663480aa0f9d3b83a0d207420282a"
+    },
+    "codex-welcome": {
+      "final_message": "Bienvenue dans Maurice. Le plugin donne accès aux ressources visibles sous le mandat existant.\n\nLes outils de diagnostic réellement disponibles sont :\n\n- `maurice.search` : rechercher les ressources accessibles, avec les filtres facultatifs `query` et `kind`.\n- `maurice.explain` : inspecter une référence exacte (`ref`), ses schémas, sa politique d’autorisation et ses effets attendus, sans démarrer de travail. Permet aussi d’observer une demande `pending_action:<id>`.\n\nAucune commande dédiée `status`, `doctor` ou `diagnose` n’est exposée par ce plugin.\n\nAucun effet métier réalisé, aucun grant créé, aucun démarrage ou arrêt du One, aucun appel à `maurice.execute`. Aucune configuration ni aucun jeton lus.",
+      "calls": [
+        {
+          "tool": "maurice.search",
+          "result": {
+            "visible_count": 0
+          }
+        },
+        {
+          "tool": "maurice.search",
+          "result": {
+            "visible_count": 44
+          }
+        }
+      ],
+      "transcript_sha256": "10a6c9863e1b592e1524e0b4c1d0af4b8cc4c1294e55b36fd47565ea459e3bcd"
+    },
+    "codex-final-refused": {
+      "final_message": "La décision humaine est un **refus** (`decision: rejected`) pour `pending_action:ha_dbcbdha4p5cn9l46j740`.\n\nLe Workflow n’a pas démarré et aucune de ses actions n’a été exécutée. Je m’arrête ici, sans réessai, nouvelle clé ni autre parcours. Aucune configuration ni aucun jeton n’a été lu.",
+      "calls": [
+        {
+          "tool": "maurice.explain",
+          "result": {
+            "action_id": "ha_dbcbdha4p5cn9l46j740",
+            "approval_surface": "personal",
+            "decision": "rejected",
+            "plan_hash": "cf79ca75f1269a9c3e45c0c73c363aed46a683cc2b411da2801d3623971aa7d5",
+            "status": "completed"
+          }
+        }
+      ],
+      "transcript_sha256": "2a941c3efbe874f1893a53aa3aed26b74afd769ebd86deb5c67411a6e81b1378"
+    },
+    "codex-final-human": {
+      "final_message": "La décision humaine observée est `approved`. Le rejeu du même Workflow, avec la même entrée et la clé `agent-613-human-1`, retourne `completed` et `recorded: true`.\n\nPreuve confirmée : « Accord humain Codex » dans `/qualification/codex-human.txt`.\n\nExécution : `u83a5ahl3o7ro714to3g`. Aucune nouvelle carte humaine n’est attendue.",
+      "calls": [
+        {
+          "tool": "maurice.explain",
+          "result": {
+            "action_id": "ha_dbcbcoi4p5cn9l46j4lg",
+            "approval_phase": "workflow_step",
+            "approval_surface": "personal",
+            "decision": "approved",
+            "execution_id": "u83a5ahl3o7ro714to3g",
+            "job_id": "dbcbcoi4p5cn9l46j3u0",
+            "plan_hash": "71cfe733515bcc53c9365ad00afbc1703230cf7cacfe97be6054cbcf4a8812d5",
+            "status": "completed",
+            "step_plan_hash": "fc922e411d5ac6862d03af50033f0d4e89f6f3b0e0f560c30cac934ed0f73ed4"
+          }
+        },
+        {
+          "tool": "maurice.search",
+          "result": {
+            "visible_count": 3
+          }
+        },
+        {
+          "tool": "maurice.explain",
+          "result": {
+            "plan_hash": "71cfe733515bcc53c9365ad00afbc1703230cf7cacfe97be6054cbcf4a8812d5",
+            "usage_summary": {
+              "cost": {
+                "amount_minor": 0,
+                "cost_sample_size": 1,
+                "currency": "EUR",
+                "status": "qualified_zero"
+              },
+              "duration_ms": 179,
+              "input_tokens": 0,
+              "llm_calls": 0,
+              "method": "median",
+              "output_tokens": 0,
+              "sample_size": 1,
+              "source": "agent_job_results",
+              "tool_calls": 2
+            }
+          }
+        },
+        {
+          "tool": "maurice.execute",
+          "result": {
+            "execution_id": "u83a5ahl3o7ro714to3g",
+            "job_id": "dbcbcoi4p5cn9l46j3u0",
+            "result": {
+              "message": "Accord humain Codex",
+              "path": "/qualification/codex-human.txt",
+              "recorded": true
+            },
+            "status": "completed",
+            "usage_summary": {
+              "duration_ms": 179,
+              "tool_calls": 2,
+              "llm_calls": 0,
+              "input_tokens": 0,
+              "output_tokens": 0
+            }
+          }
+        }
+      ],
+      "transcript_sha256": "a4d07c055f473bd712c25052c2bad1039f56ffc48a7861ee03aa7f9891a2f323"
+    },
+    "codex-final-replay": {
+      "final_message": "Maurice confirme l’enregistrement : `recorded: true`, statut `completed`.\n\n- Fichier : `/qualification/codex-real.txt`\n- Contenu : « Codex plugin réel »\n- Clé d’idempotence utilisée : `agent-613-codex-real-1`\n- Job : `dbcb83a4p5cn1ijqabt0`\n- Exécution : `mr5r41acogtsdj3tvc10`\n\nAucune décision humaine n’a été demandée.",
+      "calls": [
+        {
+          "tool": "maurice.search",
+          "result": {
+            "visible_count": 2
+          }
+        },
+        {
+          "tool": "maurice.explain",
+          "result": {
+            "plan_hash": "5a46fdf300ba3f57df50f992a990c6c9f8a0228b1a0788b07eea0931c523e200",
+            "usage_summary": {
+              "cost": {
+                "amount_minor": 0,
+                "cost_sample_size": 1,
+                "currency": "EUR",
+                "status": "qualified_zero"
+              },
+              "duration_ms": 136,
+              "input_tokens": 0,
+              "llm_calls": 0,
+              "method": "median",
+              "output_tokens": 0,
+              "sample_size": 1,
+              "source": "agent_job_results",
+              "tool_calls": 2
+            }
+          }
+        },
+        {
+          "tool": "maurice.execute",
+          "result": {
+            "execution_id": "mr5r41acogtsdj3tvc10",
+            "job_id": "dbcb83a4p5cn1ijqabt0",
+            "result": {
+              "message": "Codex plugin réel",
+              "path": "/qualification/codex-real.txt",
+              "recorded": true
+            },
+            "status": "completed",
+            "usage_summary": {
+              "duration_ms": 136,
+              "tool_calls": 2,
+              "llm_calls": 0,
+              "input_tokens": 0,
+              "output_tokens": 0
+            }
+          }
+        }
+      ],
+      "transcript_sha256": "91a1126acf7a1b8e19713e7ecc016b90c84e0d859a2e30319560e3874fec9ea7"
+    },
+    "codex-link": {
+      "final_message": "La carte indique `status: completed` et `decision: rejected` : elle est résolue par un **refus humain**, sans réussite métier. Le parcours ne démarre pas et aucune de ses actions n’est exécutée.\n\n[Lien humain de la carte](<one-origin>/one/#/human-action/ha_dbcbdha4p5cn9l46j740)\n\nAucune opération réessayée, aucune autre clé utilisée. Aucune configuration ni jeton lu, aucun viewer lancé.",
+      "calls": [
+        {
+          "tool": "maurice.explain",
+          "result": {
+            "action_id": "ha_dbcbdha4p5cn9l46j740",
+            "approval_surface": "personal",
+            "decision": "rejected",
+            "plan_hash": "cf79ca75f1269a9c3e45c0c73c363aed46a683cc2b411da2801d3623971aa7d5",
+            "status": "completed"
+          }
+        }
+      ],
+      "transcript_sha256": "45638498f35f41472ef4c043da7f10bcf654ac1d27f6dbd9355446d5d6673a98"
+    }
+  },
+  "effect_check": {
+    "total_agent_jobs": 2,
+    "execution_rows": [
+      [
+        "mr5r41acogtsdj3tvc10",
+        "completed"
+      ],
+      [
+        "u83a5ahl3o7ro714to3g",
+        "completed"
+      ]
+    ],
+    "files": {
+      "codex-real.txt": "280a72497728d953d28dc2657bfa5d0fc70fd256acfcbb7d536e573b828ad820",
+      "codex-human.txt": "6b4112f8f30d6f8bd3325796a9b1433ef3e1a18e96a7658d3f1bea4348b51c50"
+    },
+    "refused_file_exists": false,
+    "reader_file_exists": false
+  },
+  "scope_checks": {
+    "reader_catalogue_count": 1,
+    "executor_workflow_catalogue_count": 3,
+    "reader_execute": "out_of_scope",
+    "reader_other_ref": "out_of_scope",
+    "revoked_reader": "MCP authentication refused"
+  },
+  "connection_checks": {
+    "authenticated_preflight": true,
+    "idempotent_bytes": true,
+    "other_server_preserved": true,
+    "modified_entry_conflict_preserves_bytes": true,
+    "revoked_grant_preserves_bytes": true
+  },
+  "limits": [
+    "Local private installation; no public marketplace or release qualification.",
+    "Real Codex CLI conversations; desktop Codex UI not separately qualified.",
+    "Human decisions performed by founder in existing One web UI; explicit One origin required to render a decision link when MCP supplies only an action reference.",
+    "Other clients and Claude mod/dev domains outside AGENT-613."
+  ]
+}
