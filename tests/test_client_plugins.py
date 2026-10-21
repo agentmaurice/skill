@@ -7,6 +7,7 @@ import sys
 import tarfile
 import tempfile
 import unittest
+import shutil
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -27,6 +28,8 @@ class ClientPluginBuild(unittest.TestCase):
             manifest = json.loads((plugin / "plugin.json").read_text())
             self.assertEqual((manifest["name"], manifest["version"]), ("maurice", "0.1.0"))
             self.assertEqual(manifest["extensions"]["com.openai"]["interface"]["category"], "Productivity")
+            self.assertEqual(manifest["extensions"]["com.openai"]["interface"]["displayName"], "Maurice")
+            self.assertEqual(manifest["author"], {"name": "AgentMaurice"})
             self.assertLessEqual(len(manifest["extensions"]["com.openai"]["interface"]["shortDescription"]), 30)
             attestation = json.loads((plugin / "source-attestation.json").read_text())
             canonical_manifest = json.loads((CANONICAL / "skill-version.json").read_text())
@@ -36,6 +39,7 @@ class ClientPluginBuild(unittest.TestCase):
             self.assertNotIn("fixturesmachine", package_text)
             marketplace = json.loads((output / ".agents/plugins/marketplace.json").read_text())
             self.assertEqual(marketplace["name"], "maurice-local")
+            self.assertEqual(marketplace["plugins"][0]["policy"], {"installation": "AVAILABLE", "authentication": "ON_INSTALL", "category": "Productivity"})
             for source in CANONICAL.rglob("*"):
                 if source.is_file():
                     target = plugin / "skills/agentmaurice" / source.relative_to(CANONICAL)
@@ -48,6 +52,25 @@ class ClientPluginBuild(unittest.TestCase):
             self.assertEqual(self.run_builder(second).returncode, 0)
             digest = lambda path: hashlib.sha256(path.read_bytes()).hexdigest()
             self.assertEqual(digest(output / "maurice.plugin.tar.gz"), digest(second / "maurice.plugin.tar.gz"))
+
+    def test_corrupt_canonical_copy_and_template_symlink_are_refused(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            copied = Path(tmp) / "repo"
+            shutil.copytree(ROOT, copied, ignore=shutil.ignore_patterns(".git", "__pycache__"))
+            canonical_file = copied / "skill/agentmaurice/SKILL.md"
+            canonical_file.write_text(canonical_file.read_text() + "\ncorruption\n")
+            output = Path(tmp) / "corrupt-out"
+            result = subprocess.run([sys.executable, str(copied / "scripts/build_client_plugin.py"), "--client", "codex", "--output", str(output)], text=True, capture_output=True)
+            self.assertNotEqual(result.returncode, 0)
+            self.assertFalse(output.exists())
+
+            shutil.rmtree(copied)
+            shutil.copytree(ROOT, copied, ignore=shutil.ignore_patterns(".git", "__pycache__"))
+            template = copied / "plugins/codex/use-maurice/SKILL.md"
+            template.unlink()
+            template.symlink_to(canonical_file)
+            result = subprocess.run([sys.executable, str(copied / "scripts/build_client_plugin.py"), "--client", "codex", "--output", str(Path(tmp) / "symlink-out")], text=True, capture_output=True)
+            self.assertNotEqual(result.returncode, 0)
 
     def test_refuses_invalid_outputs_and_client(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

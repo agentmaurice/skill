@@ -72,23 +72,26 @@ def build(output: Path, client: str) -> Path:
         fail("seul --client codex est implémenté par AGENT-613")
     manifest = validate_canonical()
     assert_output(output)
+    template = ROOT / "plugins" / "codex" / "use-maurice" / "SKILL.md"
+    ensure_no_symlinks(ROOT / "plugins" / "codex")
+    if not template.is_file():
+        fail("template use-maurice introuvable")
     with tempfile.TemporaryDirectory(prefix="agentmaurice-plugin-") as temp:
         staging = Path(temp) / "output"
         plugin = staging / "plugins" / PLUGIN_NAME
         copy_tree(CANONICAL, plugin / "skills" / "agentmaurice")
         use_skill = plugin / "skills" / "use-maurice" / "SKILL.md"
         use_skill.parent.mkdir(parents=True, exist_ok=True)
-        use_skill.write_text((ROOT / "plugins" / "codex" / "use-maurice" / "SKILL.md").read_text(encoding="utf-8"), encoding="utf-8")
+        use_skill.write_text(template.read_text(encoding="utf-8"), encoding="utf-8")
         write_json(plugin / "plugin.json", {
             "$schema": PLUGIN_SCHEMA,
             "name": PLUGIN_NAME,
             "version": PLUGIN_VERSION,
             "description": "Accéder aux Workflows AgentMaurice avec un mandat explicite.",
-            "author": {"name": "AgentMaurice", "url": "https://agentmaurice.ai"},
-            "homepage": "https://agentmaurice.ai",
+            "author": {"name": "AgentMaurice"},
             "license": "Proprietary",
             "keywords": ["agentmaurice", "workflow", "mcp"],
-            "extensions": {"com.openai": {"interface": {"shortDescription": "Workflows AgentMaurice", "category": "Productivity"}}},
+            "extensions": {"com.openai": {"interface": {"displayName": "Maurice", "developerName": "AgentMaurice", "shortDescription": "Workflows AgentMaurice", "category": "Productivity"}}},
         })
         write_json(plugin / "source-attestation.json", {
             "source": "skill/agentmaurice",
@@ -96,7 +99,7 @@ def build(output: Path, client: str) -> Path:
             "content_hash": manifest["content_hash"],
             "contract_bundle_sha256": manifest["contract_bundle_sha256"],
         })
-        write_json(staging / ".agents" / "plugins" / "marketplace.json", {"name": "maurice-local", "plugins": [{"name": PLUGIN_NAME, "source": "./plugins/maurice"}]})
+        write_json(staging / ".agents" / "plugins" / "marketplace.json", {"name": "maurice-local", "plugins": [{"name": PLUGIN_NAME, "source": "./plugins/maurice", "policy": {"installation": "AVAILABLE", "authentication": "ON_INSTALL", "category": "Productivity"}}]})
         output.mkdir(parents=True, exist_ok=True)
         for path in sorted(staging.rglob("*")):
             target = output / path.relative_to(staging)

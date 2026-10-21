@@ -29,11 +29,13 @@ réponds pas et ne simule jamais la décision humaine. Une révocation, une
 expiration, un refus ou un conflit d'idempotence bloque le parcours ; ne
 réessaie pas avec une autre cible ou une nouvelle clé pour contourner l'état.
 
-Si la connexion MCP manque, demande à l'utilisateur de choisir explicitement
-le One et d'autoriser `maurice assistant connect codex` avec un fichier de
-jeton privé. Cette connexion réutilise un mandat existant, ne crée aucun droit
-et ne démarre aucun service. Vérifie ensuite `search` puis `explain` sur le
-One réellement visé.
+Si la connexion MCP manque, demande seulement la cible du One et le chemin
+privé manquant. Après l'accord déjà donné, utilise explicitement
+`maurice assistant connect codex --endpoint <endpoint> --config-file <config>
+--token-file <token-file>` ; ne lis jamais le contenu du fichier de jeton.
+Cette connexion réutilise un mandat existant, ne crée aucun droit et ne
+démarre aucun service. Vérifie ensuite `search` puis `explain` sur le One
+réellement visé.
 
 L'approbation humaine reste distincte du mandat de l'assistant. Ne demande
 jamais de secret dans le chat, ne copie pas de jeton dans un fichier partagé,
