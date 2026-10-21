@@ -587,3 +587,25 @@ cible publique avec l’intention. Pour un pull vers un dossier vide, les trois
 paramètres `agent_id`, `agent_alias` et `env` sont obligatoires. Le serveur
 fournit les fichiers et la classification ; ne pas fabriquer un fichier
 d’environnement pour forcer une policy plus permissive.
+
+## Résultat de `build test`
+
+`build test --plan <id>` et `maurice_build_test` appliquent le plan autorisé
+avec ses tests bloquants. Ils ne lancent pas un test plan arbitraire à part.
+Un même plan et une même clé retrouvent une preuve existante : si `replayed`
+vaut `true`, rapporte « résultat de test existant », son statut et son run ID ;
+ne dis jamais que tu viens de relancer les tests. Pour une nouvelle campagne,
+prépare un nouveau plan au même état vérifié puis exécute ses tests bloquants.
+La clé implicite native est déterministe sur le plan et son autorisation.
+
+| CLI | MCP natif |
+|---|---|
+| build new module/application/agent | maurice_build_new_module/application/agent |
+| build pull/check/plan | maurice_build_pull/check/plan |
+| build apply/test/verify | maurice_build_apply/test/verify |
+| architecture observe/plan/plan-get/apply | maurice_architecture_observe/plan/plan_get/apply |
+
+Le schéma de chaque outil fixe ses champs ; ne passe pas d’argv libres.
+Le contexte est vérifié avant l’appel. Une erreur `client_target_changed`
+impose de reconnecter explicitement le profil ; ne modifie pas une cible
+pour faire passer le contrôle.

@@ -6,6 +6,28 @@ Qualification locale du 21 octobre 2026, backend `chatserver`
 Les nouvelles sessions Claude sont des sous-processus du shell interne ; les
 sessions utilisateur et les autres One ne sont pas utilisés.
 
+## Paquet de guides final
+
+L’archive finale après clarification des guides a le SHA-256
+`c14728298a9ec8a46701bd19fbe1822e20a64c6faa74c234f09c61e815cb699e`.
+Les références à `6d112a…` ci-dessous décrivent le paquet précédent et restent
+historiques. Les guides finaux corrigent la liste fraîche de Jobs, les alias
+racine, le profil MCP de lifecycle et le sens explicite du résultat de test
+rejoué. L’accueil sans domaine ne lance désormais aucune commande ni outil MCP.
+
+Les trois parcours accueil, lifecycle et build sont rejoués dans de nouveaux
+Claude CLI sur cette archive finale. Le build retrouve une preuve PASSED
+existante, avec `replayed=true`, puis verify sans dérive ; il ne prétend pas
+avoir relancé les tests. Les 21 selftests du dépôt, dont 4 consacrés au
+packaging, passent ; le validateur natif Claude passe également.
+
+La PR du plugin reste Draft : la qualification de l’onglet Code de Claude
+Desktop du critère historique PLUG-10 n’est pas effectuée par cette campagne
+shell. Les constats de la revue client restent traçables, avec leurs limites
+historiques et la clarification ultérieure des guides ; ils ne constituent
+pas un reçu accepté au HEAD final. Aucun closeout du ticket n’est revendiqué.
+Le reçu One commun au HEAD final est généré après ce commit et joint aux PR.
+
 ## État final après relecture adverse
 
 Le backend final est `fb0b0d679d01dd81ce94fa9e8a984d2833d80971`, à jour de
@@ -116,7 +138,7 @@ un autre Job, et le reçu est rejoué sur ce même identifiant.
 Tests Go ciblés et suite courte CLI/API/frontdoor/controllers réussis ; le
 changement final d’indépendance de `swarm run` vis-à-vis de la configuration
 partagée a ses tests ciblés et sa preuve live avec un chemin config absent,
-qui n’est jamais créé. Les 21 tests du packaging passent et `claude plugin
+qui n’est jamais créé. Les 21 selftests du dépôt (dont 4 de packaging) passent et `claude plugin
 validate` réussit. Le Skill canonique 2.0.39 et son bundle sont inchangés.
 L’archive qualifiée a le SHA-256
 `6d112a1797faf80a0084ad0217937a9910de9daf59ee4214a251cc60068536ba`.

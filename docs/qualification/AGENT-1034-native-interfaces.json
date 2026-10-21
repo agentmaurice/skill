@@ -8,7 +8,7 @@
   "api_port": 43700,
   "frontdoor_port": 43731,
   "os_started": false,
-  "archive_sha256": "6d112a1797faf80a0084ad0217937a9910de9daf59ee4214a251cc60068536ba",
+  "archive_sha256": "c14728298a9ec8a46701bd19fbe1822e20a64c6faa74c234f09c61e815cb699e",
   "canonical_skill": {
     "source": "skill/agentmaurice",
     "version": "2.0.39",
@@ -380,5 +380,66 @@
       "snapshot-go-fixture-test.log": "cfd06ea6cad64a2a7ea8fb5fb6d1025bfa8d68aed62dc8cba8e938ac62e0bf56"
     },
     "final_common_receipt": "generated after this report commit; see PR54 and backend MR523"
+  },
+  "archive_sha256_initial": "6d112a1797faf80a0084ad0217937a9910de9daf59ee4214a251cc60068536ba",
+  "final_guides": {
+    "archive_sha256": "c14728298a9ec8a46701bd19fbe1822e20a64c6faa74c234f09c61e815cb699e",
+    "changes": [
+      "welcome without CLI/MCP",
+      "fresh bounded Jobs list when authorized",
+      "explicit local MCP lifecycle and root Job aliases",
+      "build test clearly distinguishes existing replay from new tests"
+    ],
+    "claude_cases": {
+      "welcome-guides-final": {
+        "process_exit": 0,
+        "duration_seconds": 15.96,
+        "model": "claude-sonnet-5-5",
+        "cli_version": "2.1.306",
+        "tools": [
+          "Read",
+          "Read"
+        ]
+      },
+      "lifecycle-guides-final": {
+        "process_exit": 0,
+        "duration_seconds": 56.34,
+        "model": "claude-sonnet-5-5",
+        "cli_version": "2.1.306",
+        "tools": [
+          "mcp__maurice_local__maurice_client_context",
+          "Read",
+          "Read",
+          "Bash",
+          "Bash",
+          "mcp__maurice_local__maurice_swarm_start",
+          "mcp__maurice_local__maurice_swarm_status",
+          "Bash"
+        ]
+      },
+      "builder-guides-final": {
+        "process_exit": 0,
+        "duration_seconds": 25.07,
+        "model": "claude-sonnet-5-5",
+        "cli_version": "2.1.306",
+        "tools": [
+          "Read",
+          "Read",
+          "Read",
+          "mcp__maurice_local__maurice_client_context",
+          "mcp__maurice_local__maurice_build_check",
+          "Bash",
+          "Bash",
+          "mcp__maurice_local__maurice_build_test",
+          "Bash",
+          "mcp__maurice_local__maurice_build_verify"
+        ]
+      }
+    },
+    "repository_selftests": 21,
+    "packaging_tests_subset": 4,
+    "native_plugin_validate": "passed",
+    "client_pr": "Draft pending full ticket review including Desktop criterion",
+    "common_receipt": "generated after this report commit; see PR54/backend MR523"
   }
 }

@@ -22,8 +22,8 @@ surface d'approbation ; le plugin ne les approuve pas.
 Les domaines `swarm` et `build` guident les commandes publiques existantes :
 lifecycle local à cible explicite, exécution gouvernée et rail Agent Spec. Le
 backend de qualification AGENT-1034 expose en plus les groupes natifs
-`maurice swarm` et `maurice build`, encore à qualifier live avant une release
-générale. Le profil optionnel `maurice client-mcp-stdio` projette un sous-ensemble
+`maurice swarm` et `maurice build`, qualifiés localement dans les limites
+du rapport AGENT-1034. La release générale reste distincte. Le profil optionnel `maurice client-mcp-stdio` projette un sous-ensemble
 fermé de commandes CLI locales après choix explicite de `--config`, `--context`
 et `--workspace-root`; `--data-dir` et `--server-bin` sont explicites pour le
 lifecycle. Ses droits d'écriture et de lifecycle sont opt-in.

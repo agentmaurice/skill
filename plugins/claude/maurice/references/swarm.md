@@ -9,8 +9,9 @@ Le groupe natif CLI est `maurice swarm`. Le profil optionnel
 `maurice client-mcp-stdio` ne constitue pas un nouveau backend : il projette
 seulement les opérations locales explicitement autorisées par sa configuration.
 Par défaut il expose les lectures ; `--allow-local-write` ajoute les scaffolds
-et apply locaux, et `--allow-local-lifecycle` ajoute start/stop. Il ne fournit
-pas `swarm run`, n'accepte pas de shell RPC et n'effectue aucune approbation.
+et apply locaux, et `--allow-local-lifecycle` ajoute start/stop. Son catalogue de contrôle ne fournit
+pas `swarm run` : cette opération utilise `maurice.execute` sur la connexion
+front door avec son même grant explicite. Il n'accepte pas de shell RPC et n'effectue aucune approbation.
 
 Exemples de commandes natives à privilégier :
 
@@ -48,7 +49,13 @@ Utilise le catalogue correspondant à la connexion déjà ouverte :
   `inception_tasks_get`, `inception_tasks_events` et
   `inception_tasks_cancel`. Une session builder ne les expose pas.
 
-Ne mélange pas les deux catalogues. Une clé d'Application ne crée pas un
+- Le profil natif local `client-mcp-stdio`, quand le propriétaire l’a configuré,
+  expose les projections CLI `maurice_swarm_*`, `maurice_build_*` et
+  `maurice_architecture_*`, plus `maurice_client_context`. Il emploie le
+  credential CLI choisi, pas le grant d’exécution front door. Les outils
+  d’écriture et de lifecycle demandent leurs opt-ins séparés.
+
+Ne mélange pas ces catalogues. Une clé d'Application ne crée pas un
 nouveau droit, une autre Application ou un principal arbitraire. Le serveur
 revalide l'Application, la clé, les scopes et l'organisation à chaque appel ;
 une révocation doit donc arrêter les nouveaux appels.
@@ -254,7 +261,9 @@ serveur sert effectivement des requêtes. `stop` renvoie `was_running` et le
 chemin ciblé. Ne lance jamais `go run`, un serveur standalone arbitraire ou un
 `kill` manuel pour compléter une intention.
 
-Il n'existe pas d'équivalent MCP distant à `start` ou `stop`. Une connexion
+Le profil natif local expose `maurice_swarm_start` et `maurice_swarm_stop`
+avec les chemins choisis au lancement et `--allow-local-lifecycle`. Il n’existe
+pas d’équivalent MCP distant : une connexion
 front door ou D1 ne doit jamais démarrer ni arrêter un One local ou un nœud
 éloigné par effet implicite.
 
@@ -271,3 +280,22 @@ hors portée (`not_found`), conflit d'idempotence ou de révision (`conflict`),
 admission refusée, mandat humain requis et indisponibilité. Une commande
 acceptée, un `status` sain ou un processus démarré ne constitue pas à lui seul
 une preuve de résultat métier.
+
+## Correspondances du profil natif qualifié
+
+| Commande CLI | Outil MCP | Paramètres de la requête |
+|---|---|---|
+| context current | maurice_client_context | aucun ; cible figée |
+| swarm status/start/stop | maurice_swarm_status/start/stop | aucun ; chemins du lancement |
+| swarm nodes | maurice_swarm_nodes | organization, limit, offset (chaînes), filtres de lecture |
+| swarm jobs/list ; job list | maurice_swarm_jobs | limit, cursor, application |
+| swarm jobs get ; job get | maurice_swarm_job_get | job_id, application |
+| swarm logs ; swarm jobs events ; job events | maurice_swarm_logs | job_id, limit, cursor, application |
+| swarm run | maurice.execute, connexion front door | ref, input, idempotency_key, expected_plan_hash |
+
+Les alias Job sont les mêmes opérations publiques, pas de nouveaux catalogues.
+Pour `swarm nodes`, le filtre d’organisation parcourt des pages bornées avant
+la projection afin de ne pas confondre une organisation hors de la première
+page avec une absence d’accès. Une limite atteinte est un refus explicite.
+Les événements de Jobs utilisent le curseur `{sequence,event_id}` retourné,
+sérialisé en chaîne JSON ou base64url pour la CLI et le profil natif.

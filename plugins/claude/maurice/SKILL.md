@@ -35,10 +35,10 @@ Un changement de contexte CLI ne rebranche pas le MCP déjà connecté. Invalide
 
 ## Accueil et usage
 
-« Accueil » est informatif : il n'exécute aucune opération métier. Si utile,
-affiche seulement l'état local avec `maurice status --json` ou
-`maurice doctor --json`, sans transformer un exit code nul en preuve de
-connexion, de grant, de job ou de résultat métier.
+Sans domaine ni commande, affiche uniquement l’accueil et la syntaxe `swarm`
+et `build`. Ne lance aucune commande CLI, aucun outil MCP ni diagnostic
+spontané. Une demande explicite `doctor` ou `status` suit ensuite son propre
+parcours ; son succès ne prouve ni un grant ni un résultat métier.
 
 Pour sélectionner explicitement un contexte dans une commande, ajoute
 `--context <name>` à cette commande. Ne modifie pas le contexte par défaut
@@ -109,7 +109,7 @@ AgentMaurice. Ne les confonds pas avec les commandes d'usine du domaine `dev`.
 | Domaine | Commandes | Guide à lire avant l'appel |
 | --- | --- | --- |
 | `swarm` | `status`, `start`, `stop`, `nodes`, `run`, `jobs list|get|events`, `logs` | [Swarm](references/swarm.md) |
-| `build` | `new module|application|agent`, `check`, `plan`, `apply`, `test`, `verify` | [Build](references/build.md) |
+| `build` | `new module|application|agent`, `pull`, `check`, `plan`, `apply`, `test`, `verify` | [Build](references/build.md) |
 
 Ces commandes sont des intentions conversationnelles. Utilise les invocateurs
 publics du guide et vérifie l'aide du binaire réellement ciblé. N'installe pas
@@ -118,10 +118,11 @@ exposées dans le backend AGENT-1034 ne sont pas encore une preuve de release
 générale.
 
 Pour une commande inconnue ou une cible manquante, présente la syntaxe et
-l'information requise avant tout effet. `swarm jobs` sans ID montre seulement
-les Jobs observés dans la conversation, avec leur cible et date d'observation ;
-pour une lecture fraîche, demande l'ID exact. Une liste conservée par le client
-ne constitue pas un inventaire serveur.
+l’information requise avant tout effet. Avec une cible autorisée, `swarm jobs`
+sans ID est une lecture fraîche bornée : `maurice_swarm_jobs` dans le profil
+natif ou `maurice swarm jobs list` avec le principal CLI approprié. La liste
+n’exige pas d’ID. Si cette surface n’est pas autorisée, indique le refus et
+sépare les Jobs déjà observés en conversation d’un inventaire serveur.
 
 Le catalogue front door à trois verbes et le catalogue External Inception
 org-builder ont des portées différentes. Vérifie les outils réellement chargés
