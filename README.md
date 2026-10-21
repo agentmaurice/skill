@@ -95,6 +95,16 @@ See [`docs/install.md`](docs/install.md). MauriceCLI normally installs the
 embedded package during `maurice agent connect --skill auto` for clients with a
 native skill format.
 
+The private Codex Agent Plugin is built from this repository:
+
+```bash
+python3 scripts/build_client_plugin.py --client codex --output /tmp/maurice-plugin
+codex plugin marketplace add /tmp/maurice-plugin
+codex plugin add maurice@maurice-local
+```
+
+The builder validates `skill-version.json`, preserves the canonical Skill byte-for-byte, and emits a single-plugin archive. Claude packaging is deferred.
+
 ## Validate
 
 From the sibling `test-maurice` repository:

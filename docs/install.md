@@ -61,6 +61,20 @@ project's native skill directory. Cursor, Windsurf, and generic clients may use
 the bootstrap prompt and MCP contract when they do not expose a stable native
 skill format.
 
+## Codex Agent Plugin (privé)
+
+```bash
+python3 scripts/build_client_plugin.py --client codex --output /tmp/maurice-plugin
+codex plugin marketplace add /tmp/maurice-plugin
+codex plugin add maurice@maurice-local
+```
+
+Le paquet contient le Skill canonique et `use-maurice`. Il réutilise le MCP
+déjà connecté et ne démarre pas le One ni ne crée de mandat. Si la connexion
+manque, le Skill guide explicitement `maurice assistant connect codex` avec un
+fichier de jeton privé. La qualification sur un One réel est séparée du
+packaging.
+
 ## Verify
 
 Confirm that the client can invoke `$agentmaurice` and that the following

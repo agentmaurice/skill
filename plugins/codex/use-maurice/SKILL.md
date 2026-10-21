@@ -1,0 +1,40 @@
+---
+name: use-maurice
+description: Utiliser la porte MCP AgentMaurice avec un mandat explicite.
+---
+
+# Utiliser Maurice
+
+Ce skill guide l'usage de la porte MCP déjà branchée au One AgentMaurice. Il
+ne crée pas de grant, ne démarre ni n'arrête le One, ne fait pas de setup et
+n'utilise jamais `maurice agent connect`.
+
+## Parcours
+
+1. `maurice.search` découvre les références visibles par le mandat courant.
+2. `maurice.explain` confirme la cible exacte, les schémas, la politique, le
+   `plan_hash` et les effets attendus.
+3. `maurice.execute` est réservé à la référence expliquée. Il reçoit la même
+   cible explicite, une entrée validée, une `idempotency_key` et, lorsque le
+   plan est lié, le `expected_plan_hash`.
+
+Ne déduis jamais un Agent, une Application, un Workflow, une version ou une
+identité depuis un nom d'affichage. Conserve la référence complète retournée
+par `search` et la cible du One choisie par l'utilisateur.
+
+Une réponse `pending` ou une demande d'approbation reste en attente : utilise
+`explain` sur la référence `pending_action:<id>` pour observer l'état et
+présente la surface humaine indiquée par la réponse. Ne clique pas, ne
+réponds pas et ne simule jamais la décision humaine. Une révocation, une
+expiration, un refus ou un conflit d'idempotence bloque le parcours ; ne
+réessaie pas avec une autre cible ou une nouvelle clé pour contourner l'état.
+
+Si la connexion MCP manque, demande à l'utilisateur de choisir explicitement
+le One et d'autoriser `maurice assistant connect codex` avec un fichier de
+jeton privé. Cette connexion réutilise un mandat existant, ne crée aucun droit
+et ne démarre aucun service. Vérifie ensuite `search` puis `explain` sur le
+One réellement visé.
+
+L'approbation humaine reste distincte du mandat de l'assistant. Ne demande
+jamais de secret dans le chat, ne copie pas de jeton dans un fichier partagé,
+et n'auto-approuve aucune opération.
