@@ -121,6 +121,12 @@ raccourci conversationnel vers les rails ci-dessous :
   plan ; une approbation humaine distincte est nécessaire. Pour un Agent
   existant seulement, `maurice spec init` crée l'état d'authoring local ; il
   ne crée pas un Agent distant.
+- Pour `new`, demande d’abord le type et la cible : Agent, Application ou Module.
+  Une Application suit le [rail App](../agentmaurice/references/app-delivery.md) ;
+  `maurice app init <applicationKey>` est une création distante, à autoriser
+  explicitement. Un Module suit le [rail Module](../agentmaurice/references/modules.md) ;
+  `maurice module init <moduleKey> --dir <path>` prépare un dépôt local.
+  Ne confonds jamais scaffold local, création distante et déploiement.
 - **check** : `maurice spec check --env <env> --agent-alias <alias> --dir <path> --json`.
 - **plan** : `maurice spec plan --env <env> --agent-alias <alias> --dir <path> --json`.
 - **apply** : `maurice spec apply --plan <plan-id> --dir <path> --json`,

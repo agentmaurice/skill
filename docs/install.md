@@ -75,6 +75,8 @@ manque, le Skill guide explicitement `maurice assistant connect codex` avec un
 fichier de jeton privé. La qualification sur un One réel est séparée du
 packaging.
 
+## Plugin Claude Code (privé)
+
 Pour Claude Code, construire le paquet dans un répertoire temporaire et le
 charger seulement pour la session concernée :
 

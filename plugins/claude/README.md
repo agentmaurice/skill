@@ -19,6 +19,8 @@ Le skill guide `search`, `explain` et `execute` avec une référence exacte, un
 plan hashé et une clé d'idempotence. Les cartes humaines restent dans leur
 surface d'approbation ; le plugin ne les approuve pas.
 
-La création de nouveaux Agents ou Workflows, le lifecycle du swarm, les mods,
-les hooks, le développement de nouveaux serveurs et la qualification Desktop
-sont hors de ce plugin.
+Les domaines `swarm` et `build` guident les commandes publiques existantes :
+lifecycle local à cible explicite, exécution gouvernée et rail Agent Spec.
+Le plugin n’installe pas MauriceCLI et ne démarre aucun service automatiquement.
+Les mods, hooks et le domaine `dev` appartiennent aux lots suivants. La
+qualification Desktop reste distincte du test terminal.
