@@ -1,5 +1,7 @@
 # Interfaces natives CLI/MCP et révocation — AGENT-1034
 
+> **Dossier natif historique de cette campagne.** Le corps ci-dessous conserve les preuves CLI/MCP du backend `0df11b39c716d710ed01fd405db2a4da90b0294f` et de l'archive `c14728298a9ec8a46701bd19fbe1822e20a64c6faa74c234f09c61e815cb699e`, sans modifier leurs digests. Pour le complément courant Claude Desktop Doctor, voir [AGENT-1034-desktop-doctor.md](AGENT-1034-desktop-doctor.md) et son [JSON](AGENT-1034-desktop-doctor.json) : le tour 1 MCP/Workflow est prouvé, mais la continuité du tour 2 reste non qualifiée.
+
 Qualification locale du 21 octobre 2026, backend `chatserver`
 `0df11b39c716d710ed01fd405db2a4da90b0294f`, One isolé
 `agent-1034-interfaces` (API 43700, front door 43731, sans OS).

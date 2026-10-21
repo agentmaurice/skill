@@ -2,7 +2,7 @@
 
 Cette référence décrit le raccourci conversationnel `maurice build` pour les
 interfaces CLI AgentMaurice V2 exposées dans le backend de qualification
-AGENT-1034. La qualification dépend du binaire et du One utilisés ; consulter les preuves AGENT-1034. La release générale reste distincte.
+AGENT-1034. La qualification dépend du binaire et de l’instance utilisés ; consulter les preuves AGENT-1034. La release générale reste distincte.
 Un build est un parcours ciblé qui doit toujours nommer
 l'organisation, l'Agent ou l'Application, l'environnement, le répertoire de
 projet et la source de connexion.

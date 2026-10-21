@@ -1,5 +1,7 @@
 # Commandes Claude swarm et build — AGENT-1034
 
+> **Statut documentaire — campagne historique supersédée.** Ce document décrit la campagne menée sur l’archive 2972c5fee9e2f947795f40ccaaf71399d61397d4646120fd9aad860f6d85ea6e et le backend 4fd020849d7fa52361d371bd5dfbfceb48991e3c. L’état natif actuel qui fait foi est la [qualification des interfaces natives](AGENT-1034-native-interfaces.md) et sa [preuve JSON](AGENT-1034-native-interfaces.json), avec l’archive c14728298a9ec8a46701bd19fbe1822e20a64c6faa74c234f09c61e815cb699e et le backend de qualification 0df11b39c716d710ed01fd405db2a4da90b0294f (backend final fb0b0d679d01dd81ce94fa9e8a984d2833d80971).
+
 Campagne complémentaire : [parité CLI/MCP, cartes et reprise](AGENT-1034-parity-approval.md), avec décisions de test explicitement déléguées par le fondateur.
 
 Qualification du 21 octobre 2026, en complément de
@@ -26,14 +28,14 @@ inchangée. Aucun mod, hook, gateway, réglage global ou groupe natif CLI
 - **21 tests réussis**, validation native stricte réussie, pas de hook.
   Les tests de packaging vérifient maintenant aussi la copie de tous les
   guides et la résolution de leurs liens à l'intérieur du paquet.
-- Archive finale SHA256 : `2972c5fee9e2f947795f40ccaaf71399d61397d4646120fd9aad860f6d85ea6e`.
+- Archive finale de cette campagne historique SHA256 : `2972c5fee9e2f947795f40ccaaf71399d61397d4646120fd9aad860f6d85ea6e`.
 - Skill canonique 2.0.39 :
   `ef85a08bc3e34b153e1db7667524326c53e2701b11c10d1b2a5f2473508eb96d`.
 
 La [preuve JSON](AGENT-1034-commands.json) conserve les appels et réponses
 structurées, les erreurs, les identifiants, les hashes des transcripts et des
 archives utilisées par chaque itération. Les derniers rejeux verify CLI/MCP
-et reprise D1 utilisent l'archive finale. Les credentials restent dans les
+et reprise D1 utilisent l'archive finale de cette campagne historique. Les credentials restent dans les
 fichiers privés de qualification et n'entrent jamais dans le paquet ou la
 preuve publiée. Les réponses de schémas volumineuses sont représentées par
 leur identité et leur digest.

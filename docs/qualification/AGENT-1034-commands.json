@@ -2,6 +2,8 @@
   "ticket": "AGENT-1034",
   "date": "2026-10-21",
   "delivery_state": "in_progress",
+  "history_status": "historical_campaign_superseded",
+  "superseded_by": "AGENT-1034-native-interfaces.json",
   "qualified_surface": "Claude Code CLI in dedicated internal shells; no existing sessions or global client settings changed",
   "platform": {
     "claude_cli": "2.1.299",

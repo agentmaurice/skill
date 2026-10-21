@@ -1,4 +1,13 @@
 {
+  "desktop_doctor_report": {
+    "markdown": "docs/qualification/AGENT-1034-desktop-doctor.md",
+    "json": "docs/qualification/AGENT-1034-desktop-doctor.json",
+    "status": "provisional",
+    "scope": "Claude Desktop Doctor and MCP continuity; second-turn continuity not qualified",
+    "native_body_status": "historical native CLI/MCP campaign; existing digests unchanged",
+    "native_backend_commit": "0df11b39c716d710ed01fd405db2a4da90b0294f",
+    "native_archive_sha256": "c14728298a9ec8a46701bd19fbe1822e20a64c6faa74c234f09c61e815cb699e"
+  },
   "schema": "agentmaurice.client_qualification/v1",
   "ticket": "AGENT-1034",
   "plane_id": "19afd14d-949f-400a-8051-98cd5485b080",

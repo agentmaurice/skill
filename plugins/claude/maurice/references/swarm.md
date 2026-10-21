@@ -2,7 +2,7 @@
 
 Ce document décrit les interfaces CLI exposées dans le backend de qualification
 AGENT-1034 pour les intentions conversationnelles `swarm status`, `swarm
-nodes`, `swarm run`, `swarm jobs`, `swarm logs`, `start` et `stop`. La qualification dépend du binaire et du One utilisés ; consulter les preuves AGENT-1034. La release générale reste distincte. Ne fabrique pas
+nodes`, `swarm run`, `swarm jobs`, `swarm logs`, `start` et `stop`. La qualification dépend du binaire et de l’instance utilisés ; consulter les preuves AGENT-1034. La release générale reste distincte. Ne fabrique pas
 une route privée, un accès direct à la base ou un outil MCP absent du catalogue.
 
 Le groupe natif CLI est `maurice swarm`. Le profil optionnel
@@ -23,8 +23,8 @@ maurice swarm jobs list --json
 maurice swarm jobs get <job-id> --json
 maurice swarm jobs events <job-id> --json
 maurice swarm logs <job-id> --json
-maurice swarm start --data-dir <one-data-dir> --json
-maurice swarm stop --data-dir <one-data-dir> --json
+maurice swarm start --data-dir <instance-data-dir> --json
+maurice swarm stop --data-dir <instance-data-dir> --json
 ```
 
 Les alias historiques `maurice status`, `maurice node show`, `maurice start`
@@ -65,12 +65,12 @@ une révocation doit donc arrêter les nouveaux appels.
 Choisis une lecture selon la cible demandée :
 
 ```text
-maurice status --json --data-dir <one-data-dir>
-maurice doctor --json --data-dir <one-data-dir>
+maurice status --json --data-dir <instance-data-dir>
+maurice doctor --json --data-dir <instance-data-dir>
 maurice job graph get <graph-id> --json
 ```
 
-`status` renvoie le statut de l'instance One locale (`running`, `pid`,
+`status` renvoie le statut de l'instance Maurice locale (`running`, `pid`,
 `data_dir`). `doctor` ajoute le diagnostic local et, quand ses paramètres sont
 résolus, des vérifications de readiness ou de contexte ; il ne prouve pas une
 exécution de Workflow. `job graph get` ou `inception_tasks_get` donne l'état
@@ -88,7 +88,7 @@ publiques prévues :
 
 ```text
 maurice access list --me --json
-maurice node show --json --data-dir <one-data-dir>
+maurice node show --json --data-dir <instance-data-dir>
 maurice node show --json --edge
 ```
 
@@ -246,13 +246,13 @@ curseur suivant ; aucun appel ne doit bloquer au-delà de ce lot.
 
 ## `start` et `stop`
 
-Ces commandes pilotent uniquement une instance One locale :
+Ces commandes pilotent uniquement une instance Maurice locale :
 
 ```text
-maurice start --data-dir <one-data-dir> [--server-bin <path>] [--wait <duration>] \
+maurice start --data-dir <instance-data-dir> [--server-bin <path>] [--wait <duration>] \
   [--settle <duration>] [--ready-url <url>] [--skip-ready-check] [--env KEY=VALUE] --json
-maurice stop --data-dir <one-data-dir> [--timeout <duration>] --json
-maurice status --data-dir <one-data-dir> --json
+maurice stop --data-dir <instance-data-dir> [--timeout <duration>] --json
+maurice status --data-dir <instance-data-dir> --json
 ```
 
 `start` renvoie notamment `pid`, `data_dir`, `ready`, `ready_checked` et
@@ -264,7 +264,7 @@ chemin ciblé. Ne lance jamais `go run`, un serveur standalone arbitraire ou un
 Le profil natif local expose `maurice_swarm_start` et `maurice_swarm_stop`
 avec les chemins choisis au lancement et `--allow-local-lifecycle`. Il n’existe
 pas d’équivalent MCP distant : une connexion
-front door ou D1 ne doit jamais démarrer ni arrêter un One local ou un nœud
+front door ou D1 ne doit jamais démarrer ni arrêter une instance Maurice locale ou un nœud
 éloigné par effet implicite.
 
 ## Reprise et erreurs
@@ -286,6 +286,7 @@ une preuve de résultat métier.
 | Commande CLI | Outil MCP | Paramètres de la requête |
 |---|---|---|
 | context current | maurice_client_context | aucun ; cible figée |
+| doctor | maurice_doctor | aucun ; dossier et options de diagnostic fixés au lancement |
 | swarm status/start/stop | maurice_swarm_status/start/stop | aucun ; chemins du lancement |
 | swarm nodes | maurice_swarm_nodes | organization, limit, offset (chaînes), filtres de lecture |
 | swarm jobs/list ; job list | maurice_swarm_jobs | limit, cursor, application |
@@ -299,3 +300,9 @@ la projection afin de ne pas confondre une organisation hors de la première
 page avec une absence d’accès. Une limite atteinte est un refus explicite.
 Les événements de Jobs utilisent le curseur `{sequence,event_id}` retourné,
 sérialisé en chaîne JSON ou base64url pour la CLI et le profil natif.
+
+La sélection conversationnelle `use <context>` se traduit par `--context <context>`
+sur la CLI ou sur le lancement explicite du profil MCP de cette cible.
+Elle ne modifie pas le contexte global. Une connexion MCP déjà ouverte garde
+sa cible ; pour en changer, le propriétaire rebranche explicitement le profil,
+puis `maurice_client_context` confirme la cible avant toute nouvelle découverte.

@@ -15,7 +15,7 @@ contourne aucune autorisation et ne remplace pas l'approbation humaine.
 
 ## Règles de cible
 
-Toute action qui parle à un One, un deployment, une Application ou un Agent
+Toute action qui parle à une instance Maurice, un deployment, une Application ou un Agent
 doit nommer sa cible. Conserve la référence complète renvoyée par la
 découverte ; ne déduis jamais une cible depuis son nom affiché.
 
@@ -54,7 +54,7 @@ Pour le parcours d'une capacité AgentMaurice déjà branchée, suis strictement
 Lis toujours `structured_content` lorsqu'il existe. `pending` reste une
 attente humaine : utilise `maurice.explain` sur `pending_action:<id>` pour
 observer son état et présente le lien de décision renvoyé par l'origine
-explicitement fournie par le One, sous la forme `/one/#/human-action/<id>`.
+explicitement fournie par Maurice, sous la forme `/one/#/human-action/<id>`.
 Ne déduis jamais cette origine, son port ou ce lien depuis le port MCP.
 Si `decision` vaut `rejected`, arrête le parcours ; ne réessaie pas avec une
 autre référence ou une nouvelle clé. Une carte `completed` n'est pas une
@@ -78,7 +78,7 @@ Son invocation explicite est :
 
 ```text
 maurice --config <private-config> --context <context> client-mcp-stdio \
-  --workspace-root <workspace> [--data-dir <one-data-dir>] \
+  --workspace-root <workspace> [--data-dir <instance-data-dir>] \
   [--server-bin <server-binary>] [--allow-local-write] \
   [--allow-local-lifecycle]
 ```
@@ -99,6 +99,12 @@ Le fichier de jeton reste privé ; le client ne le lit ni ne l'imprime. Lis
 `mcp_frontdoor.checked` et `mcp_frontdoor.ok`. Doctor prouve le handshake et
 le catalogue accessibles, jamais une exécution Workflow, un grant effectif,
 une qualification métier ou la disponibilité d'une VM.
+
+Le profil natif local expose aussi `maurice_doctor`, sans paramètre de requête.
+Le propriétaire fixe `--data-dir`, `--health-url` et, pour le préflight MCP,
+la paire `--mcp-endpoint` / `--mcp-token-file` au lancement du profil.
+Ce préflight est limité au loopback ; le chemin privé ne vient jamais du modèle.
+Sans cette paire, `mcp_frontdoor.checked=false` ne prouve pas un branchement.
 
 ## Choisir le domaine
 

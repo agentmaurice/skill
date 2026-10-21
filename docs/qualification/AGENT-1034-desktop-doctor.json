@@ -1,0 +1,141 @@
+{
+  "schema": "agentmaurice.client_qualification.desktop_doctor/v1",
+  "ticket": "AGENT-1034",
+  "plane_id": "19afd14d-949f-400a-8051-98cd5485b080",
+  "status": "passed",
+  "qualification_scope": "bounded Desktop continuity and idempotent replay on this target and archive",
+  "campaign_status": "PR Draft; Plane In Progress; no closeout",
+  "scope": "Claude Desktop Doctor and MCP continuity for One agent-1034-interfaces",
+  "recorded_at": "2026-10-21",
+  "backend_commit": "2f3af26ca91438bfb27d034b6358ff6252a0a189",
+  "archive_sha256": "f8210dabe58c07c07811851ae8cef69ce9eb4f9fa73e2455b96ebe4856d0737b",
+  "desktop_session": "764a2f90-f2a9-423c-b347-0bc1e221af2a",
+  "raw_transcript_sha256": "b2f8b13412bb5a21d0f77625525ba9579458727da1d26646b460e1d97b772fa3",
+  "client": {
+    "desktop_version": "3.1623.0",
+    "embedded_cli_version": "2.1.304",
+    "cli_version": "2.1.306",
+    "os": "27.0.1",
+    "architecture": "arm64"
+  },
+  "turn_1": {
+    "artifact": "artifacts/desktop-final-mcp.json",
+    "status": "passed",
+    "assertions": {
+      "context": true,
+      "status": true,
+      "check": true,
+      "verify": true,
+      "doctor": true,
+      "same_runtime_result": true,
+      "effect_quota_0_to_1": true,
+      "no_shell": true
+    },
+    "plan_id": "dbch1fi4p5cpir4sqsk0",
+    "plan_hash": "37082f639cf413b52ecc05d57a5a35da668e63554021866e78cfdfb63b2b2c81",
+    "qualified_spec_hash": "36eb72546e747206bb485f719401a3dda10579f3455aa227917f44a2a4493528",
+    "runtime_ref": "workflow:dbcehma4p5cvd8sl2bug/native-list-proof@1.1",
+    "job_id": "dbch3d24p5cpua8dvmk0",
+    "execution_id": "eheq4jq9ul6mr1ghb100",
+    "result": {"listed": true, "status": "completed", "replay_same_job_and_execution": true, "llm_calls": 0},
+    "effect_quota": {"used": 1, "remaining": 0}
+  },
+  "cli_tour": {
+    "artifact": "artifacts/desktop-final-cli.json",
+    "producer": "assert_desktop_cli_final.py",
+    "status": "passed",
+    "assertions": {
+      "five_literal_calls": true,
+      "status_equal": true,
+      "check_equal": true,
+      "verify_equal": true,
+      "same_job_execution_and_result": true
+    },
+    "assertion_count": 5,
+    "comparison": "CLI results equal the MCP turn 1 results",
+    "raw_transcript_sha256": "300afaa03cfb9921631f1d9a9c753e071c3a4a6e81fa2221ab6debf2d60406d3",
+    "compound_echo_denied_before_execution": true,
+    "bash_permission_changed": false,
+    "mcp_continuity_qualified": false
+  },
+  "continuity_tour": {
+    "artifact": "artifacts/desktop-final-continuity.json",
+    "producer": "assert_desktop_continuity.py",
+    "status": "passed",
+    "turns": 3,
+    "ui_session": "local_b5a18e50-7bf8-46ff-8c12-36eeeec9e19b",
+    "cli_session": "bc1876c8-aa59-4e55-988a-2137b0596a56",
+    "raw_transcript_sha256": "75f856e354abbad06f724d9ce56e41953bb44ce76f70c696c91eb075bea30e7c",
+    "project_setup": {
+      "enabledMcpjsonServers": ["maurice_local", "maurice_runtime"],
+      "scope": "untracked project-local settings; new dedicated Desktop session",
+      "bash_permission_changed": false,
+      "global_settings_changed": false
+    },
+    "assertion_count": 10,
+    "assertions": {
+      "same_context_between_turns": true,
+      "same_status_and_pid": true,
+      "same_doctor": true,
+      "check_equal": true,
+      "verify_equal": true,
+      "two_exact_replays": true,
+      "same_job_execution_result": true,
+      "quota_stays_one": true,
+      "no_new_execution": true,
+      "no_shell_or_reconnect": true
+    },
+    "job_id": "dbch3d24p5cpua8dvmk0",
+    "execution_id": "eheq4jq9ul6mr1ghb100",
+    "idempotency_key": "native-1034-final-reviewed",
+    "bounded_continuity_qualified": true,
+    "general_root_cause_proven": false,
+    "higher_client_versions_claimed": false
+  },
+  "doctor": {
+    "artifact": "artifacts/doctor-final-parity.json",
+    "cli_exit": 0,
+    "cli_mcp_equal": true,
+    "tool_count": 22,
+    "health_ok": true,
+    "storage_ok": true,
+    "mcp_frontdoor_ok": true,
+    "viewer_readiness": "blocked: one_home.missing_viewer_dist",
+    "vm_profile_readiness": "not checked",
+    "llm_verified": false
+  },
+  "turn_2": {
+    "artifact": "artifacts/desktop-second-turn-blocked.json",
+    "status": "blocked_on_second_turn",
+    "removed_mcp_tools": 14,
+    "retraction_cause": "not_configured",
+    "continuity_qualified": false,
+    "root_cause_proven": false,
+    "new_connection_or_fallback_execution": false
+  },
+  "bash_fallback": {
+    "status": "denied_before_execution",
+    "classifier": "[Auto-Mode Bypass]",
+    "cause": "compound command appended ; echo EXIT=$?",
+    "commands_after_denial_executed": false,
+    "exit_code": null
+  },
+  "independent_checks": {
+    "go_selftests": 22,
+    "packaging_checks": 5,
+    "go_duration_seconds": 47.075,
+    "cli_assertions": 7,
+    "cli_assertion_helper": "assert_cli_final.py",
+    "cli_assertion_status": "passed"
+  },
+  "harness_limits": [
+    "Historical attempts used an old plan and a parent directory outside the final target; they are not final backend failures.",
+    "Negative Doctor injection was refused with client_arguments_invalid: unknown field data_dir."
+  ],
+  "qualification_limits": [
+    "The One viewer cannot be declared openable from this Doctor result.",
+    "Public VM readiness and Application chat LLM readiness were not verified.",
+    "The historical session's retraction root cause remains unqualified; bounded continuity is passed in the final dedicated session."
+  ],
+  "ripwire_command": "ripwire . --for='AGENT-1034 work submit backend merge request GitHub pull request closeout Plane multi-repo purge One sandbox active interfaces' --signatures-only --pack-top-n=20"
+}

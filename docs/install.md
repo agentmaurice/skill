@@ -86,11 +86,38 @@ claude --plugin-dir /tmp/maurice-claude-plugin/plugins/maurice
 ```
 
 Le plugin utilise le MCP déjà configuré et le namespace Claude
-`/maurice:maurice`. Aucun hook, mod ou nouveau `.mcp.json` n'est ajouté. Les
-réglages Desktop en portée project et leur qualification restent différés.
+`/maurice:maurice`. Le paquet n'ajoute aucun hook, mod ou `.mcp.json`.
+
+Dans l'onglet Code de Claude Desktop, choisir le dossier du projet puis
+installer le plugin depuis la marketplace locale construite, avec la portée
+`local` du projet (`claude plugin install maurice@<marketplace> --scope local`
+depuis ce dossier). Les serveurs MCP restent une configuration explicite du
+propriétaire. Pour les deux connexions d'un projet de qualification déjà
+revues et autorisées, la sélection persistante peut être renseignée dans le
+fichier non suivi `.claude/settings.local.json` :
+
+```json
+{
+  "enabledMcpjsonServers": ["maurice_local", "maurice_runtime"]
+}
+```
+
+Fusionner ce champ avec les réglages existants sans les écraser. Il nomme les
+connexions présentes dans le `.mcp.json` de ce projet, sans créer de grant ni
+autoriser les serveurs d'autres projets. Ouvrir ensuite une nouvelle session
+sur ce dossier et vérifier le catalogue à chaque échange. Le
+[rapport Desktop et Doctor](qualification/AGENT-1034-desktop-doctor.md)
+conserve le retrait `not_configured` observé avant cette sélection et le rejeu
+après configuration ; il ne conclut pas à une correction générale de Desktop.
+
+Lors d'un fallback CLI autorisé par une règle exacte, exécuter la commande
+littérale sans y ajouter `echo`, chaînage ou redirection ; lire le statut de
+l'outil shell. Un refus de permission reste un refus et ne justifie pas un
+autre moyen d'exécution ni une modification globale des permissions.
 
 Les parcours `swarm` et `build`, leurs invocateurs publics, leurs preuves et
-les limites restantes sont décrits dans [la matrice des commandes](qualification/AGENT-1034-commands.md). Le lifecycle reste une opération
+les limites restantes sont décrits dans [le rapport natif](qualification/AGENT-1034-native-interfaces.md) et
+[le rejeu Desktop courant](qualification/AGENT-1034-desktop-doctor.md). Le lifecycle reste une opération
 locale explicite ; une connexion MCP déjà autorisée n’impose pas la CLI.
 
 Pour les cartes humaines, conserver aussi l’URL explicite de l’accueil du One.

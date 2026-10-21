@@ -1,5 +1,7 @@
 # Parité CLI/MCP et approbations Claude — AGENT-1034
 
+> **Statut documentaire — campagne historique supersédée.** Ce document décrit la campagne menée sur l’archive 2972c5fee9e2f947795f40ccaaf71399d61397d4646120fd9aad860f6d85ea6e et le backend 4fd020849d7fa52361d371bd5dfbfceb48991e3c. L’état natif actuel qui fait foi est la [qualification des interfaces natives](AGENT-1034-native-interfaces.md) et sa [preuve JSON](AGENT-1034-native-interfaces.json), avec l’archive c14728298a9ec8a46701bd19fbe1822e20a64c6faa74c234f09c61e815cb699e et le backend de qualification 0df11b39c716d710ed01fd405db2a4da90b0294f (backend final fb0b0d679d01dd81ce94fa9e8a984d2833d80971).
+
 Campagne complémentaire du 21 octobre 2026 : **18 conversations réelles**
 Claude Code **2.1.306**, modèle **claude-sonnet-5-5**, dans des processus
 séparés lancés depuis notre shell. Aucune session Claude existante, aucun
@@ -118,5 +120,5 @@ le partage d'un même plan persisté pour la parité apply.
 
 AGENT-1034 reste **In Progress**, PR **Draft**. Mod/dev, publication distante,
 marketplace et production ne sont pas couverts. Les preuves et le reçu
-standard du SHA final sont rapportés dans la PR ; aucun work:submit ou
+standard du SHA de cette campagne historique sont rapportés dans la PR ; aucun work:submit ou
 closeout réussi n'est revendiqué.

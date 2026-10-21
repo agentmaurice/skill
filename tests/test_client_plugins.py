@@ -123,6 +123,23 @@ class ClientPluginBuild(unittest.TestCase):
             result = subprocess.run([sys.executable, str(copied / "scripts/build_client_plugin.py"), "--client", "codex", "--output", str(Path(tmp) / "symlink-out")], text=True, capture_output=True)
             self.assertNotEqual(result.returncode, 0)
 
+    def test_claude_refuses_broken_and_escaping_guide_links(self) -> None:
+        for link in ("references/missing.md", "../../../outside.md"):
+            with self.subTest(link=link), tempfile.TemporaryDirectory() as tmp:
+                copied = Path(tmp) / "repo"
+                shutil.copytree(ROOT, copied, ignore=shutil.ignore_patterns(".git", "__pycache__"))
+                guide = copied / "plugins/claude/maurice/SKILL.md"
+                guide.write_text(guide.read_text() + f"\n[invalid]({link})\n")
+                output = Path(tmp) / "out"
+                result = subprocess.run(
+                    [sys.executable, str(copied / "scripts/build_client_plugin.py"), "--client", "claude", "--output", str(output)],
+                    text=True,
+                    capture_output=True,
+                )
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIn("lien de guide", result.stderr)
+                self.assertFalse(output.exists())
+
     def test_refuses_invalid_outputs_and_client(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             base = Path(tmp)

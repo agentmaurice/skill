@@ -3,6 +3,8 @@
   "date": "2026-10-21",
   "surface": "Claude Code CLI 2.1.306 / claude-sonnet-5-5; dedicated internal shells; no user sessions/global settings changed",
   "delivery_state": "in_progress",
+  "history_status": "historical_campaign_superseded",
+  "superseded_by": "AGENT-1034-native-interfaces.json",
   "package_archive_sha256": "2972c5fee9e2f947795f40ccaaf71399d61397d4646120fd9aad860f6d85ea6e",
   "approval_actor": {
     "authorization": "Explicit founder delegation in this conversation to accept and refuse these fictional development/qualification cards",

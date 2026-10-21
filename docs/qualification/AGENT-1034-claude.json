@@ -2,6 +2,8 @@
   "ticket": "AGENT-1034",
   "date": "2026-10-21",
   "delivery_state": "in_progress",
+  "history_status": "historical_campaign_superseded",
+  "superseded_by": "AGENT-1034-native-interfaces.json",
   "platform": {
     "os": "macOS 27.0.1 (26A434)",
     "claude_cli": "2.1.299",

@@ -1,5 +1,7 @@
 # Qualification terminal du plugin Claude — AGENT-1034
 
+> **Statut documentaire — campagne historique supersédée.** Ce document décrit la campagne menée sur l’archive 8bc73847193e37a71fcc586db94bb90b71b8f35955956eed8ca256b0c2cb0d4d et le backend 4fd020849d7fa52361d371bd5dfbfceb48991e3c. L’état natif actuel qui fait foi est la [qualification des interfaces natives](AGENT-1034-native-interfaces.md) et sa [preuve JSON](AGENT-1034-native-interfaces.json), avec l’archive c14728298a9ec8a46701bd19fbe1822e20a64c6faa74c234f09c61e815cb699e et le backend de qualification 0df11b39c716d710ed01fd405db2a4da90b0294f (backend final fb0b0d679d01dd81ce94fa9e8a984d2833d80971).
+
 Campagne complémentaire : [parité CLI/MCP, cartes et reprise](AGENT-1034-parity-approval.md), avec décisions de test explicitement déléguées par le fondateur.
 
 > Complément ultérieur : les parcours `swarm` et `build` ont été complétés et
@@ -49,7 +51,7 @@ Aucun mod, hook, nouveau serveur MCP ou identifiant de poste n’est embarqué.
 | `swarm status` local | Commande native exacte avec `--config` et `--data-dir` du ticket exécutée par Claude : `running=true`. Cela ne qualifie pas l’inventaire d’un swarm. |
 | `build check` | Commande native exacte sur le projet fictif : `agentmaurice.agent_spec_check/v2`, `ok=true`, contrats valides, hash de Spec. Aucun plan ou apply déclenché. |
 
-Au contrôle final, SQLite contient **un Agent Job**, l’exécution est terminée,
+Au contrôle final de cette campagne historique, SQLite contient **un Agent Job**, l’exécution est terminée,
 le fichier attendu contient les octets convenus et le fichier du lecteur est
 absent. Le zéro coût qualifié concerne les outils locaux du One ; les modèles
 réels des clients ont bien été sollicités.

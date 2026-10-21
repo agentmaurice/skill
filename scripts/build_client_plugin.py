@@ -6,11 +6,13 @@ from __future__ import annotations
 import argparse
 import gzip
 import json
+import re
 import shutil
 import subprocess
 import sys
 import tarfile
 import tempfile
+from urllib.parse import urlparse
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -61,6 +63,22 @@ def copy_tree(src: Path, dst: Path) -> None:
         else:
             target.parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(path, target)
+
+
+def validate_guide_links(guides: Path, package_root: Path) -> None:
+    package_root = package_root.resolve()
+    for guide in guides.rglob("*.md"):
+        text = guide.read_text(encoding="utf-8")
+        relative = guide.resolve().relative_to(package_root)
+        for link in re.findall(r"\[[^\]]+\]\(([^)]+)\)", text):
+            parsed = urlparse(link)
+            if not parsed.path or parsed.scheme or link.startswith("//"):
+                continue
+            destination = (guide.parent / parsed.path).resolve()
+            if not destination.is_relative_to(package_root):
+                fail(f"lien de guide hors paquet: {relative} -> {link}")
+            if not destination.is_file():
+                fail(f"lien de guide cassé: {relative} -> {link}")
 
 
 def write_json(path: Path, value: object) -> None:
@@ -151,6 +169,7 @@ def build_claude(output: Path) -> Path:
             fail("README Claude introuvable")
         shutil.copyfile(readme, plugin / "README.md")
         copy_tree(template_root, plugin / "skills" / "maurice")
+        validate_guide_links(plugin / "skills" / "maurice", plugin)
         write_json(plugin / "plugin.json", {
             "$schema": PLUGIN_SCHEMA,
             "name": PLUGIN_NAME,
