@@ -69,6 +69,11 @@ class ClientPluginBuild(unittest.TestCase):
             self.assertEqual({key: claude_manifest[key] for key in ("name", "version", "description", "author", "license")}, {key: manifest[key] for key in ("name", "version", "description", "author", "license")})
             self.assertEqual((plugin / "skills/maurice/SKILL.md").read_bytes(), (ROOT / "plugins/claude/maurice/SKILL.md").read_bytes())
             self.assertIn("maurice:", (plugin / "skills/maurice/SKILL.md").read_text())
+            self.assertEqual((plugin / "README.md").read_bytes(), (ROOT / "plugins/claude/README.md").read_bytes())
+            readme_text = (plugin / "README.md").read_text()
+            self.assertIn("/maurice:maurice", readme_text)
+            self.assertNotIn("/Users/", readme_text)
+            self.assertNotIn("token", readme_text.lower())
             marketplace = json.loads((output / ".claude-plugin/marketplace.json").read_text())
             self.assertEqual(marketplace, {"name": "maurice-local", "owner": {"name": "AgentMaurice"}, "plugins": [{"name": "maurice", "source": "./plugins/maurice"}]})
             for source in CANONICAL.rglob("*"):
