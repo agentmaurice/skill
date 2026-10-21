@@ -89,11 +89,9 @@ route HTTP ou la base.
   nœuds de l'accès personnel ; `maurice node show [--data-dir|--edge] --json`
   expose l'identité locale. Cela ne constitue pas un inventaire générique du
   swarm.
-- `swarm run` : utilise `maurice.execute` après `search` puis `explain`, ou
-  `maurice app workflow run <applicationKey> <workflowId> [--input-file <path>]`
-  lorsque l'utilisateur a fourni ces références exactes. `--input` accepte
-  aussi un objet JSON ; `--app-key` ou `--operator` suivent le contrat de la
-  commande.
+- `swarm run` : utilise `maurice.execute` après `search` puis `explain`.
+  Le parcours CLI équivalent est `maurice search`, `maurice explain`, puis
+  `maurice execute`, avec la même référence, entrée, clé et empreinte de plan.
 - `swarm jobs` et `swarm logs` : exige `job_id` ou `graph_id`, puis utilise
   `maurice job graph get <graph_id>` et `maurice job graph events <graph_id>`
   pour un graphe, ou les outils MCP `inception_tasks_get` et
