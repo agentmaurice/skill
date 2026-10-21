@@ -57,7 +57,6 @@ class ClientPluginBuild(unittest.TestCase):
             digest = lambda path: hashlib.sha256(path.read_bytes()).hexdigest()
             self.assertEqual(digest(output / "maurice.plugin.tar.gz"), digest(second / "maurice.plugin.tar.gz"))
 
-    @unittest.skipUnless((ROOT / "plugins/claude/maurice/SKILL.md").is_file(), "template Claude réservé au rédacteur externe")
     def test_claude_package_and_archive(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             output = Path(tmp) / "out"
