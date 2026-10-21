@@ -114,6 +114,24 @@ human distinct from the plan author, plus a pull or merge request. A terminal
 failed plan is diagnostic evidence and cannot be rearmed: rerun `spec deploy`
 to create a fresh plan.
 
+## Project in a repository subdirectory
+
+A project normally sits at the root of its Git repository. When several
+projects share one repository, each in its own subdirectory, declare it in
+`agentmaurice.project.json`:
+
+```json
+"source_control": { "allow_repository_subdirectory": true }
+```
+
+Plans then record the repository, branch, commit, the subdirectory path
+(`repository_path`) and its Git tree id (`tree_sha`). Only files in that
+subdirectory make the workspace dirty, and a stored plan goes stale only when
+the subdirectory tree changes. Production rules are unchanged: clean Git,
+commit, merge request URL and a distinct human approver. Without the
+declaration, a project below a repository root reports no Git provenance and
+never runs `git init`.
+
 ## Typed questions before routing
 
 Use a pure `question` action for classification, scoring, or a yes/no assessment
