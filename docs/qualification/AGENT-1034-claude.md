@@ -1,5 +1,7 @@
 # Qualification terminal du plugin Claude — AGENT-1034
 
+Campagne complémentaire : [parité CLI/MCP, cartes et reprise](AGENT-1034-parity-approval.md), avec décisions de test explicitement déléguées par le fondateur.
+
 > Complément ultérieur : les parcours `swarm` et `build` ont été complétés et
 > rejoués dans [la campagne des commandes](AGENT-1034-commands.md). Les manques
 > listés plus bas décrivent cette première campagne ; le complément fait foi
@@ -95,3 +97,8 @@ par ce paquet. `spec init` prépare un Agent existant ; il ne crée pas un Agent
 Le domaine `dev` (AGENT-1036, outils AGENT-1037) et le mod (AGENT-1035) restent
 séparés. La validation du paquet ne vaut ni qualification Desktop, ni release
 One, ni publication publique. Le ticket reste In Progress et sa PR reste Draft.
+
+État historique : les limites de reprise humaine, cible et incompatibilité
+mentionnées dans cette première campagne sont complétées par
+[la qualification suivante](AGENT-1034-parity-approval.md), avec décisions
+de test déléguées et périmètre CLI uniquement.

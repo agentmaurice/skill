@@ -1,5 +1,7 @@
 # Commandes Claude swarm et build — AGENT-1034
 
+Campagne complémentaire : [parité CLI/MCP, cartes et reprise](AGENT-1034-parity-approval.md), avec décisions de test explicitement déléguées par le fondateur.
+
 Qualification du 21 octobre 2026, en complément de
 [la première campagne Claude](AGENT-1034-claude.md).
 **Les parcours des commandes sont complétés sur les interfaces publiques
@@ -107,8 +109,10 @@ Les limites de produit ne sont pas masquées par le guidage :
   les parcours du plugin fonctionnent dans leurs surfaces disponibles.
 - Le nouvel Agent est un draft avec scaffold ; le handoff Studio automatique
   n'est pas qualifié. Aucun Agent métier ou modèle n'est déclaré déployé.
-- Desktop Code, reprise d'approbation humaine dans Claude, changement de cible
-  et incompatibilité de protocole restent hors des preuves de cette campagne.
+- État historique de cette campagne : Desktop Code, reprise d’approbation,
+  changement de cible et incompatibilité étaient hors preuve. La [campagne
+  complémentaire](AGENT-1034-parity-approval.md) qualifie depuis les cartes
+  déléguées et les refus de cible/contrat dans la CLI ; Desktop reste non qualifié.
   La consigne du fondateur est de préserver ses sessions et d'utiliser notre
   shell CLI.
 - Les domaines mod/dev restent AGENT-1035/1036/1037. Aucune publication
