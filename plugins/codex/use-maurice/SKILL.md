@@ -29,6 +29,8 @@ réponds pas et ne simule jamais la décision humaine. Une révocation, une
 expiration, un refus ou un conflit d'idempotence bloque le parcours ; ne
 réessaie pas avec une autre cible ou une nouvelle clé pour contourner l'état.
 
+Pour présenter la carte, consulte le [contrat front door](../agentmaurice/references/frontdoor.md). Utilise le lien retourné par le serveur, ou le chemin documenté `/one/#/human-action/<action_id>` sous l’origine de l’instance explicitement fournie par l’utilisateur. Ne déduis jamais le port API depuis le port MCP. Sans origine connue, demande le lien de l’accueil humain du One ; ne fabrique pas une URL et ne lance pas de viewer CLI.
+
 Lis toujours `structured_content` lorsqu'il est présent, même si le bloc
 `content[].text` est vide. Dans une réponse de carte, `status: "completed"`
 signifie seulement que la carte a été résolue ; lis séparément

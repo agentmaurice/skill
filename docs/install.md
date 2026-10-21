@@ -75,6 +75,11 @@ manque, le Skill guide explicitement `maurice assistant connect codex` avec un
 fichier de jeton privé. La qualification sur un One réel est séparée du
 packaging.
 
+Pour les cartes humaines, conserver aussi l’URL explicite de l’accueil du One.
+Le port MCP ne permet pas de déduire le port de cette page. Si le serveur ne
+retourne qu’une référence d’action, fournir cette origine au Skill pour obtenir
+le lien documenté ; la décision reste dans l’interface humaine existante.
+
 ## Vocabulaire et parcours Codex
 
 Dans Codex, l'accueil et l'usage passent par `$use-maurice` (sans syntaxe
