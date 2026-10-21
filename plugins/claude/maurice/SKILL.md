@@ -30,6 +30,8 @@ découverte ; ne déduis jamais une cible depuis son nom affiché.
 - Ne lis jamais un fichier de jeton et ne demande jamais une valeur secrète
   dans le chat.
 
+Un changement de contexte CLI ne rebranche pas le MCP déjà connecté. Invalide les références et plans observés sur l’ancienne cible. Avant une exécution sur une autre instance, vérifie son endpoint et son mandat explicites, puis refais le préflight, `search` et `explain` sur cette connexion. Si elle manque, guide le branchement public `maurice assistant connect generic --config-file <private-mcp-config> --endpoint <endpoint> --token-file <private-token-file>` ; aucun droit nouveau n’est créé et aucun fichier global n’est remplacé implicitement.
+
 ## Accueil et usage
 
 « Accueil » est informatif : il n'exécute aucune opération métier. Si utile,
