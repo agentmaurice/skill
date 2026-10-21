@@ -1,0 +1,106 @@
+{
+  "schema": "agentmaurice.review_receipt/v1",
+  "ticket": "AGENT-1034",
+  "repo": "chatserver",
+  "head": "df523801ccef28cd03eb8ce4f94ca4030854d72f",
+  "reviewer": "claude-sonnet-5-5",
+  "reviewer_family": "anthropic",
+  "author_families": [
+    "openai"
+  ],
+  "diff_sha256": "58ab4b6ae5f0b14804dec29659d28339582c15956a3d639ac598e3e1366eff86",
+  "criteria": "PLUG-01 à PLUG-05 applicables.\nPLUG-12 : chaque commande a son équivalent CLI et MCP, documenté, au même résultat métier.\nPLUG-13 : une commande sans domaine affiche l'accueil et ne lance aucun effet.\nPLUG-15 : aucun outil ni libellé\none\nne subsiste.\nPLUG-10 : rejeu dans le terminal Claude et dans l'onglet Code de Claude Desktop.",
+  "criteria_sha256": "502faf768f9e782062bcd6f763a68c48a76915bf4b2aee6b25cfbd7d3dbcc34f",
+  "reviewed_at": "2026-10-21T19:56:20Z",
+  "duration_seconds": 42.0,
+  "usage": {
+    "input_tokens": 2,
+    "cache_creation_input_tokens": 337,
+    "cache_read_input_tokens": 16222,
+    "output_tokens": 5660,
+    "output_tokens_details": {
+      "thinking_tokens": 3537
+    },
+    "server_tool_use": {
+      "web_search_requests": 0,
+      "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+      "ephemeral_1h_input_tokens": 337,
+      "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+      {
+        "input_tokens": 2,
+        "output_tokens": 5660,
+        "cache_read_input_tokens": 16222,
+        "cache_creation_input_tokens": 337,
+        "cache_creation": {
+          "ephemeral_5m_input_tokens": 0,
+          "ephemeral_1h_input_tokens": 337
+        },
+        "type": "message"
+      }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+  },
+  "findings": [
+    {
+      "severity": "blocking",
+      "title": "PLUG-15 : le nouvel outil maurice_doctor expose des libellés « One » au modèle",
+      "file": "apps/mauricecli/internal/cli/cmd/doctor_operator.go (via client_mcp.go, entrée \"doctor\")",
+      "breaking_input": "Appel de maurice_doctor avec un dossier local sans viewer (viewer-app absent du cache).",
+      "expected": "PLUG-15 : aucun outil ni libellé « one » ne subsiste. La sortie JSON du nouvel outil ne devrait pas contenir « One ».",
+      "observed": "Le MCP renvoie tel quel le JSON de la CLI (le test le impose : « Doctor MCP JSON = CLI JSON »). Ce JSON contient les diagnostics existants (« One home viewer assets are missing… ») et miniAppNote (« open the One home… »). Le diff ne les modifie pas. La doc restreint PLUG-15 à la « surface de commandes », mais la sortie d'un outil nouvellement ajouté reste un libellé visible. Les nouveaux tests utilisent aussi ONE_VIEWER_DIST, « relative-one » et « /selected/one »."
+    },
+    {
+      "severity": "minor",
+      "title": "PLUG-10, PLUG-12 et PLUG-13 : aucune preuve ni artefact dans le diff",
+      "file": "apps/mauricecli/docs/client-control.md",
+      "breaking_input": "Rejeu de /doctor dans le terminal Claude et dans l'onglet Code de Claude Desktop. Commande sans domaine.",
+      "expected": "Une commande ou un skill de plugin pour doctor, un test ou une preuve de rejeu dans les deux clients, et un test montrant que l'absence de domaine affiche l'accueil sans effet.",
+      "observed": "Le diff ajoute une ligne de tableau dans la doc, l'outil MCP et des tests unitaires Go. Il n'ajoute aucune commande de plugin, aucun test PLUG-13 et aucune trace de rejeu PLUG-10. Ces critères ne sont pas démontrés."
+    },
+    {
+      "severity": "minor",
+      "title": "Écart CLI/MCP non neutre pour PLUG-12 : data-dir obligatoire et options figées",
+      "file": "apps/mauricecli/internal/cli/cmd/client_mcp.go (arguments, branche doctor)",
+      "breaking_input": "MCP lancé sans --data-dir, alors que la CLI `doctor` sait résoudre un dossier par défaut avec resolveDoctorDataDir.",
+      "expected": "Même résultat métier entre la CLI et le MCP, ou un écart documenté sans ambiguïté.",
+      "observed": "Le MCP refuse l'appel (« explicit data directory required ») alors que la CLI aboutit. Cet écart est documenté, mais la validation du dataDir n'a lieu au démarrage que si une option Doctor est fournie. Un dataDir avec espaces ou relatif échoue donc seulement à l'appel, après exposition de l'outil."
+    },
+    {
+      "severity": "minor",
+      "title": "Validation de l'endpoint MCP : port explicite non vérifié et valeur brute transmise",
+      "file": "apps/mauricecli/internal/cli/cmd/client_mcp.go (validateDoctorOptions)",
+      "breaking_input": "--mcp-endpoint http://127.0.0.1/mcp/maurice (sans port), si ValidateEndpoint l'accepte.",
+      "expected": "La doc annonce « HTTP loopback avec IP et port explicites » pour les URL du profil Doctor. Un port absent devrait être refusé, comme pour health-url.",
+      "observed": "validateDoctorLocalHTTPURL, qui exige le port, n'est appelée que pour health-url. Pour l'endpoint MCP, seuls le schéma http et l'IP loopback sont contrôlés après ValidateEndpoint. La valeur brute `endpoint`, et non `validated`, est ensuite passée à la CLI. Si la normalisation diffère, ce qui est contrôlé n'est pas ce qui est utilisé. Les tests dépendent aussi du texte d'erreur d'un package externe (« invalid doctor MCP endpoint »)."
+    },
+    {
+      "severity": "minor",
+      "title": "Chemin du token et dossier de données non confinés comme les autres chemins du client",
+      "file": "apps/mauricecli/internal/cli/cmd/client_mcp.go (validateDoctorDataDir, validateDoctorOptions)",
+      "breaking_input": "--data-dir pointant vers un lien symbolique, ou --mcp-token-file absolu vers un fichier quelconque, lisible mais non privé.",
+      "expected": "Cohérence avec la règle du fichier (« Reject symlink components ») et avec la doc (« private token file »).",
+      "observed": "validateDoctorDataDir utilise os.Stat, qui suit les liens symboliques. Le token n'est contrôlé ni pour l'existence, ni pour les droits, ni pour les liens symboliques. Seul le caractère absolu est vérifié."
+    },
+    {
+      "severity": "minor",
+      "title": "--viewer-config-dir dérivé de o.config sans contrôle d'absolu côté MCP",
+      "file": "apps/mauricecli/internal/cli/cmd/client_mcp.go et one_lifecycle.go",
+      "breaking_input": "Serveur MCP lancé avec --config relatif (ex. cfg/config.yaml), si le démarrage ne l'absolutise pas.",
+      "expected": "Doctor renvoie son JSON avec le cache viewer du dossier de la config source.",
+      "observed": "filepath.Dir(o.config) donne un chemin relatif. Le child refuse alors avec « --viewer-config-dir must be absolute » et l'appel Doctor échoue. Le diff ne montre aucune garantie que o.config soit absolu. Les tests n'utilisent que des chemins absolus. Ce flag caché n'est pas non plus documenté dans la CLI."
+    }
+  ],
+  "resolutions": {
+    "1": {
+      "kind": "refute",
+      "reason": "Le critère PLUG-15 est défini dans la spec canonique wiki/architecture/agentmaurice-client-plugins.md, section prototype : le prototype one-bridge et ses commandes/outils doivent être renommés maurice/maurice_*. Le nouvel outil s'appelle maurice_doctor, aucun domaine one, maurice one ou outil one_* n'est ajouté. Le JSON CLI préexistant est conservé intégralement pour PLUG-12 ; ses codes one_home.*, URLs /one/ et variables ONE_VIEWER_DIST restent des contrats runtime, pas des noms d'outils du plugin. PLUG-02 exige de réutiliser le Skill canonique dont le nom du runtime One est conservé. Les guides propres du plugin ont en revanche remplacé leurs libellés One par instance Maurice ; le maintien du seul lien protocolaire de carte humaine est explicite. Le nouveau rapport client AGENT-1034-desktop-doctor.md distingue ces périmètres, sans revendiquer la disparition de toute chaîne interne One. La version canonique conservée est maintenant 2.0.40 (PLUG-02) et le paquet54e72b58, après intégration de main. Le rapport post-main distingue la qualification Desktop68454b62 du commitdf523801 intégrant seulement un test upstream. Le catalogue réel maurice_doctor et les11lectures/22opérations sont consignés dans main-merged-native-catalogue.json."
+    }
+  }
+}

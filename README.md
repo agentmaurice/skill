@@ -103,7 +103,13 @@ codex plugin marketplace add /tmp/maurice-plugin
 codex plugin add maurice@maurice-local
 ```
 
-The builder validates `skill-version.json`, preserves the canonical Skill byte-for-byte, and emits a single-plugin archive. Claude packaging is deferred.
+The builder validates `skill-version.json`, preserves the canonical Skill byte-for-byte, and emits a single-plugin archive for Codex or Claude.
+
+Le paquet Claude privé se construit avec `--client claude`, puis se charge pour une session
+isolée avec `claude --plugin-dir <out>/plugins/maurice`. Le rejeu dans Code de
+Claude Desktop et la configuration locale du projet sont décrits dans le
+[rapport Desktop et Doctor](docs/qualification/AGENT-1034-desktop-doctor.md),
+avec les versions, preuves et limites de cette qualification.
 
 ### Vocabulaire et invocateurs Codex
 

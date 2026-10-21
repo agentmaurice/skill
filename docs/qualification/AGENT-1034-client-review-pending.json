@@ -1,0 +1,118 @@
+{
+  "schema": "agentmaurice.review_receipt/v1",
+  "ticket": "AGENT-1034",
+  "repo": "skill",
+  "head": "a504642a964a8567adefe0632869b45b8550ae68",
+  "reviewer": "claude-sonnet-5-5",
+  "reviewer_family": "anthropic",
+  "author_families": [
+    "openai"
+  ],
+  "diff_sha256": "2764338204eb96684a19a9d0d27236987b24e472a59e46ea5fbc2c8badf3e6cb",
+  "criteria": "PLUG-01 à PLUG-05 applicables.\nPLUG-12 : chaque commande a son équivalent CLI et MCP, documenté, au même résultat métier.\nPLUG-13 : une commande sans domaine affiche l'accueil et ne lance aucun effet.\nPLUG-15 : aucun outil ni libellé\none\nne subsiste.\nPLUG-10 : rejeu dans le terminal Claude et dans l'onglet Code de Claude Desktop.",
+  "criteria_sha256": "502faf768f9e782062bcd6f763a68c48a76915bf4b2aee6b25cfbd7d3dbcc34f",
+  "reviewed_at": "2026-10-21T18:18:14Z",
+  "duration_seconds": 49.3,
+  "usage": {
+    "input_tokens": 2,
+    "cache_creation_input_tokens": 414988,
+    "cache_read_input_tokens": 2008,
+    "output_tokens": 5119,
+    "output_tokens_details": {
+      "thinking_tokens": 2558
+    },
+    "server_tool_use": {
+      "web_search_requests": 0,
+      "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+      "ephemeral_1h_input_tokens": 414988,
+      "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+      {
+        "input_tokens": 2,
+        "output_tokens": 5119,
+        "cache_read_input_tokens": 2008,
+        "cache_creation_input_tokens": 414988,
+        "cache_creation": {
+          "ephemeral_5m_input_tokens": 0,
+          "ephemeral_1h_input_tokens": 414988
+        },
+        "type": "message"
+      }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+  },
+  "findings": [
+    {
+      "severity": "blocking",
+      "title": "PLUG-10 non tenu : aucun rejeu dans l'onglet Code de Claude Desktop",
+      "file": "docs/qualification/AGENT-1034-claude.md ; AGENT-1034-commands.json (limits) ; AGENT-1034-parity-approval.md",
+      "breaking_input": "Chercher une trace de rejeu dans l'onglet Code de Claude Desktop.",
+      "expected": "PLUG-10 : rejeu dans le terminal Claude et dans l'onglet Code de Claude Desktop.",
+      "observed": "Le diff déclare lui-même « No Desktop Code replay », « Desktop Code non qualifié » et « Rejeu réel à effectuer ». Seul le terminal est rejoué. Le critère est explicitement non satisfait."
+    },
+    {
+      "severity": "blocking",
+      "title": "PLUG-12 non tenu : la parité CLI/MCP n'est pas établie pour chaque commande",
+      "file": "docs/qualification/AGENT-1034-commands.json (limits) ; AGENT-1034-parity-approval.json (limits) ; plugins/claude/maurice/references/swarm.md",
+      "breaking_input": "`swarm start`, `swarm stop`, `swarm nodes`, `swarm jobs` (liste), `build new module`, `build new application`.",
+      "expected": "Chaque commande a un équivalent CLI et MCP documenté, avec le même résultat métier.",
+      "observed": "Les limites du diff reconnaissent : « Strict PLUG-12 CLI/MCP equivalence for all commands is not established » et « PLUG-12 universal parity cannot be claimed ». swarm.md écrit « Il n'existe pas d'équivalent MCP distant à start ou stop ». `swarm run` n'est pas dans le profil `client-mcp-stdio`. Le critère n'est pas satisfait."
+    },
+    {
+      "severity": "blocking",
+      "title": "PLUG-15 non tenu : le libellé « One » est omniprésent dans le plugin livré et la doc",
+      "file": "plugins/claude/maurice/SKILL.md ; plugins/claude/maurice/references/swarm.md ; build.md ; docs/install.md",
+      "breaking_input": "Rechercher « One » (sans tenir compte de la casse) dans le paquet Claude construit. Exemples : « un One, un deployment », « instance One locale », `<one-data-dir>`, `/one/#/human-action/<id>`.",
+      "expected": "Aucun outil ni libellé « one » ne subsiste.",
+      "observed": "Ces libellés sont visibles par l'utilisateur dans le Skill, les références et la doc. Les transcripts le confirment, par exemple « l'instance One » dans la réponse d'accueil. Le diff exclut seulement les identifiants protocolaires dans sa documentation. Cette réserve ne figure pas dans le critère, et les libellés visibles ne sont pas des identifiants protocolaires."
+    },
+    {
+      "severity": "blocking",
+      "title": "`build test` peut afficher un succès sans lancer les tests (faux vert)",
+      "file": "plugins/claude/maurice/references/build.md ; docs/qualification/AGENT-1034-commands.md",
+      "breaking_input": "`maurice build test --plan P` sur un plan P déjà appliqué (même clé d'idempotence par défaut), ou `maurice_build_test` en MCP.",
+      "expected": "Les tests bloquants sont réellement exécutés, et le succès n'est affiché que s'ils passent.",
+      "observed": "commands.md indique « Replay du même plan/clé : replayed=true ... aucun nouveau test déclenché ». build.md ajoute qu'une autre clé sur un plan déjà appliqué est refusée. Pour un plan déjà appliqué, `build test` renvoie donc un PASSED en cache ou un refus, mais n'exécute rien. Le même fichier affirme aussi qu'il n'existe « pas d'invocateur public autonome » pour rejouer un test plan, ce qui contredit le verbe `build test` du Skill."
+    },
+    {
+      "severity": "minor",
+      "title": "PLUG-13 : la preuve de l'accueil date d'un paquet périmé et le Skill final peut lancer une commande",
+      "file": "docs/qualification/AGENT-1034-claude.json (run claude-welcome) ; plugins/claude/maurice/SKILL.md",
+      "breaking_input": "`/maurice:maurice` sans domaine, avec le paquet final.",
+      "expected": "L'accueil est affiché sans aucun effet.",
+      "observed": "Le rejeu de l'accueil a été fait sur un ancien paquet. Il affirme « Il n'existe pas de commande `maurice swarm` », ce qui contredit le Skill final. Le Skill final dit « Si utile, affiche l'état local avec `maurice status --json` ». C'est une lecture seule, mais elle lance une commande et ne se limite pas à l'accueil."
+    },
+    {
+      "severity": "minor",
+      "title": "Preuves rattachées à des archives différentes de celle qui est livrée",
+      "file": "docs/qualification/*.json (archive_sha256)",
+      "breaking_input": "Comparer les `archive_sha256` : 8bc7…, 2972…, 6d112a…, a4e7c7…, af6cbc…",
+      "expected": "Les rejeux Claude portent sur l'archive finale livrée.",
+      "observed": "Les campagnes parity et commands citent 2972…, tandis que la campagne native-interfaces cite 6d11…. Plusieurs rejeux utilisent d'autres archives. Les guides finaux (profil `client-mcp-stdio`, groupes `maurice swarm`) ne sont donc pas couverts par tous les rejeux présentés comme preuves. README et Skill disent aussi « encore à qualifier live », alors que native-interfaces dit le contraire."
+    },
+    {
+      "severity": "minor",
+      "title": "Documentation contradictoire sur les commandes disponibles",
+      "file": "plugins/claude/maurice/references/swarm.md ; build.md ; AGENT-1034-commands.md",
+      "breaking_input": "Lire swarm.md : « le CLI public n'a pas de `maurice job list` », alors que SKILL.md liste `jobs list|get|events` et que swarm.md documente `swarm jobs list`. Lire aussi commands.md : « aucun groupe natif `maurice swarm`/`maurice build` » face au Skill qui les présente.",
+      "expected": "Une seule description cohérente des invocateurs publics.",
+      "observed": "Le modèle suivra des consignes contraires selon le fichier lu. Le diff mélange des états historiques et des états finaux sans les distinguer."
+    },
+    {
+      "severity": "minor",
+      "title": "Le reçu de relecture adverse se clôt par réfutation de l'auteur, pas par correction",
+      "file": "docs/qualification/AGENT-1034-adverse-review.json",
+      "breaking_input": "Trois constats « blocking » ont une résolution de type `refute`, rédigée par l'auteur.",
+      "expected": "Un blocage est levé par une correction vérifiée ou par l'accord du relecteur.",
+      "observed": "« open_blocking: 0 » vient d'auto-réfutations qui rejettent PLUG-15 et PLUG-12 par réinterprétation du critère. Le vert du gate est donc potentiellement un faux vert."
+    }
+  ],
+  "resolutions": {},
+  "export_status": "historical pre-guide-clarification review; not accepted at the final client HEAD"
+}

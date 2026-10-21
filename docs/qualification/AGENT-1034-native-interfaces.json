@@ -1,0 +1,454 @@
+{
+  "desktop_doctor_report": {
+    "markdown": "docs/qualification/AGENT-1034-desktop-doctor.md",
+    "json": "docs/qualification/AGENT-1034-desktop-doctor.json",
+    "status": "provisional",
+    "scope": "Claude Desktop Doctor and MCP continuity; second-turn continuity not qualified",
+    "native_body_status": "historical native CLI/MCP campaign; existing digests unchanged",
+    "native_backend_commit": "0df11b39c716d710ed01fd405db2a4da90b0294f",
+    "native_archive_sha256": "c14728298a9ec8a46701bd19fbe1822e20a64c6faa74c234f09c61e815cb699e"
+  },
+  "schema": "agentmaurice.client_qualification/v1",
+  "ticket": "AGENT-1034",
+  "plane_id": "19afd14d-949f-400a-8051-98cd5485b080",
+  "recorded_at": "2026-10-21T17:42:11.626137+00:00",
+  "backend_commit": "0df11b39c716d710ed01fd405db2a4da90b0294f",
+  "sandbox": "agent-1034-interfaces",
+  "api_port": 43700,
+  "frontdoor_port": 43731,
+  "os_started": false,
+  "archive_sha256": "c14728298a9ec8a46701bd19fbe1822e20a64c6faa74c234f09c61e815cb699e",
+  "canonical_skill": {
+    "source": "skill/agentmaurice",
+    "version": "2.0.39",
+    "content_hash": "ef85a08bc3e34b153e1db7667524326c53e2701b11c10d1b2a5f2473508eb96d",
+    "contract_bundle_sha256": "7edd3dc380babcdad0fd999dc15faa50ee55aabcf655a20b2fe876193d439c2d"
+  },
+  "governance": {
+    "plane": "In Progress",
+    "work_start_exit": 0,
+    "wip_waiver": "explicit targeted continuation; all other gates preserved",
+    "receipt": "generated after this report commit at the final two repository heads; see PR54"
+  },
+  "build": {
+    "qualified_spec_hash": "36eb72546e747206bb485f719401a3dda10579f3455aa227917f44a2a4493528",
+    "final_plan": "dbcfena4p5cngjnub190",
+    "final_plan_hash": "65cd0158001dd6eaeff72d15c1cc6043f9d915a1689d31370ff895dfde418af6",
+    "final_test_run": "dbcfeni4p5cngjnub1og",
+    "idempotency_key": "native-1034-final-build"
+  },
+  "runtime": {
+    "runtime_ref": "workflow:dbcehma4p5cvd8sl2bug/native-list-proof@1.1",
+    "runtime_job_id": "dbcffm24p5ch4u6j1l6g",
+    "runtime_execution_id": "q37eoearbp89mjs3rns0",
+    "runtime_plan_hash": "e89a5354ec1848ece91150b7beabc3a705f14cd630f8a6b8b45f63f14be76697",
+    "runtime_idempotency_key": "native-1034-swarm-list-versioned"
+  },
+  "runtime_assertions": {
+    "status": "completed",
+    "result": {
+      "listed": true
+    },
+    "tool_calls": 1,
+    "llm_calls": 0,
+    "used_effects_after_replays": 1
+  },
+  "public_jobs": {
+    "job_id": "dbcfh424p5ch4u6j1mgg",
+    "blocked_reason": "validation_failed",
+    "legacy_output_contract": "ok:true; Workflow output listed:true",
+    "parity_exception": "snapshot revision changes between sequential server reads; other captured fields equal",
+    "event_cursor_page1": {
+      "sequence": 1,
+      "event_id": "dbcfh424p5ch4u6j1mhg"
+    },
+    "page_limit_tested": [
+      1,
+      2
+    ],
+    "cursor_encodings": [
+      "compact JSON string",
+      "base64url JSON"
+    ],
+    "status_at_native_parity": "blocked",
+    "status_after_hard_deadline": "expired",
+    "receipt_first_attempt": "failed harness assertion expected blocked after deadline; same job replayed with expired+validation_failed expectation"
+  },
+  "catalogues": {
+    "native_default_readonly": 10,
+    "native_with_explicit_opt_ins": 21,
+    "runtime_frontdoor": 3,
+    "D1_unchanged": 5
+  },
+  "claude_cases": [
+    {
+      "case": "control",
+      "process_exit": 0,
+      "duration_seconds": 43.29,
+      "model": "claude-sonnet-5-5",
+      "claude_code_version": "2.1.306",
+      "tools": [
+        {
+          "name": "Skill",
+          "expected_error": false
+        },
+        {
+          "name": "Read",
+          "expected_error": false
+        },
+        {
+          "name": "mcp__maurice_local__maurice_client_context",
+          "expected_error": false
+        },
+        {
+          "name": "Read",
+          "expected_error": false
+        },
+        {
+          "name": "Read",
+          "expected_error": false
+        },
+        {
+          "name": "Bash",
+          "expected_error": false
+        },
+        {
+          "name": "Bash",
+          "expected_error": false
+        },
+        {
+          "name": "Bash",
+          "expected_error": false
+        },
+        {
+          "name": "Bash",
+          "expected_error": false
+        },
+        {
+          "name": "mcp__maurice_local__maurice_swarm_status",
+          "expected_error": false
+        },
+        {
+          "name": "mcp__maurice_local__maurice_swarm_nodes",
+          "expected_error": false
+        },
+        {
+          "name": "mcp__maurice_local__maurice_swarm_jobs",
+          "expected_error": false
+        },
+        {
+          "name": "Bash",
+          "expected_error": false
+        },
+        {
+          "name": "mcp__maurice_local__maurice_build_new_module",
+          "expected_error": false
+        },
+        {
+          "name": "Bash",
+          "expected_error": false
+        },
+        {
+          "name": "mcp__maurice_local__maurice_build_new_application",
+          "expected_error": false
+        }
+      ],
+      "assertions_source_sha256": "dcf6398adcecb1b104abc671ddab7cad7e3d1e2541f915aecbb9e130b52b8eb9"
+    },
+    {
+      "case": "builder-final",
+      "process_exit": 0,
+      "duration_seconds": 37.25,
+      "model": "claude-sonnet-5-5",
+      "claude_code_version": "2.1.306",
+      "tools": [
+        {
+          "name": "Read",
+          "expected_error": false
+        },
+        {
+          "name": "Read",
+          "expected_error": false
+        },
+        {
+          "name": "Read",
+          "expected_error": false
+        },
+        {
+          "name": "mcp__maurice_local__maurice_client_context",
+          "expected_error": false
+        },
+        {
+          "name": "mcp__maurice_local__maurice_build_check",
+          "expected_error": false
+        },
+        {
+          "name": "Bash",
+          "expected_error": false
+        },
+        {
+          "name": "Bash",
+          "expected_error": false
+        },
+        {
+          "name": "mcp__maurice_local__maurice_build_test",
+          "expected_error": false
+        },
+        {
+          "name": "Bash",
+          "expected_error": false
+        },
+        {
+          "name": "mcp__maurice_local__maurice_build_verify",
+          "expected_error": false
+        }
+      ],
+      "assertions_source_sha256": "dcf6398adcecb1b104abc671ddab7cad7e3d1e2541f915aecbb9e130b52b8eb9"
+    },
+    {
+      "case": "lifecycle-final",
+      "process_exit": 0,
+      "duration_seconds": 64.06,
+      "model": "claude-sonnet-5-5",
+      "claude_code_version": "2.1.306",
+      "tools": [
+        {
+          "name": "Skill",
+          "expected_error": false
+        },
+        {
+          "name": "mcp__maurice_local__maurice_client_context",
+          "expected_error": false
+        },
+        {
+          "name": "Read",
+          "expected_error": false
+        },
+        {
+          "name": "Read",
+          "expected_error": false
+        },
+        {
+          "name": "Bash",
+          "expected_error": false
+        },
+        {
+          "name": "Bash",
+          "expected_error": false
+        },
+        {
+          "name": "mcp__maurice_local__maurice_swarm_start",
+          "expected_error": false
+        },
+        {
+          "name": "mcp__maurice_local__maurice_swarm_status",
+          "expected_error": false
+        },
+        {
+          "name": "Bash",
+          "expected_error": false
+        }
+      ],
+      "assertions_source_sha256": "dcf6398adcecb1b104abc671ddab7cad7e3d1e2541f915aecbb9e130b52b8eb9"
+    },
+    {
+      "case": "runtime-final",
+      "process_exit": 0,
+      "duration_seconds": 23.28,
+      "model": "claude-sonnet-5-5",
+      "claude_code_version": "2.1.306",
+      "tools": [
+        {
+          "name": "Read",
+          "expected_error": false
+        },
+        {
+          "name": "Bash",
+          "expected_error": false
+        },
+        {
+          "name": "mcp__maurice_runtime__maurice_execute",
+          "expected_error": false
+        },
+        {
+          "name": "mcp__maurice_runtime__maurice_explain",
+          "expected_error": false
+        }
+      ],
+      "assertions_source_sha256": "dcf6398adcecb1b104abc671ddab7cad7e3d1e2541f915aecbb9e130b52b8eb9"
+    },
+    {
+      "case": "revocation-final",
+      "process_exit": 0,
+      "duration_seconds": 16.54,
+      "model": "claude-sonnet-5-5",
+      "claude_code_version": "2.1.306",
+      "tools": [
+        {
+          "name": "Bash",
+          "expected_error": true
+        }
+      ],
+      "assertions_source_sha256": "dcf6398adcecb1b104abc671ddab7cad7e3d1e2541f915aecbb9e130b52b8eb9"
+    }
+  ],
+  "private_evidence_sha256": {
+    "final-replay-records.json": "3602d9e571850a5d6dde214dbc3e20ea22b9a5663a14cf6557366485944447d4",
+    "final-build-c8bda712-records.json": "94d6cb8295d99c81e8b4fc0aa68025cbba9baf82c8aab134c43deb9973743a8a",
+    "control-guards.json": "08c16d96851276a80393c0a35156cf52cb6141b9b21f63aa8a675ea20eb073a7",
+    "revocation-records.json": "c8c1538c0a83aebc95c796d66c8936f23de06cac9f71f9b371d19f2829f45a51",
+    "artifacts/swarm-list-run.json": "4dc756411d8e16805e9d35309b5735d61df6a846969d41bcc7af1ce287ffab7f",
+    "artifacts/swarm-list-mcp-replay.json": "488bc4fb5b8abfa6611d5a46c1498b064440e75590ed50a268cf60ee75cab029",
+    "artifacts/swarm-list-quota-after.json": "3df93700d4dfb388e6e79d9bbd8a35eff7ab5788f4e77c02e96f82717ed109c7",
+    "artifacts/jobs-parity-final.json": "b5cff25db135d3876d383d038bcbbbe52289cdc5e882949fda29205df6f519f2",
+    "artifacts/list-repaired-lifecycle.json": "8f9f3412d002d969486528ba5e1db9b63c9eb4be1fe50fdf85c83d70f28bd433"
+  },
+  "limits": [
+    "local native control uses owner-selected CLI credential; it is not a remote frontdoor grant extension",
+    "nodes is a principal access projection, not generic fleet inventory",
+    "fresh third-party HTTP MCP SDK may return its own authentication error; HTTP401 preserved",
+    "no new Codex campaign; AGENT-613 historical evidence retained",
+    "no Claude Desktop, marketplace, production or general release qualification",
+    "public Hanko legacy job retrieval is qualified separately from completed frontdoor execution"
+  ],
+  "post_review": {
+    "backend_final": "fb0b0d679d01dd81ce94fa9e8a984d2833d80971",
+    "merged_main": "69f34c96f6d1000288b07e4e033d8f67ed06d814",
+    "governance_snapshot": "2a4b86d8f2e30c306830796d532fa2ac30e5e1d3",
+    "reviewed_head": "1bef58da3c2b88496c935cfc3a17a0b89b4adbbf",
+    "reviewer": "claude-sonnet-5-5",
+    "reviewer_family": "anthropic",
+    "findings": 8,
+    "blocking_findings": 3,
+    "open_blocking": 0,
+    "resolutions": {
+      "1": {
+        "kind": "refute",
+        "reason": "PLUG-15 concerne les domaines et outils du plugin AGENT-1034. Aucun domaine /one, aucune commande maurice one et aucun outil maurice_one_* ne sont ajoutés : le catalogue reste swarm/build (PR54). AgentMaurice One demeure le nom du runtime existant demandé pour la qualification isolée. ONE_VIEWER_DIST est une variable protocolaire héritée nécessaire au serveur, pas un outil ni un libellé du catalogue du plugin. Supprimer ce contrat interne casserait le runtime et dépasse le périmètre de renommage des commandes. La documentation backend décrit honnêtement cette frontière, sans revendiquer une suppression de tous les identifiants internes."
+      },
+      "2": {
+        "kind": "refute",
+        "reason": "Le comportement est explicite, pas un faux vert : build apply et build test imposent --tests on et un plan persistant autorisé. Le premier apply exécute réellement le test bloquant ; le même plan et sa clé rejouent ensuite une preuve PASSED avec replayed=true et le même tests.run_id. C’est précisément l’idempotence exigée, et la documentation indique qu’un nouveau plan est requis pour une nouvelle campagne. Preuve réelle post-correction : post-review-final-mcp-build-test (appliqué, tests PASSED1/1), post-review-final-cli-build-apply-replay (replayed=true, même run), puis verify CLI/MCP verified=true/drift=false, plan dbcfuga4p5cn1nlbbk2g, run dbcfuga4p5cn1nlbbk5g. La clé native par défaut est déterministe dans spec.go, pas probablement générée aléatoirement."
+      },
+      "3": {
+        "kind": "refute",
+        "reason": "PLUG-12 exige le même résultat métier CLI/MCP, pas un seul credential ou catalogue. swarm run est une projection exacte de maurice.execute avec le même ref/input/key/hash et le même grant, documentée dans la table ; forcer cette écriture dans le profil opérateur élargirait les droits et violerait la séparation des autorités. La preuve réelle CLI/MCP puis ClaudeCLI/MCP retourne le même Job completed, même execution_id, résultat listed=true et quota1 après rejeux. job list/get/events sont des alias des mêmes constructeurs ajoutés sous swarm jobs et swarm logs : ils appellent les mêmes API publiques avec les mêmes paramètres. La pagination CLI swarm jobs events versus MCP swarm_logs est déjà contrôlée à limite1 et avec curseurs JSON/base64url. Les noms d’alias ne créent pas une nouvelle opération métier ; leur correspondance explicite et les preuves sont aussi consignées dans le rapport de PR54."
+      },
+      "8": {
+        "kind": "test",
+        "path": "apps/mauricecli/internal/cli/cmd/client_mcp_test.go"
+      }
+    },
+    "build": {
+      "final_plan": "dbcg2g24p5cgjgvbm01g",
+      "final_plan_hash": "a814d5bda51759b78ede4e435908e4b9393c2e5779ad82e2bd8590cf25b1fdd2",
+      "final_test_run": "dbcg2g24p5cgjgvbm04g",
+      "idempotency_key": "native-1034-final-build",
+      "qualified_spec_hash": "36eb72546e747206bb485f719401a3dda10579f3455aa227917f44a2a4493528"
+    },
+    "runtime": {
+      "runtime_ref": "workflow:dbcehma4p5cvd8sl2bug/native-list-proof@1.1",
+      "runtime_job_id": "dbcg2ga4p5cgjgvbm0pg",
+      "runtime_execution_id": "e8s7jmp38r8gl4tco9q0",
+      "runtime_plan_hash": "e89a5354ec1848ece91150b7beabc3a705f14cd630f8a6b8b45f63f14be76697",
+      "runtime_idempotency_key": "native-1034-runtime-post-review"
+    },
+    "runtime_assertions": {
+      "completed": true,
+      "tool_calls": 1,
+      "llm_calls": 0,
+      "used_effects_after_replay": 1
+    },
+    "lifecycle": {
+      "real_claude": true,
+      "process_exit": 0,
+      "model": "claude-sonnet-5-5",
+      "cli_version": "2.1.306",
+      "duration_seconds": 56.69
+    },
+    "tests": {
+      "short_packages": [
+        "CLI",
+        "API",
+        "frontdoor",
+        "controllers"
+      ],
+      "short_exit": 0,
+      "sequence_only_http_compatibility_exit": 0,
+      "go_only_snapshot_process_regression_exit": 0
+    },
+    "private_proof_sha256": {
+      "post-final-replay-records.json": "56657f264146eb0d50b222b702474045dce8f64db185c7cebcee8084c3fc2e8a",
+      "post-review-control-guards.json": "08c16d96851276a80393c0a35156cf52cb6141b9b21f63aa8a675ea20eb073a7",
+      "artifacts/post-final-aliases-parity.json": "3fc068267c6f0b6fd63cb14b33145e39b38c523201f2855a6fcf71c3f8414ad4",
+      "artifacts/post-final-swarm-list-run.json": "bb3fdca1b71cfbfac23905d12c3361688902941e94bcb9693f7d690c12c6d6ff",
+      "artifacts/post-final-swarm-list-mcp-replay.json": "21c816ee85ca9c388bacbd712eedcfb5fd4f386633a283c62ba8e2e77aa19e65",
+      "artifacts/post-final-swarm-list-quota-after.json": "3848748634e276fd5d2729dd9fd6916d3047f192f93065f6d67188e4118d0c7b",
+      "review-consolidated-tests.log": "0c1ecef3990d499955ff9e71a23a47fc9da93f34d8dcc69f6eba671a51d82b46",
+      "controller-compat-tests.log": "07ba0dcedbfdbea04bbed955d2194cce0b1776474c9e03908da48368cea3f1bf",
+      "snapshot-go-fixture-test.log": "cfd06ea6cad64a2a7ea8fb5fb6d1025bfa8d68aed62dc8cba8e938ac62e0bf56"
+    },
+    "final_common_receipt": "generated after this report commit; see PR54 and backend MR523"
+  },
+  "archive_sha256_initial": "6d112a1797faf80a0084ad0217937a9910de9daf59ee4214a251cc60068536ba",
+  "final_guides": {
+    "archive_sha256": "c14728298a9ec8a46701bd19fbe1822e20a64c6faa74c234f09c61e815cb699e",
+    "changes": [
+      "welcome without CLI/MCP",
+      "fresh bounded Jobs list when authorized",
+      "explicit local MCP lifecycle and root Job aliases",
+      "build test clearly distinguishes existing replay from new tests"
+    ],
+    "claude_cases": {
+      "welcome-guides-final": {
+        "process_exit": 0,
+        "duration_seconds": 15.96,
+        "model": "claude-sonnet-5-5",
+        "cli_version": "2.1.306",
+        "tools": [
+          "Read",
+          "Read"
+        ]
+      },
+      "lifecycle-guides-final": {
+        "process_exit": 0,
+        "duration_seconds": 56.34,
+        "model": "claude-sonnet-5-5",
+        "cli_version": "2.1.306",
+        "tools": [
+          "mcp__maurice_local__maurice_client_context",
+          "Read",
+          "Read",
+          "Bash",
+          "Bash",
+          "mcp__maurice_local__maurice_swarm_start",
+          "mcp__maurice_local__maurice_swarm_status",
+          "Bash"
+        ]
+      },
+      "builder-guides-final": {
+        "process_exit": 0,
+        "duration_seconds": 25.07,
+        "model": "claude-sonnet-5-5",
+        "cli_version": "2.1.306",
+        "tools": [
+          "Read",
+          "Read",
+          "Read",
+          "mcp__maurice_local__maurice_client_context",
+          "mcp__maurice_local__maurice_build_check",
+          "Bash",
+          "Bash",
+          "mcp__maurice_local__maurice_build_test",
+          "Bash",
+          "mcp__maurice_local__maurice_build_verify"
+        ]
+      }
+    },
+    "repository_selftests": 21,
+    "packaging_tests_subset": 4,
+    "native_plugin_validate": "passed",
+    "client_pr": "Draft pending full ticket review including Desktop criterion",
+    "common_receipt": "generated after this report commit; see PR54/backend MR523"
+  }
+}

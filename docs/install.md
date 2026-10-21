@@ -75,6 +75,59 @@ manque, le Skill guide explicitement `maurice assistant connect codex` avec un
 fichier de jeton privé. La qualification sur un One réel est séparée du
 packaging.
 
+## Plugin Claude Code (privé)
+
+Pour Claude Code, construire le paquet dans un répertoire temporaire et le
+charger seulement pour la session concernée :
+
+```bash
+python3 scripts/build_client_plugin.py --client claude --output /tmp/maurice-claude-plugin
+claude --plugin-dir /tmp/maurice-claude-plugin/plugins/maurice
+```
+
+Le plugin utilise le MCP déjà configuré et le namespace Claude
+`/maurice:maurice`. Le paquet n'ajoute aucun hook, mod ou `.mcp.json`.
+
+Dans l'onglet Code de Claude Desktop, choisir le dossier du projet. Depuis
+ce dossier, enregistrer le catalogue construit et installer en portée `local` :
+
+```bash
+claude plugin marketplace add /tmp/maurice-claude-plugin
+claude plugin install maurice@maurice-local --scope local
+```
+
+La commande marketplace enregistre le catalogue dans le client ; `--scope
+local` limite l’activation du plugin au projet. Pour une qualification isolée,
+un nom de marketplace distinct permet de conserver une version précédente
+sans confusion de cache. Les serveurs MCP restent une configuration explicite du
+propriétaire. Pour les deux connexions d'un projet de qualification déjà
+revues et autorisées, la sélection persistante peut être renseignée dans le
+fichier non suivi `.claude/settings.local.json` :
+
+```json
+{
+  "enabledMcpjsonServers": ["maurice_local", "maurice_runtime"]
+}
+```
+
+Fusionner ce champ avec les réglages existants sans les écraser. Il nomme les
+connexions présentes dans le `.mcp.json` de ce projet, sans créer de grant ni
+autoriser les serveurs d'autres projets. Ouvrir ensuite une nouvelle session
+sur ce dossier et vérifier le catalogue à chaque échange. Le
+[rapport Desktop et Doctor](qualification/AGENT-1034-desktop-doctor.md)
+conserve le retrait `not_configured` observé avant cette sélection et le rejeu
+après configuration ; il ne conclut pas à une correction générale de Desktop.
+
+Lors d'un fallback CLI autorisé par une règle exacte, exécuter la commande
+littérale sans y ajouter `echo`, chaînage ou redirection ; lire le statut de
+l'outil shell. Un refus de permission reste un refus et ne justifie pas un
+autre moyen d'exécution ni une modification globale des permissions.
+
+Les parcours `swarm` et `build`, leurs invocateurs publics, leurs preuves et
+les limites restantes sont décrits dans [le rapport natif](qualification/AGENT-1034-native-interfaces.md) et
+[le rejeu Desktop courant](qualification/AGENT-1034-desktop-doctor.md). Le lifecycle reste une opération
+locale explicite ; une connexion MCP déjà autorisée n’impose pas la CLI.
+
 Pour les cartes humaines, conserver aussi l’URL explicite de l’accueil du One.
 Le port MCP ne permet pas de déduire le port de cette page. Si le serveur ne
 retourne qu’une référence d’action, fournir cette origine au Skill pour obtenir
@@ -108,14 +161,16 @@ maurice assistant connect codex \
 ```
 
 Le chemin du fichier de jeton reste privé et son contenu n'est jamais lu dans
-le parcours documentaire. AGENT-613 ne livre pas de commande d'installation
-automatique, de nouveau wrapper ou serveur MCP, de mode Claude, de build de
-nouveaux Agents/Workflows, ni le lifecycle du swarm.
+le parcours documentaire. Le lot Codex AGENT-613 ne livre pas de commande
+d’installation automatique ni de nouveau serveur MCP. Le plugin Claude
+provient du lot distinct AGENT-1034, documenté ci-dessus.
 
 ## Verify
 
-Confirm that the client can invoke `$agentmaurice` and that the following
-relative references resolve from `SKILL.md`:
+For the canonical standalone Skill, confirm `$agentmaurice`. For the Codex
+plugin, confirm `$use-maurice`. For the Claude plugin, confirm
+`/maurice:maurice` and `/maurice:agentmaurice`. Then check that the following
+relative references resolve from the canonical `SKILL.md`:
 
 - `references/agent-spec-v2.md`
 - `references/expert-operations.md`

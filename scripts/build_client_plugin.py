@@ -6,11 +6,13 @@ from __future__ import annotations
 import argparse
 import gzip
 import json
+import re
 import shutil
 import subprocess
 import sys
 import tarfile
 import tempfile
+from urllib.parse import urlparse
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -63,14 +65,28 @@ def copy_tree(src: Path, dst: Path) -> None:
             shutil.copyfile(path, target)
 
 
+def validate_guide_links(guides: Path, package_root: Path) -> None:
+    package_root = package_root.resolve()
+    for guide in guides.rglob("*.md"):
+        text = guide.read_text(encoding="utf-8")
+        relative = guide.resolve().relative_to(package_root)
+        for link in re.findall(r"\[[^\]]+\]\(([^)]+)\)", text):
+            parsed = urlparse(link)
+            if not parsed.path or parsed.scheme or link.startswith("//"):
+                continue
+            destination = (guide.parent / parsed.path).resolve()
+            if not destination.is_relative_to(package_root):
+                fail(f"lien de guide hors paquet: {relative} -> {link}")
+            if not destination.is_file():
+                fail(f"lien de guide cassé: {relative} -> {link}")
+
+
 def write_json(path: Path, value: object) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(value, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
 
-def build(output: Path, client: str) -> Path:
-    if client != "codex":
-        fail("seul --client codex est implémenté par AGENT-613")
+def build_codex(output: Path) -> Path:
     manifest = validate_canonical()
     assert_output(output)
     template = ROOT / "plugins" / "codex" / "use-maurice" / "SKILL.md"
@@ -132,6 +148,85 @@ def build(output: Path, client: str) -> Path:
                 with path.open("rb") as handle:
                     tar.addfile(info, handle)
     return archive
+
+
+def build_claude(output: Path) -> Path:
+    manifest = validate_canonical()
+    assert_output(output)
+    template_root = ROOT / "plugins" / "claude" / "maurice"
+    if not template_root.is_dir() or template_root.is_symlink():
+        fail("template Claude maurice introuvable")
+    ensure_no_symlinks(ROOT / "plugins" / "claude")
+    template = template_root / "SKILL.md"
+    if not template.is_file():
+        fail("template Claude maurice introuvable")
+    with tempfile.TemporaryDirectory(prefix="agentmaurice-plugin-") as temp:
+        staging = Path(temp) / "output"
+        plugin = staging / "plugins" / PLUGIN_NAME
+        copy_tree(CANONICAL, plugin / "skills" / "agentmaurice")
+        readme = ROOT / "plugins" / "claude" / "README.md"
+        if not readme.is_file() or readme.is_symlink():
+            fail("README Claude introuvable")
+        shutil.copyfile(readme, plugin / "README.md")
+        copy_tree(template_root, plugin / "skills" / "maurice")
+        validate_guide_links(plugin / "skills" / "maurice", plugin)
+        write_json(plugin / "plugin.json", {
+            "$schema": PLUGIN_SCHEMA,
+            "name": PLUGIN_NAME,
+            "version": PLUGIN_VERSION,
+            "description": PLUGIN_DESCRIPTION,
+            "author": {"name": "AgentMaurice"},
+            "license": "Proprietary",
+            "keywords": ["agentmaurice", "workflow", "mcp"],
+        })
+        write_json(plugin / ".claude-plugin" / "plugin.json", {
+            "name": PLUGIN_NAME,
+            "version": PLUGIN_VERSION,
+            "description": PLUGIN_DESCRIPTION,
+            "author": {"name": "AgentMaurice"},
+            "license": "Proprietary",
+        })
+        write_json(plugin / "source-attestation.json", {
+            "source": "skill/agentmaurice",
+            "version": manifest["version"],
+            "content_hash": manifest["content_hash"],
+            "contract_bundle_sha256": manifest["contract_bundle_sha256"],
+        })
+        write_json(staging / ".claude-plugin" / "marketplace.json", {
+            "name": "maurice-local",
+            "owner": {"name": "AgentMaurice"},
+            "plugins": [{"name": PLUGIN_NAME, "source": "./plugins/maurice"}],
+        })
+        output.mkdir(parents=True, exist_ok=True)
+        for path in sorted(staging.rglob("*")):
+            target = output / path.relative_to(staging)
+            if path.is_dir():
+                target.mkdir(parents=True, exist_ok=True)
+            else:
+                target.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copyfile(path, target)
+    archive = output / f"{PLUGIN_NAME}.plugin.tar.gz"
+    with archive.open("wb") as raw, gzip.GzipFile(fileobj=raw, mode="wb", mtime=0) as compressed, tarfile.open(fileobj=compressed, mode="w", format=tarfile.PAX_FORMAT) as tar:
+        plugin_root = output / "plugins" / PLUGIN_NAME
+        for path in sorted(plugin_root.rglob("*")):
+            if path.is_symlink():
+                fail(f"symlink généré: {path}")
+            if path.is_file():
+                info = tar.gettarinfo(str(path), arcname=f"{PLUGIN_NAME}/{path.relative_to(plugin_root)}")
+                info.uid = info.gid = 0
+                info.uname = info.gname = ""
+                info.mtime = 0
+                with path.open("rb") as handle:
+                    tar.addfile(info, handle)
+    return archive
+
+
+def build(output: Path, client: str) -> Path:
+    if client == "codex":
+        return build_codex(output)
+    if client == "claude":
+        return build_claude(output)
+    fail("client non supporté: choisir codex ou claude")
 
 
 def main() -> None:

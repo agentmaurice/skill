@@ -1,0 +1,1698 @@
+{
+  "ticket": "AGENT-1034",
+  "date": "2026-10-21",
+  "delivery_state": "in_progress",
+  "history_status": "historical_campaign_superseded",
+  "superseded_by": "AGENT-1034-native-interfaces.json",
+  "platform": {
+    "os": "macOS 27.0.1 (26A434)",
+    "claude_cli": "2.1.299",
+    "claude_model": "claude-sonnet-5-5",
+    "codex_cli": "0.163.0",
+    "codex_model": "gpt-6.1-sol",
+    "backend_sha": "4fd020849d7fa52361d371bd5dfbfceb48991e3c",
+    "one_build": "plugin-qualification-4fd02084"
+  },
+  "package": {
+    "name": "maurice",
+    "version": "0.1.0",
+    "canonical_skill": {
+      "source": "skill/agentmaurice",
+      "version": "2.0.39",
+      "content_hash": "ef85a08bc3e34b153e1db7667524326c53e2701b11c10d1b2a5f2473508eb96d",
+      "contract_bundle_sha256": "7edd3dc380babcdad0fd999dc15faa50ee55aabcf655a20b2fe876193d439c2d"
+    },
+    "archive_sha256": "8bc73847193e37a71fcc586db94bb90b71b8f35955956eed8ca256b0c2cb0d4d",
+    "runtime_guide_sha256": "89d21b098ae328ff26cca7b62ba098074e661cdb1d6d01652fcd7120ed6a28ad",
+    "codex_archive_unchanged": "3a26bd9977ab40b9651ccee765642bfcb31c976024d108e0c602c07b4c5472f8"
+  },
+  "runs": {
+    "claude-real": {
+      "init": {
+        "model": "claude-sonnet-5-5",
+        "plugins": [
+          {
+            "name": "maurice",
+            "path": "<qualification-root>/package/plugins/maurice",
+            "source": "maurice@inline",
+            "version": "0.1.0"
+          },
+          {
+            "name": "cc-plugin-sec-default",
+            "path": "builtin",
+            "source": "cc-plugin-sec-default@builtin"
+          },
+          {
+            "name": "cc-plugin-agents-md",
+            "path": "builtin",
+            "source": "cc-plugin-agents-md@builtin"
+          },
+          {
+            "name": "cc-plugin-telemetry",
+            "path": "builtin",
+            "source": "cc-plugin-telemetry@builtin"
+          },
+          {
+            "name": "cc-plugin-plugin-authoring",
+            "path": "builtin",
+            "source": "cc-plugin-plugin-authoring@builtin"
+          }
+        ],
+        "mcp_servers": [
+          {
+            "name": "maurice",
+            "status": "connected",
+            "source": "dynamic"
+          }
+        ],
+        "skills": [
+          "deep-research",
+          "maurice:agentmaurice",
+          "maurice:maurice",
+          "design",
+          "design-sync",
+          "dataviz",
+          "update-config",
+          "verify",
+          "debug",
+          "code-review",
+          "simplify",
+          "batch",
+          "fewer-permission-prompts",
+          "doctor",
+          "loop",
+          "schedule",
+          "claude-api",
+          "workflow-authoring",
+          "run",
+          "run-skill-generator",
+          "plugin-authoring"
+        ]
+      },
+      "calls": [
+        {
+          "tool": "ToolSearch",
+          "input": {
+            "query": "select:mcp__maurice__maurice_search,mcp__maurice__maurice_explain,mcp__maurice__maurice_execute",
+            "max_results": 3
+          }
+        },
+        {
+          "tool": "mcp__maurice__maurice_search",
+          "input": {
+            "query": "record-proof"
+          },
+          "result": {
+            "limit": 50,
+            "results": [
+              {
+                "agent_id": "dbcbvqa4p5co3iapsscg",
+                "application": null,
+                "description": "Workflow publié : record-proof",
+                "gesture_policy": "auto",
+                "input_schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "message": {
+                      "maxLength": 200,
+                      "type": "string"
+                    },
+                    "path": {
+                      "pattern": "^/qualification/[a-z0-9-]+\\.txt$",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "path",
+                    "message"
+                  ],
+                  "type": "object"
+                },
+                "kind": "workflow",
+                "ref": "workflow:dbcbvqa4p5co3iapsscg/record-proof@1",
+                "title": "Enregistrer une preuve de qualification fictive",
+                "version": "1",
+                "workflow_id": "record-proof"
+              },
+              {
+                "agent_id": "dbcbvqa4p5co3iapsscg",
+                "application": null,
+                "description": "Workflow publié : approve-proof",
+                "gesture_policy": "confirm",
+                "input_schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "message": {
+                      "maxLength": 200,
+                      "type": "string"
+                    },
+                    "path": {
+                      "pattern": "^/qualification/[a-z0-9-]+\\.txt$",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "path",
+                    "message"
+                  ],
+                  "type": "object"
+                },
+                "kind": "workflow",
+                "ref": "workflow:dbcbvqa4p5co3iapsscg/approve-proof@1",
+                "title": "Enregistrer une preuve fictive après accord humain",
+                "version": "1",
+                "workflow_id": "approve-proof"
+              },
+              {
+                "agent_id": "dbcbvqa4p5co3iapsscg",
+                "application": null,
+                "description": "Workflow publié : list-proof",
+                "gesture_policy": "auto",
+                "input_schema": {
+                  "additionalProperties": false,
+                  "properties": {},
+                  "type": "object"
+                },
+                "kind": "workflow",
+                "ref": "workflow:dbcbvqa4p5co3iapsscg/list-proof@1",
+                "title": "Lister les preuves fictives",
+                "version": "1",
+                "workflow_id": "list-proof"
+              }
+            ],
+            "search_mode": "local_lexical",
+            "truncated": false
+          }
+        },
+        {
+          "tool": "mcp__maurice__maurice_explain",
+          "input": {
+            "ref": "workflow:dbcbvqa4p5co3iapsscg/record-proof@1",
+            "input": {
+              "path": "/qualification/shared-client.txt",
+              "message": "Preuve commune Codex Claude"
+            }
+          },
+          "result": {
+            "approver": {
+              "approval_surface": "personal",
+              "distinct_from_assistant": true,
+              "issuer": "agentmaurice.local_principal/v1",
+              "kind": "human",
+              "subject": "local-operator"
+            },
+            "description": "Workflow publié : record-proof",
+            "dry_run": {
+              "executed": false,
+              "mode": "plan",
+              "steps": [
+                {
+                  "requires_approval": false,
+                  "tool": "dbcbvqa4p5co3iapsscg_storage__mcp_storage_server--write_file",
+                  "type": "tool_call"
+                },
+                {
+                  "requires_approval": false,
+                  "tool": "dbcbvqa4p5co3iapsscg_storage__mcp_storage_server--read_file",
+                  "type": "tool_call"
+                }
+              ]
+            },
+            "effect_quota": {
+              "charged_at": "admission",
+              "exhausted": false,
+              "max_effects": 5,
+              "refund_policy": "none",
+              "remaining_effects": 5,
+              "scope": "mandate",
+              "unit": "workflow_run",
+              "used_effects": 0
+            },
+            "effective_remaining_effects": 5,
+            "execution_supported": true,
+            "gesture_policy": "auto",
+            "history_scope": "current_workflow_version_and_spec",
+            "input_schema": {
+              "additionalProperties": false,
+              "properties": {
+                "message": {
+                  "maxLength": 200,
+                  "type": "string"
+                },
+                "path": {
+                  "pattern": "^/qualification/[a-z0-9-]+\\.txt$",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "path",
+                "message"
+              ],
+              "type": "object"
+            },
+            "kind": "workflow",
+            "output_schema": {
+              "additionalProperties": false,
+              "properties": {
+                "message": {
+                  "type": "string"
+                },
+                "path": {
+                  "type": "string"
+                },
+                "recorded": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "path",
+                "message",
+                "recorded"
+              ],
+              "type": "object"
+            },
+            "plan_hash": "41e634237484e3b9f2fdc4ad9544399503bf6bf274a12bd6d1d5a5fc05100eab",
+            "quota_chain": [
+              {
+                "exhausted": false,
+                "mandate_id": "md_dbcc0ci4p5cken7sjvr0",
+                "max_effects": 5,
+                "remaining_effects": 5,
+                "used_effects": 0
+              }
+            ],
+            "recent_executions": [],
+            "ref": "workflow:dbcbvqa4p5co3iapsscg/record-proof@1",
+            "sample_window": 50,
+            "title": "Enregistrer une preuve de qualification fictive",
+            "usage_summary": {
+              "cost": null,
+              "duration_ms": null,
+              "input_tokens": null,
+              "llm_calls": null,
+              "method": "median",
+              "output_tokens": null,
+              "sample_size": 0,
+              "source": "agent_job_results",
+              "tool_calls": null
+            }
+          }
+        },
+        {
+          "tool": "mcp__maurice__maurice_execute",
+          "input": {
+            "ref": "workflow:dbcbvqa4p5co3iapsscg/record-proof@1",
+            "input": {
+              "path": "/qualification/shared-client.txt",
+              "message": "Preuve commune Codex Claude"
+            },
+            "idempotency_key": "agent-1034-shared-client-1",
+            "expected_plan_hash": "41e634237484e3b9f2fdc4ad9544399503bf6bf274a12bd6d1d5a5fc05100eab"
+          },
+          "result": {
+            "execution_id": "cks7p63rtpgt621ls8j0",
+            "job_id": "dbcc1ka4p5cken7sk05g",
+            "result": {
+              "message": "Preuve commune Codex Claude",
+              "path": "/qualification/shared-client.txt",
+              "recorded": true
+            },
+            "status": "completed",
+            "usage_summary": {
+              "duration_ms": 178,
+              "tool_calls": 2,
+              "llm_calls": 0,
+              "input_tokens": 0,
+              "output_tokens": 0
+            }
+          }
+        }
+      ],
+      "final": {
+        "subtype": "success",
+        "is_error": false,
+        "result": "La preuve fictive a été enregistrée dans `/qualification/shared-client.txt`. L'exécution est `completed`, sans accord humain requis.\n\n**Outils MCP utilisés** (sur le MCP Maurice déjà connecté, sans shell, config, jeton ni grant) :\n1. `maurice_search` avec la requête `record-proof`. Elle a renvoyé `workflow:dbcbvqa4p5co3iapsscg/record-proof@1`, dont la politique de geste est `auto`.\n2. `maurice_explain` sur cette référence :\n   - **Entrée :** `path` (motif `^/qualification/[a-z0-9-]+\\.txt$`) et `message` (200 caractères max).\n   - **Plan :** `write_file` puis `read_file`, sans étape d'approbation.\n   - **`plan_hash` :** `41e634237484e3b9f2fdc4ad9544399503bf6bf274a12bd6d1d5a5fc05100eab`.\n   - **Quota :** 5 effets restants avant l'exécution.\n3. `maurice_execute` avec :\n   - **Entrée :** `{\"path\":\"/qualification/shared-client.txt\",\"message\":\"Preuve commune Codex Claude\"}`.\n   - **Clé d'idempotence :** `agent-1034-shared-client-1`.\n   - **`expected_plan_hash` :** le hash ci-dessus.\n\n**Résultat retourné :**\n- **Job :** `dbcc1ka4p5cken7sk05g`\n- **Exécution :** `cks7p63rtpgt621ls8j0`\n- **Résultat :** `{\"message\":\"Preuve commune Codex Claude\",\"path\":\"/qualification/shared-client.txt\",\"recorded\":true}`\n- **Usage :** 178 ms, 2 appels d'outil, 0 appel LLM.\n\nJe n'ai pas relu le fichier moi-même. `recorded: true` est ce que le Workflow a renvoyé, et son plan inclut une étape `read_file`.\n\nIl n'y avait ni attente d'approbation ni cible alternative, et je n'ai produit aucun effet hors de ce fichier.",
+        "permission_denials": [],
+        "num_turns": 5
+      },
+      "transcript_sha256": "7164d2c8427e28e445582a3725f57b5412cf30794b3071d9b4b5f5a86b48db57"
+    },
+    "claude-welcome": {
+      "init": {
+        "model": "claude-sonnet-5-5",
+        "plugins": [
+          {
+            "name": "maurice",
+            "path": "<qualification-root>/package/plugins/maurice",
+            "source": "maurice@inline",
+            "version": "0.1.0"
+          },
+          {
+            "name": "cc-plugin-sec-default",
+            "path": "builtin",
+            "source": "cc-plugin-sec-default@builtin"
+          },
+          {
+            "name": "cc-plugin-agents-md",
+            "path": "builtin",
+            "source": "cc-plugin-agents-md@builtin"
+          },
+          {
+            "name": "cc-plugin-telemetry",
+            "path": "builtin",
+            "source": "cc-plugin-telemetry@builtin"
+          },
+          {
+            "name": "cc-plugin-plugin-authoring",
+            "path": "builtin",
+            "source": "cc-plugin-plugin-authoring@builtin"
+          }
+        ],
+        "mcp_servers": [
+          {
+            "name": "maurice",
+            "status": "connected",
+            "source": "dynamic"
+          }
+        ],
+        "skills": [
+          "deep-research",
+          "maurice:agentmaurice",
+          "maurice:maurice",
+          "design",
+          "design-sync",
+          "dataviz",
+          "update-config",
+          "verify",
+          "debug",
+          "code-review",
+          "simplify",
+          "batch",
+          "fewer-permission-prompts",
+          "doctor",
+          "loop",
+          "schedule",
+          "claude-api",
+          "workflow-authoring",
+          "run",
+          "run-skill-generator",
+          "plugin-authoring"
+        ]
+      },
+      "calls": [],
+      "final": {
+        "subtype": "success",
+        "is_error": false,
+        "result": "# Accueil Maurice (`/maurice:maurice`)\n\nCet accueil est informatif. Je n'ai rien exécuté et je n'ai lu aucune configuration ni aucun jeton.\n\n## Ce que le plugin permet\n\nIl guide Claude Code vers les interfaces publiques d'AgentMaurice, toujours avec une cible explicite.\n\n- **Capacités gouvernées** : le parcours est `maurice.search`, puis `maurice.explain`, puis `maurice.execute`. Le dernier appel porte la référence expliquée, une `idempotency_key` et, si elle est fournie, la valeur `expected_plan_hash`. Une attente humaine (`pending`) reste à décider par la personne concernée.\n- **Diagnostic** : `maurice status --json`, `maurice doctor --json`, et `maurice doctor --mcp-endpoint … --mcp-token-file … --json` pour la porte MCP.\n- **Swarm et jobs** : lecture d'un graphe par `maurice job graph get` ou `maurice job graph events`, avec un `graph_id` ou un `job_id`. Les outils `inception_tasks_*` couvrent la soumission et l'annulation. Il n'existe pas de commande `maurice swarm`.\n- **Cycle local** : `maurice start`, `maurice stop` et `maurice status` pour l'instance One, `maurice edge …` pour le pont Edge. `start` et `stop` demandent un `--data-dir` explicite.\n- **Cycle Agent Spec** : `spec check`, `spec plan`, `spec apply` (après approbation humaine du plan), `spec verify` et `maurice test`. Pour créer un nouvel Agent, le passage se fait par `inception_architecture_*`. Le skill `maurice:agentmaurice` couvre ce volet en détail.\n\n## Cible MCP\n\n- Les outils `mcp__maurice__maurice_search`, `maurice_explain` et `maurice_execute` sont exposés dans cette session, donc un serveur MCP « maurice » est branché.\n- **Sa cible n'est pas attestée.** L'endpoint, le One ou deployment visé et le mandat ne me sont pas connus. Les connaître demanderait de lire la configuration, ce que vous avez exclu. Je ne déduis donc aucune cible.\n- Avant toute exécution, il faudra donner une cible explicite, soit `--context <name>`, soit un endpoint avec son mandat. Il faudra ensuite faire `search` puis `explain` sur cette connexion.\n\n## Prérequis manquants ou non vérifiés\n\n- Cible nommée : contexte MauriceCLI ou endpoint MCP.\n- `--data-dir` pour tout `start` ou `stop`.\n- Pour `doctor` sur la porte MCP : un endpoint et un fichier de jeton privé. Je ne lirai jamais ce fichier.\n- Pour brancher une autre instance : `maurice assistant connect generic --config-file <private-mcp-config> --endpoint <endpoint> --token-file <private-token-file>`.\n- Pour le cycle Agent Spec : `--env`, `--agent-alias`, `--dir`, puis un plan approuvé par une personne.\n- L'état local (CLI installé, instance démarrée) n'est pas vérifié. `maurice status --json` pourra le dire, sur demande.\n\nDites-moi la cible et l'action voulues pour continuer.",
+        "permission_denials": [],
+        "num_turns": 1
+      },
+      "transcript_sha256": "90d27da3ef7b41c7b4329b413f0a56a78009b1cd7171d998dcc58048f88c0866"
+    },
+    "claude-reader": {
+      "init": {
+        "model": "claude-sonnet-5-5",
+        "plugins": [
+          {
+            "name": "maurice",
+            "path": "<qualification-root>/package/plugins/maurice",
+            "source": "maurice@inline",
+            "version": "0.1.0"
+          },
+          {
+            "name": "cc-plugin-sec-default",
+            "path": "builtin",
+            "source": "cc-plugin-sec-default@builtin"
+          },
+          {
+            "name": "cc-plugin-agents-md",
+            "path": "builtin",
+            "source": "cc-plugin-agents-md@builtin"
+          },
+          {
+            "name": "cc-plugin-telemetry",
+            "path": "builtin",
+            "source": "cc-plugin-telemetry@builtin"
+          },
+          {
+            "name": "cc-plugin-plugin-authoring",
+            "path": "builtin",
+            "source": "cc-plugin-plugin-authoring@builtin"
+          }
+        ],
+        "mcp_servers": [
+          {
+            "name": "maurice",
+            "status": "connected",
+            "source": "dynamic"
+          }
+        ],
+        "skills": [
+          "deep-research",
+          "maurice:agentmaurice",
+          "maurice:maurice",
+          "design",
+          "design-sync",
+          "dataviz",
+          "update-config",
+          "verify",
+          "debug",
+          "code-review",
+          "simplify",
+          "batch",
+          "fewer-permission-prompts",
+          "doctor",
+          "loop",
+          "schedule",
+          "claude-api",
+          "workflow-authoring",
+          "run",
+          "run-skill-generator",
+          "plugin-authoring"
+        ]
+      },
+      "calls": [
+        {
+          "tool": "ToolSearch",
+          "input": {
+            "query": "select:mcp__maurice__maurice_search,mcp__maurice__maurice_explain,mcp__maurice__maurice_execute",
+            "max_results": 5
+          }
+        },
+        {
+          "tool": "mcp__maurice__maurice_search",
+          "input": {
+            "query": "record-proof"
+          },
+          "result": {
+            "limit": 50,
+            "results": [
+              {
+                "agent_id": "dbcbvqa4p5co3iapsscg",
+                "application": null,
+                "description": "Workflow publié : record-proof",
+                "gesture_policy": "auto",
+                "input_schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "message": {
+                      "maxLength": 200,
+                      "type": "string"
+                    },
+                    "path": {
+                      "pattern": "^/qualification/[a-z0-9-]+\\.txt$",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "path",
+                    "message"
+                  ],
+                  "type": "object"
+                },
+                "kind": "workflow",
+                "ref": "workflow:dbcbvqa4p5co3iapsscg/record-proof@1",
+                "title": "Enregistrer une preuve de qualification fictive",
+                "version": "1",
+                "workflow_id": "record-proof"
+              }
+            ],
+            "search_mode": "local_lexical",
+            "truncated": false
+          }
+        },
+        {
+          "tool": "mcp__maurice__maurice_explain",
+          "input": {
+            "ref": "workflow:dbcbvqa4p5co3iapsscg/record-proof@1",
+            "input": {
+              "path": "/qualification/reader-denied.txt",
+              "message": "Lecture seule doit refuser"
+            }
+          },
+          "result": {
+            "approver": {
+              "approval_surface": "personal",
+              "distinct_from_assistant": true,
+              "issuer": "agentmaurice.local_principal/v1",
+              "kind": "human",
+              "subject": "local-operator"
+            },
+            "description": "Workflow publié : record-proof",
+            "dry_run": {
+              "executed": false,
+              "mode": "plan",
+              "steps": [
+                {
+                  "requires_approval": false,
+                  "tool": "dbcbvqa4p5co3iapsscg_storage__mcp_storage_server--write_file",
+                  "type": "tool_call"
+                },
+                {
+                  "requires_approval": false,
+                  "tool": "dbcbvqa4p5co3iapsscg_storage__mcp_storage_server--read_file",
+                  "type": "tool_call"
+                }
+              ]
+            },
+            "effect_quota": {
+              "charged_at": "admission",
+              "exhausted": false,
+              "max_effects": 0,
+              "refund_policy": "none",
+              "remaining_effects": null,
+              "scope": "mandate",
+              "unit": "workflow_run",
+              "used_effects": 0
+            },
+            "effective_remaining_effects": null,
+            "execution_supported": true,
+            "gesture_policy": "auto",
+            "history_scope": "current_workflow_version_and_spec",
+            "input_schema": {
+              "additionalProperties": false,
+              "properties": {
+                "message": {
+                  "maxLength": 200,
+                  "type": "string"
+                },
+                "path": {
+                  "pattern": "^/qualification/[a-z0-9-]+\\.txt$",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "path",
+                "message"
+              ],
+              "type": "object"
+            },
+            "kind": "workflow",
+            "output_schema": {
+              "additionalProperties": false,
+              "properties": {
+                "message": {
+                  "type": "string"
+                },
+                "path": {
+                  "type": "string"
+                },
+                "recorded": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "path",
+                "message",
+                "recorded"
+              ],
+              "type": "object"
+            },
+            "plan_hash": "f890aee54cbaa2dcf9261cde3302f24cef7d4c54fdcacfdb0ad1633950cb17dd",
+            "quota_chain": [
+              {
+                "exhausted": false,
+                "mandate_id": "md_dbcc0ci4p5cken7sjvt0",
+                "max_effects": 0,
+                "remaining_effects": null,
+                "used_effects": 0
+              }
+            ],
+            "recent_executions": [
+              {
+                "execution_id": "cks7p63rtpgt621ls8j0",
+                "job_id": "dbcc1ka4p5cken7sk05g",
+                "status": "completed",
+                "timestamp": "2026-10-21T13:40:33.18476Z",
+                "usage_summary": {
+                  "cost": {
+                    "amount_minor": 0,
+                    "currency": "EUR",
+                    "status": "qualified_zero"
+                  },
+                  "duration_ms": 178,
+                  "input_tokens": 0,
+                  "llm_calls": 0,
+                  "output_tokens": 0,
+                  "tool_calls": 2
+                }
+              }
+            ],
+            "ref": "workflow:dbcbvqa4p5co3iapsscg/record-proof@1",
+            "sample_window": 50,
+            "title": "Enregistrer une preuve de qualification fictive",
+            "usage_summary": {
+              "cost": {
+                "amount_minor": 0,
+                "cost_sample_size": 1,
+                "currency": "EUR",
+                "status": "qualified_zero"
+              },
+              "duration_ms": 178,
+              "input_tokens": 0,
+              "llm_calls": 0,
+              "method": "median",
+              "output_tokens": 0,
+              "sample_size": 1,
+              "source": "agent_job_results",
+              "tool_calls": 2
+            }
+          }
+        },
+        {
+          "tool": "mcp__maurice__maurice_execute",
+          "input": {
+            "ref": "workflow:dbcbvqa4p5co3iapsscg/record-proof@1",
+            "input": {
+              "path": "/qualification/reader-denied.txt",
+              "message": "Lecture seule doit refuser"
+            },
+            "idempotency_key": "agent-1034-reader-denied",
+            "expected_plan_hash": "f890aee54cbaa2dcf9261cde3302f24cef7d4c54fdcacfdb0ad1633950cb17dd"
+          },
+          "result": {
+            "error": {
+              "code": "out_of_scope"
+            }
+          }
+        }
+      ],
+      "final": {
+        "subtype": "success",
+        "is_error": false,
+        "result": "L'exécution a été refusée avec `out_of_scope`. Je n'ai pas contourné ce refus.\n\n- **Cible :** le MCP Maurice de qualification, via les outils `maurice_search`, `maurice_explain` et `maurice_execute`. Aucune CLI, aucune configuration, aucun jeton, aucun autre Workflow.\n- **Découverte (`maurice_search`) :** une seule référence visible, `workflow:dbcbvqa4p5co3iapsscg/record-proof@1`.\n  - Titre : « Enregistrer une preuve de qualification fictive ».\n  - Politique de geste : `auto`.\n- **Explication (`maurice_explain`) :**\n  - **Entrée :** `path` doit correspondre à `^/qualification/[a-z0-9-]+\\.txt$`, et `message` fait 200 caractères au maximum. Mon entrée respectait ces règles.\n  - **Plan :** deux appels d'outil sans approbation requise, `write_file` puis `read_file`.\n  - **Sortie :** `{path, message, recorded}`.\n  - **Hash du plan :** `f890aee54cbaa2dcf9261cde3302f24cef7d4c54fdcacfdb0ad1633950cb17dd`.\n  - **Mandat :** `md_dbcc0ci4p5cken7sjvt0`, avec `max_effects: 0` et un quota non épuisé.\n  - **Historique :** une exécution précédente est `completed`.\n- **Exécution (`maurice_execute`) :** j'ai tenté l'exécution parce que la politique `auto` et l'explication ne montraient aucun blocage. Les paramètres étaient :\n  - `path` : `/qualification/reader-denied.txt`\n  - `message` : « Lecture seule doit refuser »\n  - clé d'idempotence : `agent-1034-reader-denied`\n  - `expected_plan_hash` : le hash ci-dessus\n\n  Le résultat est `out_of_scope`.\n\nLe mandat présenté ne couvre donc pas cette écriture. C'est le résultat attendu pour un accès en lecture seule.\n\nRien n'a été écrit : `recorded` n'est pas confirmé et aucun job n'a été créé à ma connaissance. Je ne relance pas avec une autre clé ou une autre référence, et je ne demande aucun nouveau droit.",
+        "permission_denials": [],
+        "num_turns": 5
+      },
+      "transcript_sha256": "dabd398d4e70889b9a781d199f5a26fa216b91f129bbe52e8cf845c34a8e20ea"
+    },
+    "claude-no-mcp": {
+      "init": {
+        "model": "claude-sonnet-5-5",
+        "plugins": [
+          {
+            "name": "maurice",
+            "path": "<qualification-root>/package/plugins/maurice",
+            "source": "maurice@inline",
+            "version": "0.1.0"
+          },
+          {
+            "name": "cc-plugin-sec-default",
+            "path": "builtin",
+            "source": "cc-plugin-sec-default@builtin"
+          },
+          {
+            "name": "cc-plugin-agents-md",
+            "path": "builtin",
+            "source": "cc-plugin-agents-md@builtin"
+          },
+          {
+            "name": "cc-plugin-telemetry",
+            "path": "builtin",
+            "source": "cc-plugin-telemetry@builtin"
+          },
+          {
+            "name": "cc-plugin-plugin-authoring",
+            "path": "builtin",
+            "source": "cc-plugin-plugin-authoring@builtin"
+          }
+        ],
+        "mcp_servers": [],
+        "skills": [
+          "deep-research",
+          "maurice:agentmaurice",
+          "maurice:maurice",
+          "design",
+          "design-sync",
+          "dataviz",
+          "update-config",
+          "verify",
+          "debug",
+          "code-review",
+          "simplify",
+          "batch",
+          "fewer-permission-prompts",
+          "doctor",
+          "loop",
+          "schedule",
+          "claude-api",
+          "workflow-authoring",
+          "run",
+          "run-skill-generator",
+          "plugin-authoring"
+        ]
+      },
+      "calls": [
+        {
+          "tool": "ToolSearch",
+          "input": {
+            "query": "maurice",
+            "max_results": 10
+          }
+        },
+        {
+          "tool": "ToolSearch",
+          "input": {
+            "query": "one_ inception mcp",
+            "max_results": 10
+          }
+        }
+      ],
+      "final": {
+        "subtype": "success",
+        "is_error": false,
+        "result": "## Diagnostic : aucune connexion MCP Maurice n'est disponible dans cette session\n\n**Preuves**\n- Le plugin `maurice` est chargé : le skill `/maurice:maurice` et le skill `maurice:agentmaurice` apparaissent. Cela ne prouve pas qu'une connexion MCP existe.\n- Les outils chargés ne contiennent aucun outil `maurice.search`, `maurice.explain` ou `maurice.execute`.\n- Les outils différés ne contiennent aucun outil `one_*` ni `inception_*`.\n- Deux recherches dans le catalogue (`maurice`, `one_ inception mcp`) ont renvoyé « No matching deferred tools found ».\n\n**Conclusion** : le plugin est présent, mais aucun serveur MCP Maurice n'est raccordé à cette session. Je ne peux donc ni faire `search`, ni `explain`, ni `execute`.\n\n**Ce que je n'ai pas fait**, comme demandé : je n'ai lu ni configuration ni jeton. Je n'ai lancé aucun service et je n'ai créé aucune connexion ni aucun grant. Je n'ai exécuté ni `maurice doctor` ni `maurice start`. Ce diagnostic porte sur la session, pas sur l'état de l'instance locale.\n\n**Pour raccorder la connexion**\nIl vous faut un endpoint MCP explicite et un fichier de jeton privé. La commande publique est :\n```bash\nmaurice assistant connect generic --config-file <private-mcp-config> --endpoint <endpoint> --token-file <private-token-file>\n```\nRedémarrez ensuite la session ou rechargez les serveurs MCP, car le branchement n'est pas pris en compte à chaud.\n\n**Pour vérifier la porte MCP**\nFournissez l'endpoint et le chemin du fichier de jeton. Je lancerai alors :\n```bash\nmaurice doctor --mcp-endpoint <endpoint> --mcp-token-file <private-token-file> --json\n```\nJe lirai `mcp_frontdoor.checked` et `mcp_frontdoor.ok`. Ce doctor prouve seulement le handshake et le catalogue. Il ne prouve ni un grant effectif, ni une exécution Workflow.",
+        "permission_denials": [],
+        "num_turns": 3
+      },
+      "transcript_sha256": "367df2531f338989381c75ae35c9e39231fa51f8597ba778dc2a3ceee47da270"
+    },
+    "claude-reader-revoked": {
+      "init": {
+        "model": "claude-sonnet-5-5",
+        "plugins": [
+          {
+            "name": "maurice",
+            "path": "<qualification-root>/package-qualified/plugins/maurice",
+            "source": "maurice@inline",
+            "version": "0.1.0"
+          },
+          {
+            "name": "cc-plugin-sec-default",
+            "path": "builtin",
+            "source": "cc-plugin-sec-default@builtin"
+          },
+          {
+            "name": "cc-plugin-agents-md",
+            "path": "builtin",
+            "source": "cc-plugin-agents-md@builtin"
+          },
+          {
+            "name": "cc-plugin-telemetry",
+            "path": "builtin",
+            "source": "cc-plugin-telemetry@builtin"
+          },
+          {
+            "name": "cc-plugin-plugin-authoring",
+            "path": "builtin",
+            "source": "cc-plugin-plugin-authoring@builtin"
+          }
+        ],
+        "mcp_servers": [
+          {
+            "name": "maurice",
+            "status": "failed",
+            "source": "dynamic"
+          }
+        ],
+        "skills": [
+          "deep-research",
+          "maurice:agentmaurice",
+          "maurice:maurice",
+          "design",
+          "design-sync",
+          "dataviz",
+          "update-config",
+          "verify",
+          "debug",
+          "code-review",
+          "simplify",
+          "batch",
+          "fewer-permission-prompts",
+          "doctor",
+          "loop",
+          "schedule",
+          "claude-api",
+          "workflow-authoring",
+          "run",
+          "run-skill-generator",
+          "plugin-authoring"
+        ]
+      },
+      "calls": [],
+      "final": {
+        "subtype": "success",
+        "is_error": false,
+        "result": "**Résultat du doctor : échec de connexion, aucune capacité vérifiable.**\n\n- **Cible :** le serveur MCP `maurice` configuré pour cette session.\n- **Statut réel :** `CONNECTION_CLOSED` (« Connection closed »). Le serveur n'a pas pu se connecter, donc aucun outil `maurice.*` ou `one_*` n'est exposé dans cette session.\n- **Outil utilisé :** aucun appel doctor n'a été fait. Il n'y a aucune connexion à interroger. Vous avez aussi exclu le shell, donc je n'ai pas lancé `maurice doctor --mcp-endpoint … --mcp-token-file … --json`. `mcp_frontdoor.checked` et `mcp_frontdoor.ok` n'ont donc pas été lus.\n- **Code de sortie :** sans objet, car aucune commande n'a été exécutée.\n\n**Ce qui n'est pas prouvé :**\n- Handshake : non établi.\n- Catalogue (`search`, `explain`, `execute`) : non accessible.\n- Grant effectif, exécution Workflow, qualification métier : aucune preuve.\n\nJe n'ai pas lu de configuration ni de jeton. Je n'ai pas rebranché la connexion, créé de grant, ni produit d'effet métier. Ce résultat est cohérent avec la révocation du mandat lecteur par l'opérateur. Je ne peux toutefois pas le confirmer, car l'erreur ne donne pas la cause (mandat révoqué, endpoint injoignable ou autre).\n\n**Pour la suite :** si l'opérateur rétablit un mandat, le rebranchement public est `maurice assistant connect generic --config-file <private-mcp-config> --endpoint <endpoint> --token-file <private-token-file>`. Il faudra ensuite relancer le doctor avec les deux options explicites.",
+        "permission_denials": [],
+        "num_turns": 1
+      },
+      "transcript_sha256": "c0f1fa69bfcbaf325e2ed26971a1e31110413d003cea39ee1b5f091ad328e2ec"
+    },
+    "claude-cli-status": {
+      "init": {
+        "model": "claude-sonnet-5-5",
+        "plugins": [
+          {
+            "name": "maurice",
+            "path": "<qualification-root>/package/plugins/maurice",
+            "source": "maurice@inline",
+            "version": "0.1.0"
+          },
+          {
+            "name": "cc-plugin-sec-default",
+            "path": "builtin",
+            "source": "cc-plugin-sec-default@builtin"
+          },
+          {
+            "name": "cc-plugin-agents-md",
+            "path": "builtin",
+            "source": "cc-plugin-agents-md@builtin"
+          },
+          {
+            "name": "cc-plugin-telemetry",
+            "path": "builtin",
+            "source": "cc-plugin-telemetry@builtin"
+          },
+          {
+            "name": "cc-plugin-plugin-authoring",
+            "path": "builtin",
+            "source": "cc-plugin-plugin-authoring@builtin"
+          }
+        ],
+        "mcp_servers": [
+          {
+            "name": "maurice",
+            "status": "connected",
+            "source": "dynamic"
+          }
+        ],
+        "skills": [
+          "deep-research",
+          "maurice:agentmaurice",
+          "maurice:maurice",
+          "design",
+          "design-sync",
+          "dataviz",
+          "update-config",
+          "verify",
+          "debug",
+          "code-review",
+          "simplify",
+          "batch",
+          "fewer-permission-prompts",
+          "doctor",
+          "loop",
+          "schedule",
+          "claude-api",
+          "workflow-authoring",
+          "run",
+          "run-skill-generator",
+          "plugin-authoring"
+        ]
+      },
+      "calls": [
+        {
+          "tool": "Bash",
+          "input": {
+            "command": "<ticket-sandbox>/bin/maurice status --data-dir <ticket-sandbox>/one --json",
+            "description": "Run maurice status for the explicit sandbox target"
+          }
+        }
+      ],
+      "final": {
+        "subtype": "success",
+        "is_error": false,
+        "result": "Je n'ai pas pu obtenir l'état du One AGENT-1034, car la commande a été refusée avant son exécution. Cette session n'a aucune interface pour répondre à une demande d'approbation, donc le refus est automatique. Je ne la relance pas, et rien d'autre nécessitant une approbation ne passera dans cette session.\n\n**Commande bloquée**\n```\n<ticket-sandbox>/bin/maurice status --data-dir <ticket-sandbox>/one --json\n```\n\n- **Cible :** One fictif AGENT-1034, avec le binaire et le data-dir que vous avez indiqués.\n- **Code de sortie, statut structuré, preuve :** aucun, la commande n'a pas tourné.\n- **Effets :** aucun. Je n'ai lu ni imprimé `operator.yaml` ou un jeton, et je n'ai lancé aucun start, stop ou grant, ni appel HTTP, ni autre binaire.\n\n**Pour débloquer**\n- Autorisez cette commande exacte dans les permissions de Claude Code. Par exemple, ajoutez `Bash(<ticket-sandbox>/bin/maurice status:*)` à l'allowlist, puis relancez `/maurice:maurice swarm status`.\n- Ou lancez vous-même la commande ci-dessus dans votre terminal et collez-moi la sortie JSON. Je vous aiderai à l'interpréter.",
+        "permission_denials": [
+          {
+            "tool_name": "Bash",
+            "tool_use_id": "toolu_01B7Bu67bwd2LsaHi2AUV15k",
+            "tool_input": {
+              "command": "<ticket-sandbox>/bin/maurice status --data-dir <ticket-sandbox>/one --json",
+              "description": "Run maurice status for the explicit sandbox target"
+            }
+          }
+        ],
+        "num_turns": 2
+      },
+      "transcript_sha256": "4cf1130ee2611c82872ae2d2c8a783fb5fa8a85f589d2cf6579072bcd1f35ffa"
+    },
+    "claude-cli-buildcheck": {
+      "init": {
+        "model": "claude-sonnet-5-5",
+        "plugins": [
+          {
+            "name": "maurice",
+            "path": "<qualification-root>/package/plugins/maurice",
+            "source": "maurice@inline",
+            "version": "0.1.0"
+          },
+          {
+            "name": "cc-plugin-sec-default",
+            "path": "builtin",
+            "source": "cc-plugin-sec-default@builtin"
+          },
+          {
+            "name": "cc-plugin-agents-md",
+            "path": "builtin",
+            "source": "cc-plugin-agents-md@builtin"
+          },
+          {
+            "name": "cc-plugin-telemetry",
+            "path": "builtin",
+            "source": "cc-plugin-telemetry@builtin"
+          },
+          {
+            "name": "cc-plugin-plugin-authoring",
+            "path": "builtin",
+            "source": "cc-plugin-plugin-authoring@builtin"
+          }
+        ],
+        "mcp_servers": [
+          {
+            "name": "maurice",
+            "status": "connected",
+            "source": "dynamic"
+          }
+        ],
+        "skills": [
+          "deep-research",
+          "maurice:agentmaurice",
+          "maurice:maurice",
+          "design",
+          "design-sync",
+          "dataviz",
+          "update-config",
+          "verify",
+          "debug",
+          "code-review",
+          "simplify",
+          "batch",
+          "fewer-permission-prompts",
+          "doctor",
+          "loop",
+          "schedule",
+          "claude-api",
+          "workflow-authoring",
+          "run",
+          "run-skill-generator",
+          "plugin-authoring"
+        ]
+      },
+      "calls": [
+        {
+          "tool": "Bash",
+          "input": {
+            "command": "<ticket-sandbox>/bin/maurice --config <ticket-sandbox>/cli/operator.yaml spec check --env local --agent-alias qualification --dir <ticket-sandbox>/state/project --json; echo \"exit=$?\"",
+            "description": "Run Agent Spec check on qualification project"
+          }
+        }
+      ],
+      "final": {
+        "subtype": "success",
+        "is_error": false,
+        "result": "Le `spec check` n'a pas été exécuté, donc je n'ai ni résultat ni hash à rapporter.\n\nLa commande a été refusée automatiquement. Je l'avais composée de deux opérations, le binaire puis `echo \"exit=$?\"` pour relever le code de sortie. La seconde demandait une approbation, et cette session n'a aucune interface pour en donner. Le refus s'applique à toute la commande. Je ne la relance pas, comme l'indique le message de refus.\n\n**Commande prévue**\n- Binaire : `<ticket-sandbox>/bin/maurice`\n- Configuration privée : passée avec `--config …/cli/operator.yaml`. Je n'ai pas lu le fichier. Je n'ai pas vérifié que `--config` est le bon nom d'option, faute d'avoir lancé `--help`.\n- Arguments : `spec check --env local --agent-alias qualification --dir <ticket-sandbox>/state/project --json`\n- Cible : One AGENT-1034, endpoint `http://127.0.0.1:43300`.\n\n**État**\n- Aucun fichier n'a été modifié.\n- Aucun plan n'a été compilé ni appliqué.\n- Aucune approbation n'a été décidée.\n- Le raccordement, le check et la qualification ne sont pas établis.\n\nPour continuer, vous pouvez lancer vous-même la commande ci-dessus sans le `echo`. Vous pouvez aussi m'autoriser à la relancer seule, et je vous rapporterai la sortie JSON réelle, le hash et le code de sortie.",
+        "permission_denials": [
+          {
+            "tool_name": "Bash",
+            "tool_use_id": "toolu_01BKY1qAwZkLkG6AF5eUksAq",
+            "tool_input": {
+              "command": "<ticket-sandbox>/bin/maurice --config <ticket-sandbox>/cli/operator.yaml spec check --env local --agent-alias qualification --dir <ticket-sandbox>/state/project --json; echo \"exit=$?\"",
+              "description": "Run Agent Spec check on qualification project"
+            }
+          }
+        ],
+        "num_turns": 2
+      },
+      "transcript_sha256": "c09fc3843d93a8ef001205f6cd9d8fb83bbaab8609e9ab831817097baba29526"
+    },
+    "claude-cli-status-ok": {
+      "init": {
+        "model": "claude-sonnet-5-5",
+        "plugins": [
+          {
+            "name": "maurice",
+            "path": "<qualification-root>/package-qualified/plugins/maurice",
+            "source": "maurice@inline",
+            "version": "0.1.0"
+          },
+          {
+            "name": "cc-plugin-sec-default",
+            "path": "builtin",
+            "source": "cc-plugin-sec-default@builtin"
+          },
+          {
+            "name": "cc-plugin-agents-md",
+            "path": "builtin",
+            "source": "cc-plugin-agents-md@builtin"
+          },
+          {
+            "name": "cc-plugin-telemetry",
+            "path": "builtin",
+            "source": "cc-plugin-telemetry@builtin"
+          },
+          {
+            "name": "cc-plugin-plugin-authoring",
+            "path": "builtin",
+            "source": "cc-plugin-plugin-authoring@builtin"
+          }
+        ],
+        "mcp_servers": [
+          {
+            "name": "maurice",
+            "status": "connected",
+            "source": "dynamic"
+          }
+        ],
+        "skills": [
+          "deep-research",
+          "maurice:agentmaurice",
+          "maurice:maurice",
+          "design",
+          "design-sync",
+          "dataviz",
+          "update-config",
+          "verify",
+          "debug",
+          "code-review",
+          "simplify",
+          "batch",
+          "fewer-permission-prompts",
+          "doctor",
+          "loop",
+          "schedule",
+          "claude-api",
+          "workflow-authoring",
+          "run",
+          "run-skill-generator",
+          "plugin-authoring"
+        ]
+      },
+      "calls": [
+        {
+          "tool": "Bash",
+          "input": {
+            "command": "<ticket-sandbox>/bin/maurice --config <ticket-sandbox>/cli/operator.yaml status --data-dir <ticket-sandbox>/one --json",
+            "description": "Run Maurice status for the AGENT-1034 One"
+          },
+          "result": {
+            "running": true,
+            "pid": 18268,
+            "data_dir": "<ticket-sandbox>/one"
+          }
+        }
+      ],
+      "final": {
+        "subtype": "success",
+        "is_error": false,
+        "result": "**Commande exécutée** (exactement celle demandée, sans modification) :\n`<ticket-sandbox>/bin/maurice --config …/cli/operator.yaml status --data-dir …/agent-1034/one --json`\n\n**Cible explicite :** One de qualification AGENT-1034 (`<ticket-sandbox>/one`)\n\n**Sortie structurée :**\n```json\n{\n  \"running\": true,\n  \"pid\": 18268,\n  \"data_dir\": \"<ticket-sandbox>/one\"\n}\n```\n\n**Code retourné par le tool :** l'outil Bash n'a signalé aucune erreur, donc le code de sortie est 0. Il ne l'affiche pas explicitement, et je ne l'ai pas mesuré avec une commande supplémentaire.\n\n**Preuve obtenue :** l'instance One locale d'AGENT-1034 tourne (PID 18268) sur le `data_dir` indiqué.\n\nCette sortie ne prouve rien d'autre. Elle ne montre ni raccordement MCP, ni grant effectif, ni job, ni exécution métier, ni qualification. Je n'ai pas lu le fichier de configuration privé et je n'ai lancé aucune autre commande.",
+        "permission_denials": [],
+        "num_turns": 2
+      },
+      "transcript_sha256": "086bd5b654ed3fccf5cd60c349a81e9b96820f9b0cfb7b88c835064ac25188e0"
+    },
+    "claude-cli-buildcheck-ok": {
+      "init": {
+        "model": "claude-sonnet-5-5",
+        "plugins": [
+          {
+            "name": "maurice",
+            "path": "<qualification-root>/package-qualified/plugins/maurice",
+            "source": "maurice@inline",
+            "version": "0.1.0"
+          },
+          {
+            "name": "cc-plugin-sec-default",
+            "path": "builtin",
+            "source": "cc-plugin-sec-default@builtin"
+          },
+          {
+            "name": "cc-plugin-agents-md",
+            "path": "builtin",
+            "source": "cc-plugin-agents-md@builtin"
+          },
+          {
+            "name": "cc-plugin-telemetry",
+            "path": "builtin",
+            "source": "cc-plugin-telemetry@builtin"
+          },
+          {
+            "name": "cc-plugin-plugin-authoring",
+            "path": "builtin",
+            "source": "cc-plugin-plugin-authoring@builtin"
+          }
+        ],
+        "mcp_servers": [
+          {
+            "name": "maurice",
+            "status": "connected",
+            "source": "dynamic"
+          }
+        ],
+        "skills": [
+          "deep-research",
+          "maurice:agentmaurice",
+          "maurice:maurice",
+          "design",
+          "design-sync",
+          "dataviz",
+          "update-config",
+          "verify",
+          "debug",
+          "code-review",
+          "simplify",
+          "batch",
+          "fewer-permission-prompts",
+          "doctor",
+          "loop",
+          "schedule",
+          "claude-api",
+          "workflow-authoring",
+          "run",
+          "run-skill-generator",
+          "plugin-authoring"
+        ]
+      },
+      "calls": [
+        {
+          "tool": "Bash",
+          "input": {
+            "command": "<ticket-sandbox>/bin/maurice --config <ticket-sandbox>/cli/operator.yaml spec check --env local --agent-alias qualification --dir <ticket-sandbox>/state/project --json",
+            "description": "Run the authorized spec check command"
+          },
+          "result": {
+            "diagnostics": null,
+            "local_contracts_valid": true,
+            "schema_version": "agentmaurice.agent_spec_check/v2",
+            "source_control": {
+              "commit_sha": "bc9daee0e748ba1a734d905263ce96e984ec7f00",
+              "branch": "main",
+              "repository_url": "",
+              "workspace_hash": "sha256:37547fa9384bbf904ca253f55ea40f0d16dba7be4ae088e428d6b16b1dedaa71"
+            },
+            "ok": true,
+            "organization_id": "dbcbvq24p5co3iapsrug",
+            "agent_id": "dbcbvqa4p5co3iapsscg",
+            "agent_alias": "qualification",
+            "agent_spec_id": "dbcbvqa4p5co3iapt3qg",
+            "base_resource_version": 2,
+            "summary": {
+              "workflows_and_miniapps": 3,
+              "contract_bundle_sha256": "7edd3dc380babcdad0fd999dc15faa50ee55aabcf655a20b2fe876193d439c2d",
+              "has_test_plan": true
+            },
+            "governance": {
+              "require_clean_git": true,
+              "require_studio_revision": false,
+              "review_mechanism": "none",
+              "profile": "integration_test",
+              "approval_mode": "none",
+              "require_commit_sha": true,
+              "require_pull_request_url": false,
+              "authoring_channel": "code_agent",
+              "tests": "on",
+              "environment_kind": "integration_test"
+            },
+            "contract": {
+              "version": "agentmaurice.agent_spec/v2",
+              "bundle_sha256": "7edd3dc380babcdad0fd999dc15faa50ee55aabcf655a20b2fe876193d439c2d"
+            },
+            "complete": true,
+            "spec_hash": "99bb049ddcfb0200117c53d64a3096088b1cae47ebac1dafeae1cf592c8e5d75"
+          }
+        }
+      ],
+      "final": {
+        "subtype": "success",
+        "is_error": false,
+        "result": "La commande a bien été exécutée telle quelle. Le tool a renvoyé un code de sortie 0, et la sortie JSON n'a produit aucune erreur.\n\n**Commande et cible**\n- Commande : `maurice spec check --env local --agent-alias qualification --dir …/agent-1034/state/project --json`, avec `--config …/agent-1034/cli/operator.yaml`.\n- Cible : One de qualification AGENT-1034, sandbox `agent-1034`.\n- Je n'ai pas lu le fichier de configuration privé.\n\n**Sortie structurée**\n- Schéma : `agentmaurice.agent_spec_check/v2`\n- `ok` : true\n- `local_contracts_valid` : true\n- `complete` : true\n- `diagnostics` : null\n- Agent : alias `qualification`, `agent_id` `dbcbvqa4p5co3iapsscg`, `agent_spec_id` `dbcbvqa4p5co3iapt3qg`\n- Organisation : `dbcbvq24p5co3iapsrug`\n- `base_resource_version` : 2\n- Résumé :\n  - 3 workflows et miniapps\n  - un plan de test est présent\n  - `contract_bundle_sha256` : `7edd3dc3…439c2d`\n- Hash de la spec : `99bb049d…e5d75`\n- Source control :\n  - branche `main`\n  - commit `bc9daee0e748ba1a734d905263ce96e984ec7f00`\n  - `repository_url` vide\n  - `workspace_hash` : `sha256:37547fa9…dedaa71`\n- Gouvernance :\n  - profil `integration_test`\n  - `approval_mode` : none\n  - `review_mechanism` : none\n  - tests activés\n  - `authoring_channel` : code_agent\n  - `require_clean_git` et `require_commit_sha` à true\n\n**Ce que ce résultat prouve**\n- Le check de la spec est passé, et les contrats locaux sont valides.\n- Ce résultat ne prouve rien d'autre. Je n'ai lancé ni plan, ni approbation, ni apply, ni verify, ni exécution métier.",
+        "permission_denials": [],
+        "num_turns": 2
+      },
+      "transcript_sha256": "c4305fd9be734ab7d29a147731346c1ae64c42f47aa85346acbc48c7798b7372"
+    },
+    "claude-replay": {
+      "init": {
+        "model": "claude-sonnet-5-5",
+        "plugins": [
+          {
+            "name": "maurice",
+            "path": "<qualification-root>/package-qualified/plugins/maurice",
+            "source": "maurice@inline",
+            "version": "0.1.0"
+          },
+          {
+            "name": "cc-plugin-sec-default",
+            "path": "builtin",
+            "source": "cc-plugin-sec-default@builtin"
+          },
+          {
+            "name": "cc-plugin-agents-md",
+            "path": "builtin",
+            "source": "cc-plugin-agents-md@builtin"
+          },
+          {
+            "name": "cc-plugin-telemetry",
+            "path": "builtin",
+            "source": "cc-plugin-telemetry@builtin"
+          },
+          {
+            "name": "cc-plugin-plugin-authoring",
+            "path": "builtin",
+            "source": "cc-plugin-plugin-authoring@builtin"
+          }
+        ],
+        "mcp_servers": [
+          {
+            "name": "maurice",
+            "status": "connected",
+            "source": "dynamic"
+          }
+        ],
+        "skills": [
+          "deep-research",
+          "maurice:agentmaurice",
+          "maurice:maurice",
+          "design",
+          "design-sync",
+          "dataviz",
+          "update-config",
+          "verify",
+          "debug",
+          "code-review",
+          "simplify",
+          "batch",
+          "fewer-permission-prompts",
+          "doctor",
+          "loop",
+          "schedule",
+          "claude-api",
+          "workflow-authoring",
+          "run",
+          "run-skill-generator",
+          "plugin-authoring"
+        ]
+      },
+      "calls": [
+        {
+          "tool": "ToolSearch",
+          "input": {
+            "query": "select:mcp__maurice__maurice_search,mcp__maurice__maurice_explain,mcp__maurice__maurice_execute",
+            "max_results": 5
+          }
+        },
+        {
+          "tool": "mcp__maurice__maurice_search",
+          "input": {
+            "query": "record-proof"
+          },
+          "result": {
+            "limit": 50,
+            "results": [
+              {
+                "agent_id": "dbcbvqa4p5co3iapsscg",
+                "application": null,
+                "description": "Workflow publié : record-proof",
+                "gesture_policy": "auto",
+                "input_schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "message": {
+                      "maxLength": 200,
+                      "type": "string"
+                    },
+                    "path": {
+                      "pattern": "^/qualification/[a-z0-9-]+\\.txt$",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "path",
+                    "message"
+                  ],
+                  "type": "object"
+                },
+                "kind": "workflow",
+                "ref": "workflow:dbcbvqa4p5co3iapsscg/record-proof@1",
+                "title": "Enregistrer une preuve de qualification fictive",
+                "version": "1",
+                "workflow_id": "record-proof"
+              },
+              {
+                "agent_id": "dbcbvqa4p5co3iapsscg",
+                "application": null,
+                "description": "Workflow publié : approve-proof",
+                "gesture_policy": "confirm",
+                "input_schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "message": {
+                      "maxLength": 200,
+                      "type": "string"
+                    },
+                    "path": {
+                      "pattern": "^/qualification/[a-z0-9-]+\\.txt$",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "path",
+                    "message"
+                  ],
+                  "type": "object"
+                },
+                "kind": "workflow",
+                "ref": "workflow:dbcbvqa4p5co3iapsscg/approve-proof@1",
+                "title": "Enregistrer une preuve fictive après accord humain",
+                "version": "1",
+                "workflow_id": "approve-proof"
+              },
+              {
+                "agent_id": "dbcbvqa4p5co3iapsscg",
+                "application": null,
+                "description": "Workflow publié : list-proof",
+                "gesture_policy": "auto",
+                "input_schema": {
+                  "additionalProperties": false,
+                  "properties": {},
+                  "type": "object"
+                },
+                "kind": "workflow",
+                "ref": "workflow:dbcbvqa4p5co3iapsscg/list-proof@1",
+                "title": "Lister les preuves fictives",
+                "version": "1",
+                "workflow_id": "list-proof"
+              }
+            ],
+            "search_mode": "local_lexical",
+            "truncated": false
+          }
+        },
+        {
+          "tool": "mcp__maurice__maurice_explain",
+          "input": {
+            "ref": "workflow:dbcbvqa4p5co3iapsscg/record-proof@1",
+            "input": {
+              "path": "/qualification/shared-client.txt",
+              "message": "Preuve commune Codex Claude"
+            }
+          },
+          "result": {
+            "approver": {
+              "approval_surface": "personal",
+              "distinct_from_assistant": true,
+              "issuer": "agentmaurice.local_principal/v1",
+              "kind": "human",
+              "subject": "local-operator"
+            },
+            "description": "Workflow publié : record-proof",
+            "dry_run": {
+              "executed": false,
+              "mode": "plan",
+              "steps": [
+                {
+                  "requires_approval": false,
+                  "tool": "dbcbvqa4p5co3iapsscg_storage__mcp_storage_server--write_file",
+                  "type": "tool_call"
+                },
+                {
+                  "requires_approval": false,
+                  "tool": "dbcbvqa4p5co3iapsscg_storage__mcp_storage_server--read_file",
+                  "type": "tool_call"
+                }
+              ]
+            },
+            "effect_quota": {
+              "charged_at": "admission",
+              "exhausted": false,
+              "max_effects": 5,
+              "refund_policy": "none",
+              "remaining_effects": 4,
+              "scope": "mandate",
+              "unit": "workflow_run",
+              "used_effects": 1
+            },
+            "effective_remaining_effects": 4,
+            "execution_supported": true,
+            "gesture_policy": "auto",
+            "history_scope": "current_workflow_version_and_spec",
+            "input_schema": {
+              "additionalProperties": false,
+              "properties": {
+                "message": {
+                  "maxLength": 200,
+                  "type": "string"
+                },
+                "path": {
+                  "pattern": "^/qualification/[a-z0-9-]+\\.txt$",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "path",
+                "message"
+              ],
+              "type": "object"
+            },
+            "kind": "workflow",
+            "output_schema": {
+              "additionalProperties": false,
+              "properties": {
+                "message": {
+                  "type": "string"
+                },
+                "path": {
+                  "type": "string"
+                },
+                "recorded": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "path",
+                "message",
+                "recorded"
+              ],
+              "type": "object"
+            },
+            "plan_hash": "41e634237484e3b9f2fdc4ad9544399503bf6bf274a12bd6d1d5a5fc05100eab",
+            "quota_chain": [
+              {
+                "exhausted": false,
+                "mandate_id": "md_dbcc0ci4p5cken7sjvr0",
+                "max_effects": 5,
+                "remaining_effects": 4,
+                "used_effects": 1
+              }
+            ],
+            "recent_executions": [
+              {
+                "execution_id": "cks7p63rtpgt621ls8j0",
+                "job_id": "dbcc1ka4p5cken7sk05g",
+                "status": "completed",
+                "timestamp": "2026-10-21T13:40:33.18476Z",
+                "usage_summary": {
+                  "cost": {
+                    "amount_minor": 0,
+                    "currency": "EUR",
+                    "status": "qualified_zero"
+                  },
+                  "duration_ms": 178,
+                  "input_tokens": 0,
+                  "llm_calls": 0,
+                  "output_tokens": 0,
+                  "tool_calls": 2
+                }
+              }
+            ],
+            "ref": "workflow:dbcbvqa4p5co3iapsscg/record-proof@1",
+            "sample_window": 50,
+            "title": "Enregistrer une preuve de qualification fictive",
+            "usage_summary": {
+              "cost": {
+                "amount_minor": 0,
+                "cost_sample_size": 1,
+                "currency": "EUR",
+                "status": "qualified_zero"
+              },
+              "duration_ms": 178,
+              "input_tokens": 0,
+              "llm_calls": 0,
+              "method": "median",
+              "output_tokens": 0,
+              "sample_size": 1,
+              "source": "agent_job_results",
+              "tool_calls": 2
+            }
+          }
+        },
+        {
+          "tool": "mcp__maurice__maurice_execute",
+          "input": {
+            "ref": "workflow:dbcbvqa4p5co3iapsscg/record-proof@1",
+            "input": {
+              "path": "/qualification/shared-client.txt",
+              "message": "Preuve commune Codex Claude"
+            },
+            "idempotency_key": "agent-1034-shared-client-1",
+            "expected_plan_hash": "41e634237484e3b9f2fdc4ad9544399503bf6bf274a12bd6d1d5a5fc05100eab"
+          },
+          "result": {
+            "execution_id": "cks7p63rtpgt621ls8j0",
+            "job_id": "dbcc1ka4p5cken7sk05g",
+            "result": {
+              "message": "Preuve commune Codex Claude",
+              "path": "/qualification/shared-client.txt",
+              "recorded": true
+            },
+            "status": "completed",
+            "usage_summary": {
+              "duration_ms": 178,
+              "tool_calls": 2,
+              "llm_calls": 0,
+              "input_tokens": 0,
+              "output_tokens": 0
+            }
+          }
+        }
+      ],
+      "final": {
+        "subtype": "success",
+        "is_error": false,
+        "result": "La reprise a renvoyé le résultat de l'exécution d'origine. Je n'ai pas relancé le Workflow.\n\n- **Outils utilisés :** `maurice_search`, puis `maurice_explain`, puis `maurice_execute`, tous sur le MCP Maurice déjà connecté.\n- **Référence :** `workflow:dbcbvqa4p5co3iapsscg/record-proof@1`. Sa politique de geste est `auto`, donc aucun accord humain n'était requis.\n- **Schéma d'entrée :** `path` (motif `^/qualification/[a-z0-9-]+\\.txt$`) et `message` (200 caractères maximum), sans autre propriété.\n- **Plan :** deux étapes, `write_file` puis `read_file`, sans approbation requise.\n- **Plan hash :** `41e634237484e3b9f2fdc4ad9544399503bf6bf274a12bd6d1d5a5fc05100eab`, passé en `expected_plan_hash`.\n- **Entrées :** `path` = `/qualification/shared-client.txt` et `message` = « Preuve commune Codex Claude ».\n- **Clé d'idempotence :** `agent-1034-shared-client-1`, la même que pour le premier lancement.\n\n**Résultat retourné :**\n- **Statut :** `completed`.\n- **Job :** `dbcc1ka4p5cken7sk05g`.\n- **Exécution :** `cks7p63rtpgt621ls8j0`.\n- **Sortie :** `{\"message\":\"Preuve commune Codex Claude\",\"path\":\"/qualification/shared-client.txt\",\"recorded\":true}`.\n- **Usage :** 178 ms, 2 appels d'outil, aucun appel LLM.\n\n**Pourquoi je dis que c'est une reprise :** `explain` listait déjà cette exécution (même Job, même `execution_id`, horodatée 2026-10-21T13:40:33Z) et affichait 1 effet utilisé sur 5 sur le mandat. L'`execute` a renvoyé exactement ces identifiants. Je n'ai pas relu le contenu du fichier moi-même.\n\nJe n'ai pas accédé à un shell HTTP, à une configuration ou à un jeton. Je n'ai créé aucun grant ni aucune connexion. Rien n'a été écrit en dehors du fichier fictif.",
+        "permission_denials": [],
+        "num_turns": 5
+      },
+      "transcript_sha256": "d69c8fe02fbc66298f0c8e52f31baa22b20297cc2c8a9acce48d3dd8a956b9b6"
+    }
+  },
+  "parity": {
+    "same_ref_input_key_plan": true,
+    "claude": {
+      "execution_id": "cks7p63rtpgt621ls8j0",
+      "job_id": "dbcc1ka4p5cken7sk05g",
+      "result": {
+        "message": "Preuve commune Codex Claude",
+        "path": "/qualification/shared-client.txt",
+        "recorded": true
+      },
+      "status": "completed",
+      "usage_summary": {
+        "duration_ms": 178,
+        "tool_calls": 2,
+        "llm_calls": 0,
+        "input_tokens": 0,
+        "output_tokens": 0
+      }
+    },
+    "codex": {
+      "execution_id": "cks7p63rtpgt621ls8j0",
+      "job_id": "dbcc1ka4p5cken7sk05g",
+      "result": {
+        "message": "Preuve commune Codex Claude",
+        "path": "/qualification/shared-client.txt",
+        "recorded": true
+      },
+      "status": "completed",
+      "usage_summary": {
+        "duration_ms": 178,
+        "tool_calls": 2,
+        "llm_calls": 0,
+        "input_tokens": 0,
+        "output_tokens": 0
+      }
+    },
+    "public_cli": {
+      "execution_id": "cks7p63rtpgt621ls8j0",
+      "job_id": "dbcc1ka4p5cken7sk05g",
+      "result": {
+        "message": "Preuve commune Codex Claude",
+        "path": "/qualification/shared-client.txt",
+        "recorded": true
+      },
+      "status": "completed",
+      "usage_summary": {
+        "duration_ms": 178,
+        "tool_calls": 2,
+        "llm_calls": 0,
+        "input_tokens": 0,
+        "output_tokens": 0
+      }
+    },
+    "after_restart": {
+      "execution_id": "cks7p63rtpgt621ls8j0",
+      "job_id": "dbcc1ka4p5cken7sk05g",
+      "result": {
+        "message": "Preuve commune Codex Claude",
+        "path": "/qualification/shared-client.txt",
+        "recorded": true
+      },
+      "status": "completed",
+      "usage_summary": {
+        "duration_ms": 178,
+        "tool_calls": 2,
+        "llm_calls": 0,
+        "input_tokens": 0,
+        "output_tokens": 0
+      }
+    }
+  },
+  "effects": {
+    "agent_jobs": 1,
+    "execution_id": "cks7p63rtpgt621ls8j0",
+    "file_sha256": "b71e7bdbc0a40f07051a4d3252d21dd5473dc438dfc1ee6529ef942f6a53e5ff",
+    "file_content": "Preuve commune Codex Claude",
+    "reader_denied_file_exists": false
+  },
+  "restart": {
+    "server_bin": "<ticket-sandbox>/bin/agentmaurice-standalone",
+    "pid": 97276,
+    "log_path": "<ticket-sandbox>/one/server.log",
+    "ready": true,
+    "ready_checked": true,
+    "ready_url": "http://127.0.0.1:43300/ready",
+    "already_running": false,
+    "data_dir": "<ticket-sandbox>/one"
+  },
+  "native_validation": {
+    "success": true,
+    "strict": true,
+    "target": "<qualification-root>/package-qualified/plugins/maurice/.claude-plugin/plugin.json",
+    "manifest": {
+      "file": "<qualification-root>/package-qualified/plugins/maurice/.claude-plugin/plugin.json",
+      "type": "plugin",
+      "errors": [],
+      "warnings": [],
+      "notes": [],
+      "gatingHooks": []
+    },
+    "contents": [],
+    "advice": [
+      {
+        "file": "<qualification-root>/package-qualified/plugins/maurice/README.md",
+        "message": "This README has no line that installs \"maurice\" from a marketplace. Add the install line, which works in one step on Claude Code 2.1.275 or later. Validate the folder that holds its marketplace.json to have <owner>/<repo> filled in, and the name its marketplace lists it under.",
+        "installLine": "/plugin install maurice --marketplace <owner>/<repo>"
+      }
+    ],
+    "directory": {
+      "profile": null,
+      "findings": [
+        {
+          "code": "ICON_MISSING",
+          "title": "No icon",
+          "severity": "warning",
+          "blocking": false,
+          "hold": false,
+          "file": ".claude-plugin/plugin.json",
+          "field": "icon",
+          "message": "No icon found in the plugin. The validator looked for `icon` in plugin.json and for a file at .claude-plugin/icon.png or .svg, assets/icon.png or .svg, or a similar path.",
+          "fix": "Add a square PNG to the plugin folder at .claude-plugin/icon.png, or set `icon` in plugin.json to the path of a square PNG or JPEG in the plugin: 512 to 2048 px on each side, under 2 MB. SVG and WebP are not accepted. That file may become the listing icon only once: the first time the plugin is saved or submitted in the developer portal. Adding or changing it later does not change the icon."
+        }
+      ],
+      "undecided": [],
+      "incomplete": false,
+      "failure": null,
+      "notes": []
+    }
+  },
+  "remaining": [
+    "See AGENT-1034-commands.json limits for current qualification gaps.",
+    "The initial runs and effects snapshot in this file describe the first campaign only; later jobs, lifecycle and authoring proofs are recorded in the subsequent evidence."
+  ],
+  "subsequent_qualification": {
+    "report": "AGENT-1034-commands.md",
+    "evidence": "AGENT-1034-commands.json",
+    "scope": "swarm and build commands; original runs and one-job effect snapshot remain historical"
+  }
+}
