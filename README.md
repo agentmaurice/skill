@@ -105,6 +105,19 @@ codex plugin add maurice@maurice-local
 
 The builder validates `skill-version.json`, preserves the canonical Skill byte-for-byte, and emits a single-plugin archive. Claude packaging is deferred.
 
+### Vocabulaire et invocateurs Codex
+
+| Besoin | Invocateur réel | Rôle dans AGENT-613 |
+|---|---|---|
+| Accueil et usage | `$use-maurice` | Guide `search` → `explain` → `execute` sur le MCP déjà branché |
+| Diagnostic | `maurice doctor --mcp-endpoint <endpoint> --mcp-token-file <token-file> --json` | Vérifie la connexion et le catalogue ; `checked`/`ok` ne prouvent ni l'exécution ni la qualification métier |
+| Découverte / plan / effet | `maurice.search`, `maurice.explain`, `maurice.execute` ou les commandes CLI publiques correspondantes | Référence exacte, `plan_hash`, entrée et `idempotency_key` |
+| Branchement explicite | `maurice assistant connect codex --endpoint <endpoint> --config-file <config> --token-file <token-file>` | Réutilise un mandat existant ; ne lit pas le jeton et ne démarre pas le One |
+
+Le paquet ne fournit pas de commande d'installation automatique, de wrapper
+CLI, de nouveau serveur MCP ou d'alias. Le cycle swarm, le build de nouveaux
+Agents/Workflows, le lifecycle et le mode Claude restent hors AGENT-613.
+
 ## Validate
 
 From the sibling `test-maurice` repository:

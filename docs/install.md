@@ -75,6 +75,38 @@ manque, le Skill guide explicitement `maurice assistant connect codex` avec un
 fichier de jeton privé. La qualification sur un One réel est séparée du
 packaging.
 
+## Vocabulaire et parcours Codex
+
+Dans Codex, l'accueil et l'usage passent par `$use-maurice` (sans syntaxe
+Claude) : le guide enchaîne `maurice.search`, `maurice.explain`, puis
+`maurice.execute` avec une référence exacte, le `plan_hash` attendu et une
+`idempotency_key`. Les mêmes opérations sont disponibles par les commandes
+CLI publiques `maurice search`, `maurice explain` et `maurice execute`.
+
+Pour un diagnostic de connexion, utiliser :
+
+```bash
+maurice doctor --mcp-endpoint <endpoint> --mcp-token-file <token-file> --json
+```
+
+Les champs `checked` et `ok` indiquent seulement la connexion et la découverte
+du catalogue MCP ; ils ne prouvent pas une exécution, une approbation humaine
+ou une qualification métier.
+
+Si le MCP manque, le branchement explicite est :
+
+```bash
+maurice assistant connect codex \
+  --endpoint <endpoint> \
+  --config-file <config> \
+  --token-file <token-file>
+```
+
+Le chemin du fichier de jeton reste privé et son contenu n'est jamais lu dans
+le parcours documentaire. AGENT-613 ne livre pas de commande d'installation
+automatique, de nouveau wrapper ou serveur MCP, de mode Claude, de build de
+nouveaux Agents/Workflows, ni le lifecycle du swarm.
+
 ## Verify
 
 Confirm that the client can invoke `$agentmaurice` and that the following
