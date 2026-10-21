@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import re
 import hashlib
 import subprocess
 import sys
@@ -69,6 +70,20 @@ class ClientPluginBuild(unittest.TestCase):
             self.assertEqual({key: claude_manifest[key] for key in ("name", "version", "description", "author", "license")}, {key: manifest[key] for key in ("name", "version", "description", "author", "license")})
             self.assertEqual((plugin / "skills/maurice/SKILL.md").read_bytes(), (ROOT / "plugins/claude/maurice/SKILL.md").read_bytes())
             self.assertIn("maurice:", (plugin / "skills/maurice/SKILL.md").read_text())
+            guides = ROOT / "plugins/claude/maurice"
+            self.assertEqual(
+                {path.relative_to(guides) for path in guides.rglob("*") if path.is_file()},
+                {path.relative_to(plugin / "skills/maurice") for path in (plugin / "skills/maurice").rglob("*") if path.is_file()},
+            )
+            for source in guides.rglob("*.md"):
+                target = plugin / "skills/maurice" / source.relative_to(guides)
+                self.assertEqual(source.read_bytes(), target.read_bytes(), str(source))
+                for link in re.findall(r"\[[^\]]+\]\(([^)]+)\)", target.read_text()):
+                    if "://" not in link and not link.startswith("#"):
+                        destination = (target.parent / link.split("#", 1)[0]).resolve()
+                        self.assertTrue(destination.is_relative_to(plugin.resolve()), link)
+                        self.assertTrue(destination.is_file(), f"broken packaged guide link: {link}")
+
             self.assertEqual((plugin / "README.md").read_bytes(), (ROOT / "plugins/claude/README.md").read_bytes())
             readme_text = (plugin / "README.md").read_text()
             self.assertIn("/maurice:maurice", readme_text)

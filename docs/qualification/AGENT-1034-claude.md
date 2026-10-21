@@ -1,5 +1,10 @@
 # Qualification terminal du plugin Claude — AGENT-1034
 
+> Complément ultérieur : les parcours `swarm` et `build` ont été complétés et
+> rejoués dans [la campagne des commandes](AGENT-1034-commands.md). Les manques
+> listés plus bas décrivent cette première campagne ; le complément fait foi
+> pour leur état courant. Le lot complet reste In Progress.
+
 État au 21 octobre 2026 : **implémentation en cours, lot complet non clôturé**.
 Le paquet `maurice 0.1.0` est construit et utilisé dans de vraies conversations
 Claude Code. Le rejeu dans l’onglet Code Desktop est différé : le fondateur a

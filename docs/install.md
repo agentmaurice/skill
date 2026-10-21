@@ -89,6 +89,10 @@ Le plugin utilise le MCP déjà configuré et le namespace Claude
 `/maurice:maurice`. Aucun hook, mod ou nouveau `.mcp.json` n'est ajouté. Les
 réglages Desktop en portée project et leur qualification restent différés.
 
+Les parcours `swarm` et `build`, leurs invocateurs publics, leurs preuves et
+les limites restantes sont décrits dans [la matrice des commandes](qualification/AGENT-1034-commands.md). Le lifecycle reste une opération
+locale explicite ; une connexion MCP déjà autorisée n’impose pas la CLI.
+
 Pour les cartes humaines, conserver aussi l’URL explicite de l’accueil du One.
 Le port MCP ne permet pas de déduire le port de cette page. Si le serveur ne
 retourne qu’une référence d’action, fournir cette origine au Skill pour obtenir

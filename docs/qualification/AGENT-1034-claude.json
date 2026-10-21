@@ -1685,10 +1685,12 @@
     }
   },
   "remaining": [
-    "Claude Desktop Code tab not qualified: user asked to preserve active work; only read-only inventory was inspected before that constraint.",
-    "Generic swarm node inventory, jobs/logs and every build/lifecycle intent do not yet have a complete client replay and strict CLI/MCP equivalence proof.",
-    "No new native swarm/build CLI groups or MCP node/graph gateway delivered; existing public invokers are guided and their gaps documented.",
-    "Claude human approval/resume, target switch and protocol incompatibility not qualified by these runs.",
-    "No public marketplace submission or release binary qualification."
-  ]
+    "See AGENT-1034-commands.json limits for current qualification gaps.",
+    "The initial runs and effects snapshot in this file describe the first campaign only; later jobs, lifecycle and authoring proofs are recorded in the subsequent evidence."
+  ],
+  "subsequent_qualification": {
+    "report": "AGENT-1034-commands.md",
+    "evidence": "AGENT-1034-commands.json",
+    "scope": "swarm and build commands; original runs and one-job effect snapshot remain historical"
+  }
 }

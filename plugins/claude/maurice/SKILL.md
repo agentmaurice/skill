@@ -1,5 +1,6 @@
 ---
 name: maurice
+argument-hint: "[use <context>|doctor|swarm <command>|build <command>]"
 description: >-
   Piloter AgentMaurice depuis Claude Code avec une cible explicite : accueil,
   diagnostic, découverte MCP, exécution gouvernée, swarm AgentJob et cycle
@@ -30,7 +31,7 @@ découverte ; ne déduis jamais une cible depuis son nom affiché.
 - Ne lis jamais un fichier de jeton et ne demande jamais une valeur secrète
   dans le chat.
 
-Un changement de contexte CLI ne rebranche pas le MCP déjà connecté. Invalide les références et plans observés sur l’ancienne cible. Avant une exécution sur une autre instance, vérifie son endpoint et son mandat explicites, puis refais le préflight, `search` et `explain` sur cette connexion. Si elle manque, guide le branchement public `maurice assistant connect generic --config-file <private-mcp-config> --endpoint <endpoint> --token-file <private-token-file>` ; aucun droit nouveau n’est créé et aucun fichier global n’est remplacé implicitement.
+Un changement de contexte CLI ne rebranche pas le MCP déjà connecté. Invalide les références et plans observés sur l’ancienne cible. Avant une exécution sur une autre instance, vérifie son endpoint et son mandat explicites, puis refais le préflight, `search` et `explain` sur cette connexion. Si elle manque, guide le branchement public `maurice assistant connect generic --config-file <private-mcp-config> --endpoint <endpoint> --token-file <private-token-file>` ; aucun droit nouveau n’est créé et aucun fichier global n’est remplacé implicitement. Ce branchement concerne uniquement la front door. Pour External Inception / org-builder, conserve le bootstrap MCP `amb_` et la configuration renvoyée par son propre contrat ; ne les passe pas à `assistant connect` ou `agent connect`.
 
 ## Accueil et usage
 
@@ -59,9 +60,10 @@ Si `decision` vaut `rejected`, arrête le parcours ; ne réessaie pas avec une
 autre référence ou une nouvelle clé. Une carte `completed` n'est pas une
 approbation et une approbation n'est pas le résultat de l'exécution.
 
-Le produit s'appelle AgentMaurice One ; les outils MCP peuvent avoir un nom
-préfixé `one_`. Ne remplace jamais ce vocabulaire par un outil inventé comme
-`one_legacy`.
+Les outils du plugin portent le préfixe `maurice_` (ou les trois noms publics
+`maurice.search`, `maurice.explain`, `maurice.execute`). Les noms External
+Inception restent ceux réellement publiés par le catalogue ; ne les renomme
+pas côté modèle et ne fabrique jamais un outil absent.
 
 ## Doctor
 
@@ -77,68 +79,32 @@ Le fichier de jeton reste privé ; le client ne le lit ni ne l'imprime. Lis
 le catalogue accessibles, jamais une exécution Workflow, un grant effectif,
 une qualification métier ou la disponibilité d'une VM.
 
-## Swarm et jobs
+## Choisir le domaine
 
-Il n'existe pas de façade publique `maurice swarm` ni de commandes
-`node jobs/logs/run`. Ne les invente pas et n'appelle pas directement une
-route HTTP ou la base.
+L'invocation native est `/maurice:maurice <domaine> <commande>`. Le mot
+`swarm` désigne le pilotage runtime ; `build` désigne l'authoring d'outils
+AgentMaurice. Ne les confonds pas avec les commandes d'usine du domaine `dev`.
 
-- `swarm status` : combine uniquement des lectures ciblées, selon la demande :
-  `maurice status --json`, `maurice doctor --json`, ou l'état d'un graphe.
-- `swarm nodes` : `maurice access list --me --json` expose la projection des
-  nœuds de l'accès personnel ; `maurice node show [--data-dir|--edge] --json`
-  expose l'identité locale. Cela ne constitue pas un inventaire générique du
-  swarm.
-- `swarm run` : utilise `maurice.execute` après `search` puis `explain`.
-  Le parcours CLI équivalent est `maurice search`, `maurice explain`, puis
-  `maurice execute`, avec la même référence, entrée, clé et empreinte de plan.
-- `swarm jobs` et `swarm logs` : exige `job_id` ou `graph_id`, puis utilise
-  `maurice job graph get <graph_id>` et `maurice job graph events <graph_id>`
-  pour un graphe, ou les outils MCP `inception_tasks_get` et
-  `inception_tasks_events`. Il n'y a pas de `job list` ou de `job logs` à
-  fabriquer.
-- La soumission et l'annulation restent bornées par les interfaces existantes
-  (`maurice job graph submit`, `cancel`, `raise-budget` ou les outils MCP
-  `inception_tasks_submit` et `inception_tasks_cancel`) et leurs contrats.
+| Domaine | Commandes | Guide à lire avant l'appel |
+| --- | --- | --- |
+| `swarm` | `status`, `nodes`, `run`, `jobs`, `logs`, `start`, `stop` | [Swarm](references/swarm.md) |
+| `build` | `new`, `check`, `plan`, `apply`, `verify`, `test` | [Build](references/build.md) |
 
-## Lifecycle local
+Ces commandes sont des intentions conversationnelles. Utilise les invocateurs
+publics du guide ; n'appelle pas de groupe natif `maurice swarm` ou
+`maurice build` qui n'est pas présent dans l'aide du binaire. N'installe pas
+une CLI lorsque la connexion MCP autorisée suffit.
 
-`maurice start`, `maurice stop` et `maurice status` pilotent l'instance One
-locale ; `maurice edge serve|connect|disconnect` pilotent le pont Edge. Edge
-ne démarre pas One. Un chemin local explicite est requis avant `start` ou
-`stop`. Ne lance jamais un serveur avec `go run`, `./bin/agentmaurice serve`
-ou un kill manuel.
+Pour une commande inconnue ou une cible manquante, présente la syntaxe et
+l'information requise avant tout effet. `swarm jobs` sans ID montre seulement
+les Jobs observés dans la conversation, avec leur cible et date d'observation ;
+pour une lecture fraîche, demande l'ID exact. Une liste conservée par le client
+ne constitue pas un inventaire serveur.
 
-## Build Agent Spec
-
-Il n'existe pas de commande publique `maurice build`. Le mot « build » est un
-raccourci conversationnel vers les rails ci-dessous :
-
-- **new** : pour créer un Agent, commence par l'observation et la planification
-  d'architecture (`inception_architecture_*`), avec `create_agent` dans le
-  plan ; une approbation humaine distincte est nécessaire. Pour un Agent
-  existant seulement, `maurice spec init` crée l'état d'authoring local ; il
-  ne crée pas un Agent distant.
-- Pour `new`, demande d’abord le type et la cible : Agent, Application ou Module.
-  Une Application suit le [rail App](../agentmaurice/references/app-delivery.md) ;
-  `maurice app init <applicationKey>` est une création distante, à autoriser
-  explicitement. Un Module suit le [rail Module](../agentmaurice/references/modules.md) ;
-  `maurice module init <moduleKey> --dir <path>` prépare un dépôt local.
-  Ne confonds jamais scaffold local, création distante et déploiement.
-- **check** : `maurice spec check --env <env> --agent-alias <alias> --dir <path> --json`.
-- **plan** : `maurice spec plan --env <env> --agent-alias <alias> --dir <path> --json`.
-- **apply** : `maurice spec apply --plan <plan-id> --dir <path> --json`,
-  uniquement après l'approbation humaine du plan persistant. Les options
-  `--approval-id`, `--target`, `--tests` et `--idempotency-key` restent celles
-  affichées par `maurice spec apply --help`.
-- **verify** : `maurice spec verify --plan <plan-id> --dir <path> --wait --json`.
-- **test** : utilise `maurice test` et sa sous-commande affichée par
-  `maurice test --help`; ne remplace pas le test déclaré par le plan.
-
-Avant `check`, lis la spec, le lock, l'environnement, l'Agent cible, les
-Workflows/MiniApps et le test plan. Un plan invalide, expiré, en conflit ou
-`awaiting_approval` arrête le parcours. Le client n'approuve jamais à la
-place de la personne.
+Le catalogue front door à trois verbes et le catalogue External Inception
+org-builder ont des portées différentes. Vérifie les outils réellement chargés
+avant de choisir le parcours. L'absence d'un outil d'authoring n'autorise ni
+une route privée, ni un élargissement de mandat, ni un autre endpoint déduit.
 
 Références canoniques du paquet : [front door](../agentmaurice/references/frontdoor.md)
 et [Agent Spec V2](../agentmaurice/references/agent-spec-v2.md).

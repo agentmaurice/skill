@@ -150,9 +150,7 @@ def build_claude(output: Path) -> Path:
         if not readme.is_file() or readme.is_symlink():
             fail("README Claude introuvable")
         shutil.copyfile(readme, plugin / "README.md")
-        claude_skill = plugin / "skills" / "maurice" / "SKILL.md"
-        claude_skill.parent.mkdir(parents=True, exist_ok=True)
-        claude_skill.write_text(template.read_text(encoding="utf-8"), encoding="utf-8")
+        copy_tree(template_root, plugin / "skills" / "maurice")
         write_json(plugin / "plugin.json", {
             "$schema": PLUGIN_SCHEMA,
             "name": PLUGIN_NAME,
