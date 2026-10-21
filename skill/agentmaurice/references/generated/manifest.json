@@ -1,9 +1,9 @@
 {
-  "contract_bundle_sha256": "7edd3dc380babcdad0fd999dc15faa50ee55aabcf655a20b2fe876193d439c2d",
+  "contract_bundle_sha256": "781642b0dd961739c8051c117259544e0f410b4cdd70f7555d3551c956c2d0c9",
   "files": [
     {
       "path": "agent-spec-v2.generated.md",
-      "sha256": "acc1e4d53a8ea95410ef871b78e347a33de1d6b374c2b14ffd9065d9f187e52d"
+      "sha256": "84b1c052057236839c738df9f4e439f1ea306828a2441eb47bb6269bf30bd04b"
     },
     {
       "path": "bounded-prospects/README.md",
