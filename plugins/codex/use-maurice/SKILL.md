@@ -29,6 +29,15 @@ réponds pas et ne simule jamais la décision humaine. Une révocation, une
 expiration, un refus ou un conflit d'idempotence bloque le parcours ; ne
 réessaie pas avec une autre cible ou une nouvelle clé pour contourner l'état.
 
+Lis toujours `structured_content` lorsqu'il est présent, même si le bloc
+`content[].text` est vide. Dans une réponse de carte, `status: "completed"`
+signifie seulement que la carte a été résolue ; lis séparément
+`decision: "approved"` ou `decision: "rejected"`. Une décision rejetée arrête
+le parcours : ne réessaie pas, ne crée pas de nouvelle clé et ne transforme
+jamais le statut de la carte en réussite métier. N'annonce une réussite
+fonctionnelle qu'après le résultat de l'opération autorisée, pas depuis le
+statut de la carte. Ne parse aucun fichier de configuration ni aucun jeton.
+
 Si la connexion MCP manque, demande seulement la cible du One et le chemin
 privé manquant. Après l'accord déjà donné, utilise explicitement
 `maurice assistant connect codex --endpoint <endpoint> --config-file <config>
