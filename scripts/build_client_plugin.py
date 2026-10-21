@@ -18,6 +18,7 @@ CANONICAL = ROOT / "skill" / "agentmaurice"
 PLUGIN_NAME = "maurice"
 PLUGIN_VERSION = "0.1.0"
 PLUGIN_SCHEMA = "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json"
+PLUGIN_DESCRIPTION = "Accéder aux Workflows AgentMaurice avec un mandat explicite."
 
 
 def fail(message: str) -> "NoReturn":
@@ -83,15 +84,24 @@ def build(output: Path, client: str) -> Path:
         use_skill = plugin / "skills" / "use-maurice" / "SKILL.md"
         use_skill.parent.mkdir(parents=True, exist_ok=True)
         use_skill.write_text(template.read_text(encoding="utf-8"), encoding="utf-8")
-        write_json(plugin / "plugin.json", {
+        portable_manifest = {
             "$schema": PLUGIN_SCHEMA,
             "name": PLUGIN_NAME,
             "version": PLUGIN_VERSION,
-            "description": "Accéder aux Workflows AgentMaurice avec un mandat explicite.",
+            "description": PLUGIN_DESCRIPTION,
             "author": {"name": "AgentMaurice"},
             "license": "Proprietary",
             "keywords": ["agentmaurice", "workflow", "mcp"],
             "extensions": {"com.openai": {"interface": {"displayName": "Maurice", "developerName": "AgentMaurice", "shortDescription": "Workflows AgentMaurice", "category": "Productivity"}}},
+        }
+        write_json(plugin / "plugin.json", portable_manifest)
+        write_json(plugin / ".codex-plugin" / "plugin.json", {
+            "name": PLUGIN_NAME,
+            "version": PLUGIN_VERSION,
+            "description": PLUGIN_DESCRIPTION,
+            "author": {"name": "AgentMaurice"},
+            "skills": "./skills/",
+            "interface": portable_manifest["extensions"]["com.openai"]["interface"],
         })
         write_json(plugin / "source-attestation.json", {
             "source": "skill/agentmaurice",

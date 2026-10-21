@@ -26,7 +26,11 @@ class ClientPluginBuild(unittest.TestCase):
             self.assertEqual(result.returncode, 0, result.stderr)
             plugin = output / "plugins" / "maurice"
             manifest = json.loads((plugin / "plugin.json").read_text())
+            codex_manifest = json.loads((plugin / ".codex-plugin/plugin.json").read_text())
             self.assertEqual((manifest["name"], manifest["version"]), ("maurice", "0.1.0"))
+            self.assertEqual({key: codex_manifest[key] for key in ("name", "version", "description", "author")}, {key: manifest[key] for key in ("name", "version", "description", "author")})
+            self.assertEqual(codex_manifest["skills"], "./skills/")
+            self.assertEqual(codex_manifest["interface"], manifest["extensions"]["com.openai"]["interface"])
             self.assertEqual(manifest["extensions"]["com.openai"]["interface"]["category"], "Productivity")
             self.assertEqual(manifest["extensions"]["com.openai"]["interface"]["displayName"], "Maurice")
             self.assertEqual(manifest["author"], {"name": "AgentMaurice"})
