@@ -57,6 +57,34 @@ class ClientPluginBuild(unittest.TestCase):
             digest = lambda path: hashlib.sha256(path.read_bytes()).hexdigest()
             self.assertEqual(digest(output / "maurice.plugin.tar.gz"), digest(second / "maurice.plugin.tar.gz"))
 
+    @unittest.skipUnless((ROOT / "plugins/claude/maurice/SKILL.md").is_file(), "template Claude réservé au rédacteur externe")
+    def test_claude_package_and_archive(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            output = Path(tmp) / "out"
+            result = self.run_builder(output, "claude")
+            self.assertEqual(result.returncode, 0, result.stderr)
+            plugin = output / "plugins" / "maurice"
+            manifest = json.loads((plugin / "plugin.json").read_text())
+            claude_manifest = json.loads((plugin / ".claude-plugin/plugin.json").read_text())
+            self.assertEqual((manifest["name"], manifest["version"]), ("maurice", "0.1.0"))
+            self.assertEqual({key: claude_manifest[key] for key in ("name", "version", "description", "author", "license")}, {key: manifest[key] for key in ("name", "version", "description", "author", "license")})
+            self.assertEqual((plugin / "skills/maurice/SKILL.md").read_bytes(), (ROOT / "plugins/claude/maurice/SKILL.md").read_bytes())
+            self.assertIn("maurice:", (plugin / "skills/maurice/SKILL.md").read_text())
+            marketplace = json.loads((output / ".claude-plugin/marketplace.json").read_text())
+            self.assertEqual(marketplace, {"name": "maurice-local", "owner": {"name": "AgentMaurice"}, "plugins": [{"name": "maurice", "source": "./plugins/maurice"}]})
+            for source in CANONICAL.rglob("*"):
+                if source.is_file():
+                    target = plugin / "skills/agentmaurice" / source.relative_to(CANONICAL)
+                    self.assertEqual(source.read_bytes(), target.read_bytes(), source.name)
+            with tarfile.open(output / "maurice.plugin.tar.gz", "r:gz") as archive:
+                names = archive.getnames()
+            self.assertTrue(names)
+            self.assertTrue(all(name == "maurice" or name.startswith("maurice/") for name in names))
+            second = Path(tmp) / "out-second"
+            self.assertEqual(self.run_builder(second, "claude").returncode, 0)
+            digest = lambda path: hashlib.sha256(path.read_bytes()).hexdigest()
+            self.assertEqual(digest(output / "maurice.plugin.tar.gz"), digest(second / "maurice.plugin.tar.gz"))
+
     def test_corrupt_canonical_copy_and_template_symlink_are_refused(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             copied = Path(tmp) / "repo"
@@ -79,7 +107,7 @@ class ClientPluginBuild(unittest.TestCase):
     def test_refuses_invalid_outputs_and_client(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             base = Path(tmp)
-            self.assertNotEqual(self.run_builder(base / "out", "claude").returncode, 0)
+            self.assertNotEqual(self.run_builder(base / "out", "cursor").returncode, 0)
             existing = base / "existing"
             existing.mkdir()
             (existing / "extra").write_text("x")

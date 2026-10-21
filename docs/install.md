@@ -75,6 +75,18 @@ manque, le Skill guide explicitement `maurice assistant connect codex` avec un
 fichier de jeton privé. La qualification sur un One réel est séparée du
 packaging.
 
+Pour Claude Code, construire le paquet dans un répertoire temporaire et le
+charger seulement pour la session concernée :
+
+```bash
+python3 scripts/build_client_plugin.py --client claude --output /tmp/maurice-claude-plugin
+claude --plugin-dir /tmp/maurice-claude-plugin/plugins/maurice
+```
+
+Le plugin utilise le MCP déjà configuré et le namespace Claude
+`/maurice:maurice`. Aucun hook, mod ou nouveau `.mcp.json` n'est ajouté. Les
+réglages Desktop en portée project et leur qualification restent différés.
+
 Pour les cartes humaines, conserver aussi l’URL explicite de l’accueil du One.
 Le port MCP ne permet pas de déduire le port de cette page. Si le serveur ne
 retourne qu’une référence d’action, fournir cette origine au Skill pour obtenir
