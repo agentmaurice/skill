@@ -1,33 +1,98 @@
 # Claude Desktop Doctor — AGENT-1034
 
-**Statut du parcours borné : passed.** Ce rapport documente la campagne Claude
-Desktop du 21 octobre 2026 sur le One `agent-1034-interfaces`. Trois tours dans
-une nouvelle session dédiée, avec `enabledMcpjsonServers` local configuré pour
-`maurice_local` et `maurice_runtime`, valident la continuité et le replay
-idempotent sur cette cible. L'incident de la session précédente reste conservé
-comme preuve négative historique. Cela ne prouve pas une cause générale ni une
-qualification sur des versions supérieures. La PR plugin est Draft, Plane est
-In Progress et aucun closeout, merge ou release n'est revendiqué.
+**Statut de la soumission Desktop bornée : passed.** Le parcours Claude Desktop
+complet est maintenant prouvé sur le One `agent-1034-interfaces` avec le backend
+`df523801ccef28cd03eb8ce4f94ca4030854d72f`, l'archive
+`54e72b58181a78f089242407e0b7870bcf8b72a078424be6efd9339de4dfa27c` et le
+Skill `2.0.40`. La vérification finale ajoute huit assertions au quatrième échange, avec le
+nouveau plan et son test `PASSED 1/1`. Les preuves post-main
+précédentes sur `68454b62` restent séparées ; la campagne ne revendique pas de
+cause générale au-delà de cette session.
+À l’enregistrement de cette qualification, la PR plugin est Draft et Plane
+est In Progress. La soumission, la CI, les merges et le closeout sont suivis
+séparément dans les PR et le ticket.
 
 ## Cible et versions
 
-- backend qualifié : `2f3af26ca91438bfb27d034b6358ff6252a0a189` ;
+- backend qualifié pour la soumission Desktop : `df523801ccef28cd03eb8ce4f94ca4030854d72f` ;
 - One : `agent-1034-interfaces`, API `127.0.0.1:43700`, front door
   `127.0.0.1:43731` ;
 - Desktop `3.1623.0` (macOS `27.0.1`, arm64), CLI embarquée `2.1.304`, CLI
   `2.1.306` ;
-- session Desktop/CLI de l'incident historique :
-  `764a2f90-f2a9-423c-b347-0bc1e221af2a` ;
-- session Desktop/CLI de la preuve finale : UI
-  `local_b5a18e50-7bf8-46ff-8c12-36eeeec9e19b`, CLI
-  `bc1876c8-aa59-4e55-988a-2137b0596a56` ; aucune autre session utilisateur
-  n'a été utilisée.
+- session Desktop/CLI post-main : UI
+  `local_53e0a462-f887-4278-b667-c3ed5d06e7f7`, CLI
+  `74f4b1f5-14ec-444c-a5cf-8a317ff3e584` ;
+- preuves historiques conservées : backend
+  `2f3af26ca91438bfb27d034b6358ff6252a0a189`, archive
+  `f8210dabe58c07c07811851ae8cef69ce9eb4f9fa73e2455b96ebe4856d0737b`.
 
-Les preuves d'archive et de transcript sont respectivement
-`f8210dabe58c07c07811851ae8cef69ce9eb4f9fa73e2455b96ebe4856d0737b` et
-`b2f8b13412bb5a21d0f77625525ba9579458727da1d26646b460e1d97b772fa3`.
+Le transcript de la continuité post-main porte le SHA-256
+`947a1c8a0f156ab8473770d859173a49f96f6de7723c85f655107915eb25280b`.
 
-## Tour 1 : preuve MCP et Workflow
+## Campagne post-main précédente — backend 684
+
+`desktop-main-merged-continuity.json` est `passed` avec 13 assertions sur trois
+tours : accueil sans effet, même contexte, même statut/PID, même Doctor, quota
+`0 → 1 → 1`, aucun Job supplémentaire, cinq commandes littérales, égalité CLI /
+MCP pour `status`, `check` et `verify`, quatre réponses runtime identiques,
+égalité binaire du plugin installé et absence d'édition ou de reconnexion.
+Le Job runtime est `dbchflq4p5cv5v09a07g` et l'exécution
+`af0sp80p5ivmdgvuj41g`.
+
+Les artefacts dédiés confirment en outre huit assertions MCP dans
+`desktop-main-merged-mcp.json` (transcript
+`4ba961821477d4f32d9a290774b6e4463773c2bb044a61b0050936efcedae328`) et cinq
+assertions CLI dans `desktop-main-merged-cli.json` (transcript
+`08152c0a21c7f24d72480ea4236d95c3d770e6387e5614b1434394f1c68810c8`). Les
+cinq parcours `main-merged` sont `PASS` et `assert_cli_main_merged.py` rapporte
+sept assertions réussies. Le package source et le plugin installé sont
+identiques octet par octet dans `desktop-main-merged-plugin-byte-equality.json`.
+
+La configuration et les sessions post-main ont résolu le parcours observé sur
+`68454b62` ;
+elles ne constituent pas une cause générale de l'incident historique. Le
+backend `df523801ccef28cd03eb8ce4f94ca4030854d72f` contient seulement les
+un ajustement de quatre lignes dans `internal/wasmexec/runner_test.go` après
+`68454b62`. Cette durée et ces contrôles Go appartiennent à `68454b62`, pas à la
+preuve Desktop finale `df` ci-dessous.
+
+Le Skill post-main est `2.0.40`, content hash
+`dbcd1b40538d1fab245c76849e4b3a7c371f4b15ff954ef8d60afb34950ad50b` et bundle
+`781642b0dd961739c8051c117259544e0f410b4cdd70f7555d3551c956c2d0c9`.
+
+## Soumission finale Desktop — backend df
+
+`desktop-final-submission.json` est `passed` sur la même UI
+`local_53e0a462-f887-4278-b667-c3ed5d06e7f7` et le même CLI
+`74f4b1f5-14ec-444c-a5cf-8a317ff3e584`. Ses huit assertions sont vraies :
+contexte lié, One running, health/MCP Doctor, verify sans dérive, quatre
+empreintes (`artifact`, `plan`, `expected`, `observed`) dont le `backend_commit` est `df`, deux replays
+exacts retrouvant le même Job `dbchflq4p5cv5v09a07g` et la même exécution
+`af0sp80p5ivmdgvuj41g`, quota à un et absence de shell, édition ou
+reconnexion.
+
+Le plan exact est `dbchipa4p5cgi1pqha10`, de hash
+`aa49af15cc9d753aeaae92a922f8237286362633c5b34d9276dfdb263aa938d1`, et le
+test reçu `dbchipa4p5cgi1pqha40` est `PASSED` `1/1`. Les deux `execute` ont la
+même clé `native-1034-main-merged`; `explain` avant et après conserve le quota
+à un. Le transcript de cette soumission porte le SHA-256
+`2804c2966ed8fe454b8dca5d96b397f8f83fe4b2e1f99b2a688da72da2178df7`.
+
+Cette preuve qualifie le parcours Desktop borné sur `df` et l'archive `54e72b…`.
+Elle ne réattribue pas la suite Go `41.368 s`, qui reste une preuve de la phase
+`68454b62`, et ne transforme pas la revue backend en qualification plus large.
+
+Les [extraits de réponses natives et leurs empreintes](AGENT-1034-client-evidence.json)
+conservent les appels et résultats pertinents. Le [reçu adverse Doctor](AGENT-1034-doctor-adverse-review.json)
+garde les six constats et la réfutation du seul bloquant de nomenclature ; le
+validateur officiel accepte le HEAD `df523801` sans exemption.
+
+## Preuves historiques conservées — backend 2f / archive f821
+
+Les sections suivantes conservent les preuves de la campagne précédente ; elles
+ne remplacent pas la campagne post-main ci-dessus.
+
+## Tour 1 historique : preuve MCP et Workflow
 
 `desktop-final-mcp.json` est `passed` et ses huit assertions sont vraies :
 contexte, statut, build check, build verify, Doctor, même résultat de replay,
@@ -51,7 +116,7 @@ hash de Spec qualifiée est
 Cette preuve porte sur ce Workflow local et ne vaut pas qualification générale
 du plugin ni du chat LLM.
 
-## Continuité finale : dix assertions sur trois tours
+## Continuité historique : dix assertions sur trois tours
 
 `desktop-final-continuity.json`, produit par `assert_desktop_continuity.py`, est
 `passed` avec dix assertions sur trois tours dans la nouvelle session : même
@@ -68,7 +133,7 @@ Bash ni configuration globale n'a été changée. Cette configuration et cette
 session résolvent le parcours observé ; elles n'établissent pas la cause
 générale de la rétraction de la session historique.
 
-## CLI Desktop : cinq assertions indépendantes
+## CLI Desktop historique : cinq assertions indépendantes
 
 `desktop-final-cli.json`, produit par `assert_desktop_cli_final.py`, est
 `passed`. Les cinq assertions indépendantes sont vraies : les cinq commandes
@@ -82,7 +147,7 @@ Cette preuve CLI complète le tour 1 ; elle ne rétablit pas la continuité MCP
 du tour 2 et ne change pas le refus initial de la commande composée avec
 `echo`, qui est restée non exécutée sans changement de permission Bash.
 
-## Doctor : ce qui est et n'est pas prouvé
+## Doctor historique : ce qui est et n'est pas prouvé
 
 La CLI et `maurice_doctor` sont égaux (`cli_exit=0`, `equal=true`) dans
 `doctor-final-parity.json`, avec 22 outils dans le profil. Le health check, le
@@ -124,17 +189,18 @@ attendu pour l'injection négative et n'est pas un succès fonctionnel.
 
 ## Contrôles complémentaires et décision
 
-La campagne rapporte 22 selftests Python, dont 5 contrôles de packaging. Une
-suite courte Go séparée a duré `47.075 s`. Le parcours CLI indépendant a validé
-7 assertions via `assert_cli_final.py`; la preuve de continuité ci-dessus ajoute
-10 assertions sur trois tours.
+La campagne post-main rapporte 22 selftests Python, dont 5 contrôles de
+packaging. Une suite courte Go séparée a duré `41.368 s`. Les cinq cases
+`main-merged` sont `PASS` et `assert_cli_main_merged.py` rapporte 7 assertions
+réussies. Les chiffres `47.075 s` et `assert_cli_final.py` appartiennent à la
+campagne historique f821 et restent conservés dans ses preuves.
 
-Conclusion actuelle : le parcours Desktop borné, avec la nouvelle configuration
-locale et la nouvelle session, est **passed** pour cette cible et cette archive,
-y compris la continuité et le replay idempotent. L'incident de la session
-historique reste non résolu quant à sa cause générale. Le statut de livraison
-demeure PR Draft / Plane In Progress, sans closeout ; le viewer, la readiness VM
-publique et le chat LLM restent hors preuve Doctor.
+Conclusion actuelle : le parcours Desktop borné est **passed** pour le backend
+`df523801` et l'archive post-main, y compris la continuité et le replay
+idempotent. Les preuves `684/f821` restent historiques ou préalables selon
+l'archive. Le statut de livraison demeure PR Draft / Plane In Progress, sans
+closeout ; le viewer, la readiness VM publique et le chat LLM restent hors
+preuve Doctor.
 
 La carte de code a été consultée avec :
 
@@ -142,9 +208,18 @@ La carte de code a été consultée avec :
 ripwire . --for='AGENT-1034 work submit backend merge request GitHub pull request closeout Plane multi-repo purge One sandbox active interfaces' --signatures-only --pack-top-n=20
 ```
 
-Sources publiques de campagne : `artifacts/desktop-final-mcp.json`,
-`artifacts/desktop-final-cli.json`,
-`artifacts/desktop-final-continuity.json`,
+Sources publiques de campagne : `artifacts/desktop-main-merged-mcp.json`,
+`artifacts/desktop-main-merged-cli.json`,
+`artifacts/desktop-main-merged-continuity.json`,
+`artifacts/desktop-main-merged-plugin-byte-equality.json`,
+`artifacts/desktop-final-submission.json`,
+`artifacts/main-merged-cli-build-apply-replay.json`,
+`artifacts/main-merged-cli-build-verify.json`,
+`artifacts/doctor-main-merged-parity.json`,
+`artifacts/backend-doctor-main-merged-review.json`,
+`docs/qualification/AGENT-1034-doctor-adverse-review.json`,
 `artifacts/desktop-second-turn-blocked.json`,
 `artifacts/doctor-final-parity.json`, `artifacts/client-versions-final.json`
-et `public-scope.json` sous `/private/tmp/agent1034-interfaces`.
+et `public-scope.json` sous `/private/tmp/agent1034-interfaces`. Les journaux
+de contrôles sont `/private/tmp/agent1034-interfaces/merged-main-plugin-tests.log`
+et `/private/tmp/agent1034-interfaces/merged-main-cli-full-short.log`.

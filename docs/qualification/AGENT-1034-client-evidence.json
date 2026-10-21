@@ -1,0 +1,501 @@
+{
+  "schema": "agentmaurice.client_qualification.native_evidence/v1",
+  "ticket": "AGENT-1034",
+  "backend": "df523801ccef28cd03eb8ce4f94ca4030854d72f",
+  "archive_sha256": "54e72b58181a78f089242407e0b7870bcf8b72a078424be6efd9339de4dfa27c",
+  "desktop": {
+    "status": "passed",
+    "ui_session": "local_53e0a462-f887-4278-b667-c3ed5d06e7f7",
+    "cli_session": "74f4b1f5-14ec-444c-a5cf-8a317ff3e584",
+    "backend": "df523801ccef28cd03eb8ce4f94ca4030854d72f",
+    "archive_sha256": "54e72b58181a78f089242407e0b7870bcf8b72a078424be6efd9339de4dfa27c",
+    "raw_transcript_sha256": "2804c2966ed8fe454b8dca5d96b397f8f83fe4b2e1f99b2a688da72da2178df7",
+    "plan_id": "dbchipa4p5cgi1pqha10",
+    "test_run_id": "dbchipa4p5cgi1pqha40",
+    "runtime_job_id": "dbchflq4p5cv5v09a07g",
+    "runtime_execution_id": "af0sp80p5ivmdgvuj41g",
+    "assertions": {
+      "bound_context": true,
+      "running": true,
+      "doctor_health_and_mcp": true,
+      "verify_without_drift": true,
+      "four_fingerprints_at_submission_head": true,
+      "two_exact_replays_same_job": true,
+      "quota_stays_one": true,
+      "no_shell_edit_or_reconnect": true
+    }
+  },
+  "desktop_calls": [
+    {
+      "tool": "mcp__maurice_local__maurice_client_context",
+      "input": {},
+      "timestamp": "2026-10-21T19:59:41.511Z",
+      "is_error": false,
+      "full_json_sha256": "1ea3d2664f024de87df147f65f03ccc21b00a827a7e461585bf366810cce0124",
+      "result": {
+        "agent_alias": "",
+        "api_url": "http://127.0.0.1:43700",
+        "builder_scope": "",
+        "deployment_id": "",
+        "environment": "",
+        "instance": "127-0-0-1-43700",
+        "name": "dbcehma4p5cvd8sl2bs0@127-0-0-1-43700",
+        "one_data_dir": "",
+        "organization_id": "dbcehma4p5cvd8sl2bs0",
+        "project_path": "/private/tmp/agent1034-interfaces/workspace",
+        "source": "flag",
+        "space_id": "",
+        "storage_url": "http://127.0.0.1:43700",
+        "workflow_url": ""
+      }
+    },
+    {
+      "tool": "mcp__maurice_local__maurice_swarm_status",
+      "input": {},
+      "timestamp": "2026-10-21T19:59:44.956Z",
+      "is_error": false,
+      "full_json_sha256": "7c036a93caa40df15ab05fc0cd61b01ca821a3e9f7c8d9032f5b4ef31c669b6e",
+      "result": {
+        "data_dir": "/Users/mikaelmorvan/.maurice/sandboxes/agent-1034-interfaces/one",
+        "pid": 67847,
+        "running": true
+      }
+    },
+    {
+      "tool": "mcp__maurice_local__maurice_doctor",
+      "input": {},
+      "timestamp": "2026-10-21T19:59:47.870Z",
+      "is_error": false,
+      "full_json_sha256": "1eed6d127b45c2432a4e0eaa83deb5fa0473be7ed440b2339eb0ef2a11ee8fed",
+      "result_projection": {
+        "running": true,
+        "pid": 67847,
+        "health_checked": true,
+        "health_ok": true,
+        "storage_checked": true,
+        "storage_ok": true,
+        "mcp_frontdoor": {
+          "checked": true,
+          "endpoint": "http://127.0.0.1:43731/mcp/maurice",
+          "note": "MCP reachability and catalogue only; VM readiness is a separate check",
+          "ok": true
+        },
+        "llm_actor_checked": false,
+        "llm_actor_live": false,
+        "diagnostics": [
+          {
+            "code": "one_home.missing_viewer_dist",
+            "message": "One home viewer assets are missing: no usable viewer-app bundle with index.html at /Users/mikaelmorvan/.maurice/sandboxes/agent-1034-interfaces/cli/viewer (resolved via default cache dir; pass --viewer-dist or set $MAURICE_VIEWER_DIST, or place a real viewer-app build at /Users/mikaelmorvan/.maurice/sandboxes/agent-1034-interfaces/cli/viewer). A green doctor does not mean the home page can open.",
+            "severity": "blocking"
+          },
+          {
+            "code": "one_home.home_profile_unrecorded",
+            "message": "home_profile is unrecorded: this One data directory has no managed-VM enrollment state; console_enrollment stays null until a managed start gate runs or you enroll via the Console binding flow",
+            "severity": "warning"
+          },
+          {
+            "code": "app_chat.external_llm_rail_absent",
+            "message": "There is no CLI command that attaches an external LLM client as the Run LLM for Application chat. MCP-compatible assistants use maurice assistant connect <codex|generic> with a separate mandate; that tool-access rail does not establish chat.session.",
+            "severity": "warning"
+          },
+          {
+            "code": "app_chat.prerequisites_required",
+            "message": "Application chat needs (1) an organization Auth Connector, (2) a Run LLM on the Application (maurice app run-config set <applicationId> --run-ref <slug:model>) and (3) an Application key with the chat.session scope. A green local doctor verifies none of these.",
+            "severity": "warning"
+          }
+        ],
+        "vm_profile_readiness": {
+          "checked": false,
+          "note": "not checked: local MCP does not announce public VM readiness",
+          "ok": false,
+          "public_ready": false
+        }
+      }
+    },
+    {
+      "tool": "mcp__maurice_local__maurice_build_verify",
+      "input": {
+        "dir": "project",
+        "plan": "dbchipa4p5cgi1pqha10"
+      },
+      "timestamp": "2026-10-21T19:59:52.554Z",
+      "is_error": false,
+      "full_json_sha256": "8daa6c85a99c9a47976a7c7f6153c14a6189b2014fc6b2d98c1c12d5be8d48c1",
+      "result_projection": {
+        "schema_version": "agentmaurice.agent_spec_verify/v2",
+        "plan_id": "dbchipa4p5cgi1pqha10",
+        "plan_hash": "aa49af15cc9d753aeaae92a922f8237286362633c5b34d9276dfdb263aa938d1",
+        "status": "applied",
+        "verified": true,
+        "checks": {
+          "drift": false,
+          "fingerprints": {
+            "applied_current_match": true,
+            "artifact": {
+              "backend": "sandbox-df523801",
+              "backend_commit": "df523801ccef28cd03eb8ce4f94ca4030854d72f",
+              "compiler": "agent-spec-compiler/v2",
+              "contract_bundle": "781642b0dd961739c8051c117259544e0f410b4cdd70f7555d3551c956c2d0c9",
+              "environment": "2dd2b9fd42212f5fc097c34ecb6ce7fd3cb89a861de74f642de856c40952bedb",
+              "policy": "493edacbc72a784b9f7279b33a83ae95c2c5e4902dbe662bd01e1abd945f1ce0",
+              "runtime": "002e6fb94f24780a38dfeae2a514934d417f03b7d112f0eefb30fdeee1b286b0",
+              "runtime_engine": "agent-spec-runtime/v2",
+              "tool_catalog": "af869ccff74a5d93a2bcf1e19db0533319d02872a0afcc6a44acf94f4540e5a3"
+            },
+            "artifact_applied_stable_match": true,
+            "expected": {
+              "backend": "sandbox-df523801",
+              "backend_commit": "df523801ccef28cd03eb8ce4f94ca4030854d72f",
+              "compiler": "agent-spec-compiler/v2",
+              "contract_bundle": "781642b0dd961739c8051c117259544e0f410b4cdd70f7555d3551c956c2d0c9",
+              "environment": "2dd2b9fd42212f5fc097c34ecb6ce7fd3cb89a861de74f642de856c40952bedb",
+              "policy": "493edacbc72a784b9f7279b33a83ae95c2c5e4902dbe662bd01e1abd945f1ce0",
+              "runtime": "002e6fb94f24780a38dfeae2a514934d417f03b7d112f0eefb30fdeee1b286b0",
+              "runtime_engine": "agent-spec-runtime/v2",
+              "tool_catalog": "af869ccff74a5d93a2bcf1e19db0533319d02872a0afcc6a44acf94f4540e5a3"
+            },
+            "observed": {
+              "backend": "sandbox-df523801",
+              "backend_commit": "df523801ccef28cd03eb8ce4f94ca4030854d72f",
+              "compiler": "agent-spec-compiler/v2",
+              "contract_bundle": "781642b0dd961739c8051c117259544e0f410b4cdd70f7555d3551c956c2d0c9",
+              "environment": "2dd2b9fd42212f5fc097c34ecb6ce7fd3cb89a861de74f642de856c40952bedb",
+              "policy": "493edacbc72a784b9f7279b33a83ae95c2c5e4902dbe662bd01e1abd945f1ce0",
+              "runtime": "002e6fb94f24780a38dfeae2a514934d417f03b7d112f0eefb30fdeee1b286b0",
+              "runtime_engine": "agent-spec-runtime/v2",
+              "tool_catalog": "af869ccff74a5d93a2bcf1e19db0533319d02872a0afcc6a44acf94f4540e5a3"
+            },
+            "plan": {
+              "backend": "sandbox-df523801",
+              "backend_commit": "df523801ccef28cd03eb8ce4f94ca4030854d72f",
+              "compiler": "agent-spec-compiler/v2",
+              "contract_bundle": "781642b0dd961739c8051c117259544e0f410b4cdd70f7555d3551c956c2d0c9",
+              "environment": "2dd2b9fd42212f5fc097c34ecb6ce7fd3cb89a861de74f642de856c40952bedb",
+              "policy": "493edacbc72a784b9f7279b33a83ae95c2c5e4902dbe662bd01e1abd945f1ce0",
+              "runtime": "002e6fb94f24780a38dfeae2a514934d417f03b7d112f0eefb30fdeee1b286b0",
+              "runtime_engine": "agent-spec-runtime/v2",
+              "tool_catalog": "af869ccff74a5d93a2bcf1e19db0533319d02872a0afcc6a44acf94f4540e5a3"
+            },
+            "plan_artifact_match": true
+          }
+        }
+      }
+    },
+    {
+      "tool": "mcp__maurice_runtime__maurice_explain",
+      "input": {
+        "ref": "workflow:dbcehma4p5cvd8sl2bug/native-list-proof@1.1",
+        "input": {}
+      },
+      "timestamp": "2026-10-21T20:00:02.281Z",
+      "is_error": false,
+      "full_json_sha256": "1b62f0ccacf0ee71ced24e0e164f26ed66e2a19186a9e1e520b31a4977c19cdc",
+      "result_projection": {
+        "ref": "workflow:dbcehma4p5cvd8sl2bug/native-list-proof@1.1",
+        "plan_hash": "e89a5354ec1848ece91150b7beabc3a705f14cd630f8a6b8b45f63f14be76697",
+        "effect_quota": {
+          "charged_at": "admission",
+          "exhausted": true,
+          "max_effects": 1,
+          "refund_policy": "none",
+          "remaining_effects": 0,
+          "scope": "mandate",
+          "unit": "workflow_run",
+          "used_effects": 1
+        },
+        "recent_executions": [
+          {
+            "execution_id": "af0sp80p5ivmdgvuj41g",
+            "job_id": "dbchflq4p5cv5v09a07g",
+            "status": "completed",
+            "timestamp": "2026-10-21T19:51:51.609997Z",
+            "usage_summary": {
+              "cost": {
+                "amount_minor": 0,
+                "currency": "EUR",
+                "status": "qualified_zero"
+              },
+              "duration_ms": 85,
+              "input_tokens": 0,
+              "llm_calls": 0,
+              "output_tokens": 0,
+              "tool_calls": 1
+            }
+          },
+          {
+            "execution_id": "eheq4jq9ul6mr1ghb100",
+            "job_id": "dbch3d24p5cpua8dvmk0",
+            "status": "completed",
+            "timestamp": "2026-10-21T19:25:40.674203Z",
+            "usage_summary": {
+              "cost": {
+                "amount_minor": 0,
+                "currency": "EUR",
+                "status": "qualified_zero"
+              },
+              "duration_ms": 70,
+              "input_tokens": 0,
+              "llm_calls": 0,
+              "output_tokens": 0,
+              "tool_calls": 1
+            }
+          },
+          {
+            "execution_id": "vmdff0v0jmtp2g9i6ju0",
+            "job_id": "dbcgsla4p5co28rq17t0",
+            "status": "completed",
+            "timestamp": "2026-10-21T19:11:17.68646Z",
+            "usage_summary": {
+              "cost": {
+                "amount_minor": 0,
+                "currency": "EUR",
+                "status": "qualified_zero"
+              },
+              "duration_ms": 63,
+              "input_tokens": 0,
+              "llm_calls": 0,
+              "output_tokens": 0,
+              "tool_calls": 1
+            }
+          },
+          {
+            "execution_id": "e8s7jmp38r8gl4tco9q0",
+            "job_id": "dbcg2ga4p5cgjgvbm0pg",
+            "status": "completed",
+            "timestamp": "2026-10-21T18:15:29.251958Z",
+            "usage_summary": {
+              "cost": {
+                "amount_minor": 0,
+                "currency": "EUR",
+                "status": "qualified_zero"
+              },
+              "duration_ms": 62,
+              "input_tokens": 0,
+              "llm_calls": 0,
+              "output_tokens": 0,
+              "tool_calls": 1
+            }
+          },
+          {
+            "execution_id": "q37eoearbp89mjs3rns0",
+            "job_id": "dbcffm24p5ch4u6j1l6g",
+            "status": "completed",
+            "timestamp": "2026-10-21T17:35:20.801615Z",
+            "usage_summary": {
+              "cost": {
+                "amount_minor": 0,
+                "currency": "EUR",
+                "status": "qualified_zero"
+              },
+              "duration_ms": 426,
+              "input_tokens": 0,
+              "llm_calls": 0,
+              "output_tokens": 0,
+              "tool_calls": 1
+            }
+          }
+        ]
+      }
+    },
+    {
+      "tool": "mcp__maurice_runtime__maurice_execute",
+      "input": {
+        "ref": "workflow:dbcehma4p5cvd8sl2bug/native-list-proof@1.1",
+        "input": {},
+        "idempotency_key": "native-1034-main-merged",
+        "expected_plan_hash": "e89a5354ec1848ece91150b7beabc3a705f14cd630f8a6b8b45f63f14be76697"
+      },
+      "timestamp": "2026-10-21T20:00:07.200Z",
+      "is_error": false,
+      "full_json_sha256": "648cf09f964d30dd5546ef35fa48bd79ac7a6430b5afaa38a543fa66c78024b1",
+      "result": {
+        "execution_id": "af0sp80p5ivmdgvuj41g",
+        "job_id": "dbchflq4p5cv5v09a07g",
+        "result": {
+          "listed": true
+        },
+        "status": "completed",
+        "usage_summary": {
+          "duration_ms": 85,
+          "tool_calls": 1,
+          "llm_calls": 0,
+          "input_tokens": 0,
+          "output_tokens": 0
+        }
+      }
+    },
+    {
+      "tool": "mcp__maurice_runtime__maurice_execute",
+      "input": {
+        "ref": "workflow:dbcehma4p5cvd8sl2bug/native-list-proof@1.1",
+        "input": {},
+        "idempotency_key": "native-1034-main-merged",
+        "expected_plan_hash": "e89a5354ec1848ece91150b7beabc3a705f14cd630f8a6b8b45f63f14be76697"
+      },
+      "timestamp": "2026-10-21T20:00:11.855Z",
+      "is_error": false,
+      "full_json_sha256": "648cf09f964d30dd5546ef35fa48bd79ac7a6430b5afaa38a543fa66c78024b1",
+      "result": {
+        "execution_id": "af0sp80p5ivmdgvuj41g",
+        "job_id": "dbchflq4p5cv5v09a07g",
+        "result": {
+          "listed": true
+        },
+        "status": "completed",
+        "usage_summary": {
+          "duration_ms": 85,
+          "tool_calls": 1,
+          "llm_calls": 0,
+          "input_tokens": 0,
+          "output_tokens": 0
+        }
+      }
+    },
+    {
+      "tool": "mcp__maurice_runtime__maurice_explain",
+      "input": {
+        "ref": "workflow:dbcehma4p5cvd8sl2bug/native-list-proof@1.1",
+        "input": {}
+      },
+      "timestamp": "2026-10-21T20:00:15.811Z",
+      "is_error": false,
+      "full_json_sha256": "1b62f0ccacf0ee71ced24e0e164f26ed66e2a19186a9e1e520b31a4977c19cdc",
+      "result_projection": {
+        "ref": "workflow:dbcehma4p5cvd8sl2bug/native-list-proof@1.1",
+        "plan_hash": "e89a5354ec1848ece91150b7beabc3a705f14cd630f8a6b8b45f63f14be76697",
+        "effect_quota": {
+          "charged_at": "admission",
+          "exhausted": true,
+          "max_effects": 1,
+          "refund_policy": "none",
+          "remaining_effects": 0,
+          "scope": "mandate",
+          "unit": "workflow_run",
+          "used_effects": 1
+        },
+        "recent_executions": [
+          {
+            "execution_id": "af0sp80p5ivmdgvuj41g",
+            "job_id": "dbchflq4p5cv5v09a07g",
+            "status": "completed",
+            "timestamp": "2026-10-21T19:51:51.609997Z",
+            "usage_summary": {
+              "cost": {
+                "amount_minor": 0,
+                "currency": "EUR",
+                "status": "qualified_zero"
+              },
+              "duration_ms": 85,
+              "input_tokens": 0,
+              "llm_calls": 0,
+              "output_tokens": 0,
+              "tool_calls": 1
+            }
+          },
+          {
+            "execution_id": "eheq4jq9ul6mr1ghb100",
+            "job_id": "dbch3d24p5cpua8dvmk0",
+            "status": "completed",
+            "timestamp": "2026-10-21T19:25:40.674203Z",
+            "usage_summary": {
+              "cost": {
+                "amount_minor": 0,
+                "currency": "EUR",
+                "status": "qualified_zero"
+              },
+              "duration_ms": 70,
+              "input_tokens": 0,
+              "llm_calls": 0,
+              "output_tokens": 0,
+              "tool_calls": 1
+            }
+          },
+          {
+            "execution_id": "vmdff0v0jmtp2g9i6ju0",
+            "job_id": "dbcgsla4p5co28rq17t0",
+            "status": "completed",
+            "timestamp": "2026-10-21T19:11:17.68646Z",
+            "usage_summary": {
+              "cost": {
+                "amount_minor": 0,
+                "currency": "EUR",
+                "status": "qualified_zero"
+              },
+              "duration_ms": 63,
+              "input_tokens": 0,
+              "llm_calls": 0,
+              "output_tokens": 0,
+              "tool_calls": 1
+            }
+          },
+          {
+            "execution_id": "e8s7jmp38r8gl4tco9q0",
+            "job_id": "dbcg2ga4p5cgjgvbm0pg",
+            "status": "completed",
+            "timestamp": "2026-10-21T18:15:29.251958Z",
+            "usage_summary": {
+              "cost": {
+                "amount_minor": 0,
+                "currency": "EUR",
+                "status": "qualified_zero"
+              },
+              "duration_ms": 62,
+              "input_tokens": 0,
+              "llm_calls": 0,
+              "output_tokens": 0,
+              "tool_calls": 1
+            }
+          },
+          {
+            "execution_id": "q37eoearbp89mjs3rns0",
+            "job_id": "dbcffm24p5ch4u6j1l6g",
+            "status": "completed",
+            "timestamp": "2026-10-21T17:35:20.801615Z",
+            "usage_summary": {
+              "cost": {
+                "amount_minor": 0,
+                "currency": "EUR",
+                "status": "qualified_zero"
+              },
+              "duration_ms": 426,
+              "input_tokens": 0,
+              "llm_calls": 0,
+              "output_tokens": 0,
+              "tool_calls": 1
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "scope": "Fictitious isolated local qualification; projections explicitly named, no token values or credential files.",
+  "desktop_three_turns": {
+    "backend": "68454b628a93c7d96158477ceaf06f1bdb203317",
+    "archive_sha256": "54e72b58181a78f089242407e0b7870bcf8b72a078424be6efd9339de4dfa27c",
+    "assertions": {
+      "welcome_no_effect": true,
+      "same_context": true,
+      "same_status_pid": true,
+      "same_doctor": true,
+      "quota_0_1_1": true,
+      "no_additional_job": true,
+      "five_literal_commands": true,
+      "cli_mcp_status_equal": true,
+      "cli_mcp_check_equal": true,
+      "cli_mcp_verify_equal": true,
+      "four_identical_runtime_responses": true,
+      "installed_plugin_byte_identical": true,
+      "no_edit_or_reconnect": true
+    },
+    "raw_transcript_sha256": "947a1c8a0f156ab8473770d859173a49f96f6de7723c85f655107915eb25280b",
+    "turns": 3
+  },
+  "doctor_parity": {
+    "backend": "68454b628a93c7d96158477ceaf06f1bdb203317",
+    "cli_exit": 0,
+    "equal": true,
+    "cli_json_sha256": "efc9f2dd64121ad686c2e43b3cabdedfd409c39c88b0d2ceefcf774ea16888cd",
+    "mcp_json_sha256": "efc9f2dd64121ad686c2e43b3cabdedfd409c39c88b0d2ceefcf774ea16888cd",
+    "tool_count": 22
+  }
+}

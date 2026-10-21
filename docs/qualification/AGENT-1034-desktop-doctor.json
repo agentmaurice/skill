@@ -3,20 +3,89 @@
   "ticket": "AGENT-1034",
   "plane_id": "19afd14d-949f-400a-8051-98cd5485b080",
   "status": "passed",
-  "qualification_scope": "bounded Desktop continuity and idempotent replay on this target and archive",
+  "qualification_scope": "bounded final Desktop submission continuity and idempotent replay on backend df523801 and archive 54e72b58",
   "campaign_status": "PR Draft; Plane In Progress; no closeout",
   "scope": "Claude Desktop Doctor and MCP continuity for One agent-1034-interfaces",
   "recorded_at": "2026-10-21",
-  "backend_commit": "2f3af26ca91438bfb27d034b6358ff6252a0a189",
-  "archive_sha256": "f8210dabe58c07c07811851ae8cef69ce9eb4f9fa73e2455b96ebe4856d0737b",
-  "desktop_session": "764a2f90-f2a9-423c-b347-0bc1e221af2a",
-  "raw_transcript_sha256": "b2f8b13412bb5a21d0f77625525ba9579458727da1d26646b460e1d97b772fa3",
+  "backend_commit": "df523801ccef28cd03eb8ce4f94ca4030854d72f",
+  "archive_sha256": "54e72b58181a78f089242407e0b7870bcf8b72a078424be6efd9339de4dfa27c",
+  "desktop_session": "local_53e0a462-f887-4278-b667-c3ed5d06e7f7",
+  "cli_session": "74f4b1f5-14ec-444c-a5cf-8a317ff3e584",
+  "raw_transcript_sha256": "2804c2966ed8fe454b8dca5d96b397f8f83fe4b2e1f99b2a688da72da2178df7",
+  "historical_campaign": {
+    "backend_commit": "2f3af26ca91438bfb27d034b6358ff6252a0a189",
+    "archive_sha256": "f8210dabe58c07c07811851ae8cef69ce9eb4f9fa73e2455b96ebe4856d0737b",
+    "desktop_session": "764a2f90-f2a9-423c-b347-0bc1e221af2a",
+    "status": "preserved historical evidence; second-turn retraction root cause unqualified"
+  },
   "client": {
     "desktop_version": "3.1623.0",
     "embedded_cli_version": "2.1.304",
     "cli_version": "2.1.306",
     "os": "27.0.1",
     "architecture": "arm64"
+  },
+  "post_main": {
+    "backend_commit": "68454b628a93c7d96158477ceaf06f1bdb203317",
+    "archive_sha256": "54e72b58181a78f089242407e0b7870bcf8b72a078424be6efd9339de4dfa27c",
+    "skill_version": "2.0.40",
+    "skill_content_hash": "dbcd1b40538d1fab245c76849e4b3a7c371f4b15ff954ef8d60afb34950ad50b",
+    "skill_bundle_sha256": "781642b0dd961739c8051c117259544e0f410b4cdd70f7555d3551c956c2d0c",
+    "continuity_artifact": "artifacts/desktop-main-merged-continuity.json",
+    "continuity_status": "passed",
+    "continuity_turns": 3,
+    "continuity_assertions": 13,
+    "continuity_raw_transcript_sha256": "947a1c8a0f156ab8473770d859173a49f96f6de7723c85f655107915eb25280b",
+    "mcp_artifact": "artifacts/desktop-main-merged-mcp.json",
+    "mcp_status": "passed",
+    "mcp_assertions": 8,
+    "mcp_raw_transcript_sha256": "4ba961821477d4f32d9a290774b6e4463773c2bb044a61b0050936efcedae328",
+    "cli_artifact": "artifacts/desktop-main-merged-cli.json",
+    "cli_status": "passed",
+    "cli_assertions": 5,
+    "cli_raw_transcript_sha256": "08152c0a21c7f24d72480ea4236d95c3d770e6387e5614b1434394f1c68810c8",
+    "doctor_artifact": "artifacts/doctor-main-merged-parity.json",
+    "doctor_cli_exit": 0,
+    "doctor_cli_mcp_equal": true,
+    "doctor_tool_count": 22,
+    "plugin_byte_equality_artifact": "artifacts/desktop-main-merged-plugin-byte-equality.json",
+    "runtime_job_id": "dbchflq4p5cv5v09a07g",
+    "runtime_execution_id": "af0sp80p5ivmdgvuj41g",
+    "plugin_byte_equal": true,
+    "five_main_merged_cli_cases_passed": true,
+    "assert_cli_main_merged_assertions": 7,
+    "pre_submission_desktop_backend": "68454b628a93c7d96158477ceaf06f1bdb203317",
+    "pre_submission_scope": "post-main continuity and Go suite evidence; Go duration belongs to backend 68454b62"
+  },
+  "final_submission": {
+    "artifact": "artifacts/desktop-final-submission.json",
+    "status": "passed",
+    "backend_commit": "df523801ccef28cd03eb8ce4f94ca4030854d72f",
+    "archive_sha256": "54e72b58181a78f089242407e0b7870bcf8b72a078424be6efd9339de4dfa27c",
+    "ui_session": "local_53e0a462-f887-4278-b667-c3ed5d06e7f7",
+    "cli_session": "74f4b1f5-14ec-444c-a5cf-8a317ff3e584",
+    "raw_transcript_sha256": "2804c2966ed8fe454b8dca5d96b397f8f83fe4b2e1f99b2a688da72da2178df7",
+    "plan_id": "dbchipa4p5cgi1pqha10",
+    "plan_hash": "aa49af15cc9d753aeaae92a922f8237286362633c5b34d9276dfdb263aa938d1",
+    "test_run_id": "dbchipa4p5cgi1pqha40",
+    "test_status": "PASSED",
+    "test_summary": {"passed": 1, "failed": 0, "total": 1},
+    "runtime_job_id": "dbchflq4p5cv5v09a07g",
+    "runtime_execution_id": "af0sp80p5ivmdgvuj41g",
+    "assertion_count": 8,
+    "assertions": {
+      "bound_context": true,
+      "running": true,
+      "doctor_health_and_mcp": true,
+      "verify_without_drift": true,
+      "four_fingerprints_at_submission_head": true,
+      "two_exact_replays_same_job": true,
+      "quota_stays_one": true,
+      "no_shell_edit_or_reconnect": true
+    },
+    "exact_fingerprint_scope": "backend, artifact, plan and expected/observed values all at df submission head",
+    "desktop_qualified_on_df": true,
+    "go_41_368_belongs_to_backend_684": true
   },
   "turn_1": {
     "artifact": "artifacts/desktop-final-mcp.json",
@@ -59,6 +128,7 @@
     "mcp_continuity_qualified": false
   },
   "continuity_tour": {
+    "historical": true,
     "artifact": "artifacts/desktop-final-continuity.json",
     "producer": "assert_desktop_continuity.py",
     "status": "passed",
@@ -93,6 +163,7 @@
     "higher_client_versions_claimed": false
   },
   "doctor": {
+    "historical": true,
     "artifact": "artifacts/doctor-final-parity.json",
     "cli_exit": 0,
     "cli_mcp_equal": true,
@@ -105,6 +176,7 @@
     "llm_verified": false
   },
   "turn_2": {
+    "historical": true,
     "artifact": "artifacts/desktop-second-turn-blocked.json",
     "status": "blocked_on_second_turn",
     "removed_mcp_tools": 14,
@@ -121,11 +193,11 @@
     "exit_code": null
   },
   "independent_checks": {
-    "go_selftests": 22,
+    "python_selftests": 22,
     "packaging_checks": 5,
-    "go_duration_seconds": 47.075,
+    "short_go_suite_duration_seconds": 41.368,
     "cli_assertions": 7,
-    "cli_assertion_helper": "assert_cli_final.py",
+    "cli_assertion_helper": "assert_cli_main_merged.py",
     "cli_assertion_status": "passed"
   },
   "harness_limits": [
@@ -135,7 +207,8 @@
   "qualification_limits": [
     "The One viewer cannot be declared openable from this Doctor result.",
     "Public VM readiness and Application chat LLM readiness were not verified.",
-    "The historical session's retraction root cause remains unqualified; bounded continuity is passed in the final dedicated session."
+    "The historical session's retraction root cause remains unqualified; bounded post-main continuity is passed on backend 68454b62.",
+    "The Go suite duration 41.368 seconds belongs to the preceding backend 68454b62 phase, not to the final Desktop df submission."
   ],
   "ripwire_command": "ripwire . --for='AGENT-1034 work submit backend merge request GitHub pull request closeout Plane multi-repo purge One sandbox active interfaces' --signatures-only --pack-top-n=20"
 }

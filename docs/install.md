@@ -88,10 +88,18 @@ claude --plugin-dir /tmp/maurice-claude-plugin/plugins/maurice
 Le plugin utilise le MCP déjà configuré et le namespace Claude
 `/maurice:maurice`. Le paquet n'ajoute aucun hook, mod ou `.mcp.json`.
 
-Dans l'onglet Code de Claude Desktop, choisir le dossier du projet puis
-installer le plugin depuis la marketplace locale construite, avec la portée
-`local` du projet (`claude plugin install maurice@<marketplace> --scope local`
-depuis ce dossier). Les serveurs MCP restent une configuration explicite du
+Dans l'onglet Code de Claude Desktop, choisir le dossier du projet. Depuis
+ce dossier, enregistrer le catalogue construit et installer en portée `local` :
+
+```bash
+claude plugin marketplace add /tmp/maurice-claude-plugin
+claude plugin install maurice@maurice-local --scope local
+```
+
+La commande marketplace enregistre le catalogue dans le client ; `--scope
+local` limite l’activation du plugin au projet. Pour une qualification isolée,
+un nom de marketplace distinct permet de conserver une version précédente
+sans confusion de cache. Les serveurs MCP restent une configuration explicite du
 propriétaire. Pour les deux connexions d'un projet de qualification déjà
 revues et autorisées, la sélection persistante peut être renseignée dans le
 fichier non suivi `.claude/settings.local.json` :
