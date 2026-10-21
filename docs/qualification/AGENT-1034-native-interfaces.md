@@ -60,10 +60,14 @@ Un Job distinct créé via Hanko permet de vérifier list/get/events/logs,
 limite 1, page suivante sans doublon, curseurs JSON et base64url.
 Les contenus CLI/MCP sont identiques hors révision de snapshot actualisée par
 le serveur entre deux lectures ; les deux révisions brutes sont conservées.
-Ce Job est `blocked/validation_failed` : son contrat public historique exige
+Lors de cette comparaison, ce Job est `blocked/validation_failed` : son contrat public historique exige
 `{ok:true}` tandis que le Workflow renvoie `{listed:true}`. Sa lecture est
 qualifiée ; son exécution n’est pas présentée comme un succès. Le parcours
 front door réussi utilise le schéma de sortie publié du Workflow.
+Après son délai de cinq minutes, le même Job passe à `expired`, en conservant
+`blocked_reason=validation_failed`. Le premier reçu final a échoué car son
+attente exigeait encore `blocked` ; cette attente est corrigée sans créer
+un autre Job, et le reçu est rejoué sur ce même identifiant.
 
 ## Vérifications et limites conservées
 

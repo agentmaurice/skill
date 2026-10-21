@@ -46,7 +46,6 @@
   },
   "public_jobs": {
     "job_id": "dbcfh424p5ch4u6j1mgg",
-    "status": "blocked",
     "blocked_reason": "validation_failed",
     "legacy_output_contract": "ok:true; Workflow output listed:true",
     "parity_exception": "snapshot revision changes between sequential server reads; other captured fields equal",
@@ -61,7 +60,10 @@
     "cursor_encodings": [
       "compact JSON string",
       "base64url JSON"
-    ]
+    ],
+    "status_at_native_parity": "blocked",
+    "status_after_hard_deadline": "expired",
+    "receipt_first_attempt": "failed harness assertion expected blocked after deadline; same job replayed with expired+validation_failed expectation"
   },
   "catalogues": {
     "native_default_readonly": 10,
