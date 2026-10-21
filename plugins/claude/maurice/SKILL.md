@@ -18,7 +18,11 @@ Toute action qui parle à un One, un deployment, une Application ou un Agent
 doit nommer sa cible. Conserve la référence complète renvoyée par la
 découverte ; ne déduis jamais une cible depuis son nom affiché.
 
-- `--context <name>` désigne explicitement un contexte MauriceCLI.
+- `--context <name>` désigne explicitement un contexte MauriceCLI pour un
+  appel. Le raccourci conversationnel `/maurice:maurice use <name>` doit être
+  traduit en `--context <name>` sur l'appel suivant ; `maurice use` n'accepte
+  pas de nom positionnel. N'exécute pas `maurice context use <name>` sans
+  demande explicite : cette commande modifie le contexte par défaut.
 - Une commande locale qui nécessite un chemin reçoit `--data-dir <path>`.
 - `maurice start` et `maurice stop` doivent recevoir le `--data-dir` cible
   lorsque le chemin n'est pas déjà explicite dans la demande.
@@ -33,8 +37,9 @@ affiche seulement l'état local avec `maurice status --json` ou
 `maurice doctor --json`, sans transformer un exit code nul en preuve de
 connexion, de grant, de job ou de résultat métier.
 
-Pour sélectionner explicitement un contexte, utilise `maurice use <name>`.
-Ne l'utilise pas pour réparer implicitement une cible absente.
+Pour sélectionner explicitement un contexte dans une commande, ajoute
+`--context <name>` à cette commande. Ne modifie pas le contexte par défaut
+pour réparer implicitement une cible absente.
 
 Pour le parcours d'une capacité AgentMaurice déjà branchée, suis strictement :
 
@@ -44,8 +49,17 @@ Pour le parcours d'une capacité AgentMaurice déjà branchée, suis strictement
    `idempotency_key` et, si fourni, `expected_plan_hash`.
 
 Lis toujours `structured_content` lorsqu'il existe. `pending` reste une
-attente humaine. Une carte `completed` n'est pas une approbation et une
-approbation n'est pas le résultat de l'exécution.
+attente humaine : utilise `maurice.explain` sur `pending_action:<id>` pour
+observer son état et présente le lien de décision renvoyé par l'origine
+explicitement fournie par le One, sous la forme `/one/#/human-action/<id>`.
+Ne déduis jamais cette origine, son port ou ce lien depuis le port MCP.
+Si `decision` vaut `rejected`, arrête le parcours ; ne réessaie pas avec une
+autre référence ou une nouvelle clé. Une carte `completed` n'est pas une
+approbation et une approbation n'est pas le résultat de l'exécution.
+
+Le produit s'appelle AgentMaurice One ; les outils MCP peuvent avoir un nom
+préfixé `one_`. Ne remplace jamais ce vocabulaire par un outil inventé comme
+`one_legacy`.
 
 ## Doctor
 
@@ -74,8 +88,10 @@ route HTTP ou la base.
   expose l'identité locale. Cela ne constitue pas un inventaire générique du
   swarm.
 - `swarm run` : utilise `maurice.execute` après `search` puis `explain`, ou
-  une commande publique `maurice app run <applicationKey> <workflowId>` lorsque
-  l'utilisateur a fourni ces références exactes.
+  `maurice app workflow run <applicationKey> <workflowId> [--input-file <path>]`
+  lorsque l'utilisateur a fourni ces références exactes. `--input` accepte
+  aussi un objet JSON ; `--app-key` ou `--operator` suivent le contrat de la
+  commande.
 - `swarm jobs` et `swarm logs` : exige `job_id` ou `graph_id`, puis utilise
   `maurice job graph get <graph_id>` et `maurice job graph events <graph_id>`
   pour un graphe, ou les outils MCP `inception_tasks_get` et
@@ -105,9 +121,11 @@ raccourci conversationnel vers les rails ci-dessous :
   ne crée pas un Agent distant.
 - **check** : `maurice spec check --env <env> --agent-alias <alias> --dir <path> --json`.
 - **plan** : `maurice spec plan --env <env> --agent-alias <alias> --dir <path> --json`.
-- **apply** : `maurice spec apply --env <env> --agent-alias <alias> --dir <path> --json`,
-  uniquement après l'approbation humaine du plan persistant.
-- **verify** : `maurice spec verify --env <env> --agent-alias <alias> --dir <path> --json`.
+- **apply** : `maurice spec apply --plan <plan-id> --dir <path> --json`,
+  uniquement après l'approbation humaine du plan persistant. Les options
+  `--approval-id`, `--target`, `--tests` et `--idempotency-key` restent celles
+  affichées par `maurice spec apply --help`.
+- **verify** : `maurice spec verify --plan <plan-id> --dir <path> --wait --json`.
 - **test** : utilise `maurice test` et sa sous-commande affichée par
   `maurice test --help`; ne remplace pas le test déclaré par le plan.
 
@@ -115,6 +133,9 @@ Avant `check`, lis la spec, le lock, l'environnement, l'Agent cible, les
 Workflows/MiniApps et le test plan. Un plan invalide, expiré, en conflit ou
 `awaiting_approval` arrête le parcours. Le client n'approuve jamais à la
 place de la personne.
+
+Références canoniques du paquet : [front door](../agentmaurice/references/frontdoor.md)
+et [Agent Spec V2](../agentmaurice/references/agent-spec-v2.md).
 
 ## Rapport
 
