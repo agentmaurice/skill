@@ -35,7 +35,7 @@ rechargement éventuelle ; elle dépend de la version du client.
    avec `$setup` dans Codex ou `/maurice:setup` dans Claude Code.
 2. Donner l’adresse de l’accueil de One si aucune cible n’a encore été
    enregistrée. Vérifier le client, le nom et l’adresse affichés.
-3. Ouvrir le lien retourné et comparer le code. Dans One, choisir la portée
+3. Ouvrir le lien retourné et saisir le code de huit caractères affiché dans le chat. Dans One, choisir la portée
    et les droits, puis **Autoriser la connexion** ou **Refuser**. La lecture
    seule est proposée par défaut ; exécuter un Workflow nécessite un choix
    explicite. L’ouverture peut demander la connexion One habituelle.
