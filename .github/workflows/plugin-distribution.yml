@@ -2,10 +2,10 @@ name: Maurice plugin distribution
 
 on:
   pull_request:
-    paths: ['connector/**', 'plugins/**', 'scripts/build*plugin*.py', 'tests/test*plugin*.py', '.github/workflows/plugin-distribution.yml']
+    paths: ['connector/**', 'plugins/**', 'scripts/build*plugin*.py', 'scripts/qualify_native_plugins.py', 'tests/test*plugin*.py', '.github/workflows/plugin-distribution.yml']
   push:
     branches: [main, 'codex/**']
-    paths: ['connector/**', 'plugins/**', 'scripts/build*plugin*.py', 'tests/test*plugin*.py', '.github/workflows/plugin-distribution.yml']
+    paths: ['connector/**', 'plugins/**', 'scripts/build*plugin*.py', 'scripts/qualify_native_plugins.py', 'tests/test*plugin*.py', '.github/workflows/plugin-distribution.yml']
   workflow_dispatch:
     inputs:
       publish:
@@ -97,9 +97,41 @@ jobs:
           name: maurice-plugin-catalog
           path: ${{ runner.temp }}/maurice-plugin-catalog.tar.gz
 
+  native-client-smoke:
+    needs: catalog
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/download-artifact@v4
+        with:
+          name: maurice-plugin-catalog
+          path: ${{ runner.temp }}
+      - name: Restore catalog and preserve native modes
+        run: |
+          mkdir -p "$RUNNER_TEMP/catalog"
+          tar -C "$RUNNER_TEMP/catalog" -xzf "$RUNNER_TEMP/maurice-plugin-catalog.tar.gz"
+          cd "$RUNNER_TEMP/catalog"
+          sha256sum -c SHA256SUMS
+      - name: Install pinned native clients
+        run: |
+          npm install --global @openai/codex@0.163.0 @anthropic-ai/claude-code@2.1.306
+          codex --version
+          claude --version
+      - name: Run native MCP smoke harness
+        run: |
+          python scripts/qualify_native_plugins.py \
+            --catalog "$RUNNER_TEMP/catalog" \
+            --scratch "$RUNNER_TEMP/native-client-smoke"
+
   publish:
     if: github.event_name == 'workflow_dispatch' && inputs.publish && github.ref == 'refs/heads/main'
-    needs: catalog
+    needs: [catalog, native-client-smoke]
     runs-on: ubuntu-latest
     permissions:
       contents: write
