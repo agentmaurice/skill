@@ -1,0 +1,13 @@
+{
+  "schema": "agentmaurice.connector_distribution/v1",
+  "version": "0.2.0",
+  "files": {
+    "bin/darwin-arm64/maurice-connector": "0ac510dfb2cf31bcf6711e21fb2c51bef89d9f34bd06da9a2c70226a848bd157",
+    "bin/darwin-amd64/maurice-connector": "2944946cfb172710d9cb54b137e8ec8ccceb4961274aa670a929dbcabc688468",
+    "bin/linux-amd64/maurice-connector": "cee6b46fac573e12e58f04baa00e589c6e305d45e577aad3bf712d36f5ac454c",
+    "bin/linux-arm64/maurice-connector": "cacfc8be499f743b2a8228b46c2daf2e00f687ab5f0e1795d935743eb68fc4e4",
+    "bin/windows-amd64/maurice-connector.exe": "6959d9b35ac9eb04aabb03158e08f8471c489843012b9c3fdf645c27503bfa43",
+    "bin/maurice-connector": "a4f34c5bd537086f45b9fe60e74c63dfd8b3ca2b281b6c6fe9fcf429d1f171e5",
+    "bin/maurice-connector.exe": "6959d9b35ac9eb04aabb03158e08f8471c489843012b9c3fdf645c27503bfa43"
+  }
+}

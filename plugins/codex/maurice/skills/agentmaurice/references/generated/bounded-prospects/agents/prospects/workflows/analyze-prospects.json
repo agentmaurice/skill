@@ -1,0 +1,55 @@
+{
+  "$schema": "agentmaurice.workflow/v2",
+  "schema_version": 2,
+  "workflow_id": "analyze-prospects",
+  "kind": "workflow",
+  "title": "Analyser une liste de prospects",
+  "version": "1",
+  "actions": [
+    {
+      "id": "each",
+      "type": "for_each",
+      "items": "{{ prospects }}",
+      "item_key": "prospect",
+      "max_items": 20,
+      "workflow_id": "route-prospect",
+      "on_empty": "continue",
+      "output_key": "results"
+    }
+  ],
+  "output": {
+    "results": "{{ results }}"
+  },
+  "output_schema": {
+    "type": "object",
+    "properties": {
+      "results": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "classification": {
+              "enum": [
+                "new",
+                "existing",
+                "review"
+              ]
+            }
+          },
+          "required": [
+            "id",
+            "classification"
+          ],
+          "additionalProperties": false
+        }
+      }
+    },
+    "required": [
+      "results"
+    ],
+    "additionalProperties": false
+  }
+}

@@ -1,0 +1,11 @@
+#!/bin/sh
+set -eu
+case "$(uname -s):$(uname -m)" in
+  Darwin:arm64) platform=darwin-arm64 ;;
+  Darwin:x86_64) platform=darwin-amd64 ;;
+  Linux:aarch64|Linux:arm64) platform=linux-arm64 ;;
+  Linux:x86_64|Linux:amd64) platform=linux-amd64 ;;
+  *) echo 'Maurice: unsupported platform; use a supported native package.' >&2; exit 1 ;;
+esac
+base=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+exec "$base/$platform/maurice-connector" "$@"

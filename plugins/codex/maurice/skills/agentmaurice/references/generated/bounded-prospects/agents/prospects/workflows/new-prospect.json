@@ -1,0 +1,33 @@
+{
+  "$schema": "agentmaurice.workflow/v2",
+  "schema_version": 2,
+  "workflow_id": "new-prospect",
+  "kind": "workflow",
+  "title": "Récapitulatif new",
+  "version": "1",
+  "actions": [],
+  "output": {
+    "id": "{{ prospect.id }}",
+    "classification": "new"
+  },
+  "output_schema": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "type": "string"
+      },
+      "classification": {
+        "enum": [
+          "new",
+          "existing",
+          "review"
+        ]
+      }
+    },
+    "required": [
+      "id",
+      "classification"
+    ],
+    "additionalProperties": false
+  }
+}

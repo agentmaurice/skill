@@ -1,0 +1,21 @@
+{
+  "name": "maurice",
+  "version": "0.2.0",
+  "description": "Accéder aux Workflows AgentMaurice avec un mandat explicite.",
+  "author": {
+    "name": "AgentMaurice"
+  },
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Maurice",
+    "developerName": "AgentMaurice",
+    "shortDescription": "Workflows AgentMaurice",
+    "category": "Productivity"
+  },
+  "mcpServers": "./mcp.json",
+  "extensions": {
+    "com.openai": {
+      "onboardingSkill": "./skills/setup/SKILL.md"
+    }
+  }
+}

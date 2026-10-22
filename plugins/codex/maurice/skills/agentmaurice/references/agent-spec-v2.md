@@ -1,0 +1,172 @@
+# Agent Spec V2 authoring
+
+Load this reference when editing an Agent Spec project. Retrieve the exact
+embedded JSON Schema with `maurice spec schema`; this reference describes
+boundaries and invariants rather than duplicating the schema.
+
+## Project layout
+
+```text
+agentmaurice.project.json
+agentmaurice.lock.json
+environments/<environment>.json
+agents/<agent-alias>/
+├── agent-spec.json
+├── workflows/<workflow-id>.json
+├── miniapps/<miniapp-id>.json
+└── tests/test-plan.json
+```
+
+Use public Agent vocabulary in authoring files: `agent_id`, `agent_alias`, and
+`agent_spec_id`. Do not add runtime deployment identifiers to V2 documents.
+
+Each JSON document must contain its embedded-contract identifier and
+`schema_version: 2`. Documents are closed: unknown properties are errors unless
+the schema intentionally declares an open map.
+
+## Resource boundaries
+
+Keep `agent-spec.json` limited to intent and desired state. Reconstruct the
+Workflow and MiniApp sets from their directories. Do not copy resource lists,
+Doctor snapshots, tool discovery, editor state, timestamps, or calculated
+hashes into desired state.
+
+Store one Workflow or MiniApp per file:
+
+- require `kind: workflow` in `workflows/`;
+- require `kind: miniapp` in `miniapps/`;
+- compose Workflows with `workflow_call`;
+- do not model a Skill as an action;
+- use reference objects for secrets;
+- use versioned capabilities for inter-Agent dependencies.
+
+Workflow `metadata.labels` contains at most 64 string-to-string labels.
+`metadata.annotations` may contain descriptive structured JSON, including
+domain fields named `mode`, but must remain non-secret and below 64 KiB once
+canonicalized. Metadata is preserved by pull, plan, apply, and round-trip; it
+must not be used to hide runtime behavior that belongs in explicit Workflow
+fields.
+
+When a MiniApp causes a business side effect, call a Workflow. Keep business
+logic, retry policy, authorization, and observability in that Workflow rather
+than duplicating them in the MiniApp event handler.
+
+## Ownership
+
+An Agent Spec owns the resources marked `managed` by its applied revision.
+Change those resources only by editing the Agent Spec project and applying an
+approved plan.
+
+A direct administration operation is valid only when the server explicitly
+reports the target as an `unmanaged` sandbox. Adoption into managed state and
+release back to unmanaged state are explicit plan actions.
+
+Entries in `policy_references` are managed Policy attachments, surfaced as
+`policy:<reference>` components in a plan. Agent Spec owns the attachment and
+its revision, hash, and resource version; it does not author the external
+policy provider's content. Add or remove the reference through an approved
+plan. The root release manifest is server-owned evidence and must never be
+written into the Git workspace.
+
+Use per-component versions returned by `spec plan`. Two changes to disjoint
+components may proceed concurrently; a changed component or dependency makes
+the affected plan stale.
+
+## Contract-led editing
+
+Prefer a locally embedded schema over memory:
+
+```bash
+maurice spec schema agent-spec --json
+maurice spec schema workflow --json
+maurice spec schema miniapp --json
+maurice spec schema test-plan --json
+maurice spec example workflow --json
+```
+
+Run `maurice spec check --json` after every coherent edit. Use its JSON pointer
+and diagnostic code to repair the file. Do not weaken or bypass validation.
+
+## Safe synchronization
+
+Use `maurice spec pull` to synchronize remote desired state. It must refuse to
+overwrite locally modified managed files. Keep changes inside the current
+Agent subtree and preserve unrelated Agents and environments in shared
+manifests.
+
+After a V1-to-V2 migration, inspect the report and commit the migration alone
+before adding functional changes. Restore from
+`.git/agentmaurice/migrations/<migration-id>` only during the declared cutover
+recovery window.
+
+Migration is never implicit. `maurice spec migrate` and `--check` are dry runs;
+only `maurice spec migrate --write` may change the workspace, after a green
+preview and an unambiguous server identity. `spec pull` never migrates and
+requires `--force` before overwriting a locally modified managed file.
+
+## Governance and deployment
+
+Use `maurice spec deploy` for the nominal check, plan, apply, and verify flow.
+The server returns the effective governance policy and the workspace may only
+tighten it. Sandbox, development, and integration-test plans are authorized by
+policy; staging requires a human; production and unknown profiles require a
+human distinct from the plan author, plus a pull or merge request. A terminal
+failed plan is diagnostic evidence and cannot be rearmed: rerun `spec deploy`
+to create a fresh plan.
+
+## Project in a repository subdirectory
+
+A project normally sits at the root of its Git repository. When several
+projects share one repository, each in its own subdirectory, declare it in
+`agentmaurice.project.json`:
+
+```json
+"source_control": { "allow_repository_subdirectory": true }
+```
+
+Plans then record the repository, branch, commit, the subdirectory path
+(`repository_path`) and its Git tree id (`tree_sha`). Only files in that
+subdirectory make the workspace dirty, and a stored plan goes stale only when
+the subdirectory tree changes. Production rules are unchanged: clean Git,
+commit, merge request URL and a distinct human approver. Without the
+declaration, a project below a repository root reports no Git provenance and
+never runs `git init`.
+
+## Typed questions before routing
+
+Use a pure `question` action for classification, scoring, or a yes/no assessment
+of unstructured content. Use `decision` with `selector.mode: input` to route
+its answer; do not classify with a JSON `llm_call` or
+`code_execution` + `callTool("llm_chat_completion")`.
+
+```json
+{
+  "id": "qualify",
+  "type": "question",
+  "state": { "text": "{{ text }}" },
+  "questions": {
+    "kind": {
+      "type": "choice",
+      "instructions": "Classify this page",
+      "criteria": { "article": "Editorial article", "product": "Product offer with a price" },
+      "min_confidence": 0.7
+    }
+  },
+  "output_key": "q"
+}
+```
+
+The consuming decision reads `{{ q.kind.choice }}`. Declare exactly the same
+choice IDs and an explicit fallback for `uncertain`. Choose the threshold for
+the worst downstream write; a fixed threshold is not appropriate for every
+Agent. Metadata is under `q._meta` (`provider`, `model`, `input_tokens`). Low
+confidence scores become `null`; a `noul` answer is a number from 0 to 1.
+
+All questions in one action use a single provider request. Keep extracted
+state below 32 KiB after interpolation. Omit `provider` for portable role
+resolution; an explicit provider uses `slug:model`. If Doctor reports the
+`decision` role blocked, configure a TypeSafe or OpenRouter key or the hosted
+connection (`hosted:jev-latest`, or `hosted:jev-1.13` to pin a version). Never
+silently substitute a generative model. Use `question_overrides` in test plans
+for deterministic routing tests, plus labelled live fixtures to assess accuracy
+and calibration on the Agent's own workload.

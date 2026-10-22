@@ -1,0 +1,47 @@
+{
+  "$schema": "agentmaurice.bootstrap/v2",
+  "schema_version": 2,
+  "organization": {
+    "organization_id": "org-acme",
+    "name": "Acme"
+  },
+  "environment": {
+    "environment_name": "development",
+    "environment_kind": "development",
+    "instance_url": "https://dev.agentmaurice.example"
+  },
+  "agent": {
+    "agent_id": "agt-support",
+    "agent_alias": "support",
+    "agent_spec_id": "asp-support",
+    "resource_version": 7
+  },
+  "contract_hashes": {
+    "agentmaurice.agent_spec/v2": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "agentmaurice.workflow/v2": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+  },
+  "commands": [
+    "maurice spec pull",
+    "maurice spec check",
+    "maurice spec plan",
+    "maurice spec apply",
+    "maurice spec verify"
+  ],
+  "tools": ["crm--customer_get"],
+  "models": ["organization/default"],
+  "capabilities": [
+    {
+      "name": "customer-records",
+      "version": "1"
+    }
+  ],
+  "policies": [
+    {
+      "code": "human-approval",
+      "summary": "Une approbation humaine est obligatoire avant apply.",
+      "blocking": true
+    }
+  ],
+  "warnings": [],
+  "next_command": "maurice spec pull --env development --agent support"
+}

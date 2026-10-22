@@ -1,0 +1,21 @@
+{
+  "$schema": "agentmaurice.environment/v2",
+  "schema_version": 2,
+  "environment_name": "dev",
+  "environment_kind": "development",
+  "instance_url": "http://127.0.0.1:5000",
+  "organization_id": "org-1",
+  "agents": [
+    {
+      "agent_alias": "prospects",
+      "agent_id": "agent-prospects-example"
+    }
+  ],
+  "parameters": {},
+  "secret_references": {},
+  "policies": {
+    "require_clean_git": true,
+    "require_pull_request_url": false,
+    "tests": "auto"
+  }
+}

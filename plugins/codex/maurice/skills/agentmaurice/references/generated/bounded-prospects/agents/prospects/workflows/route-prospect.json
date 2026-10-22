@@ -1,0 +1,61 @@
+{
+  "$schema": "agentmaurice.workflow/v2",
+  "schema_version": 2,
+  "workflow_id": "route-prospect",
+  "kind": "workflow",
+  "title": "Classer un prospect",
+  "version": "1",
+  "actions": [
+    {
+      "id": "route",
+      "type": "decision",
+      "input": "{{ prospect.kind }}",
+      "selector": {
+        "mode": "input"
+      },
+      "child_input": {
+        "prospect": "{{ prospect }}"
+      },
+      "choices": [
+        {
+          "id": "new",
+          "workflow_id": "new-prospect"
+        },
+        {
+          "id": "existing",
+          "workflow_id": "existing-customer"
+        }
+      ],
+      "fallback": {
+        "id": "review",
+        "workflow_id": "review-prospect"
+      },
+      "output_key": "selection",
+      "result_key": "result"
+    }
+  ],
+  "output": {
+    "id": "{{ result.id }}",
+    "classification": "{{ result.classification }}"
+  },
+  "output_schema": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "type": "string"
+      },
+      "classification": {
+        "enum": [
+          "new",
+          "existing",
+          "review"
+        ]
+      }
+    },
+    "required": [
+      "id",
+      "classification"
+    ],
+    "additionalProperties": false
+  }
+}
