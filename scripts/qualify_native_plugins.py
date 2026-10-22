@@ -12,6 +12,7 @@ import json
 import os
 from pathlib import Path
 import queue
+import re
 import shlex
 import shutil
 import subprocess
@@ -26,6 +27,9 @@ EXPECTED_TOOLS = {
     "maurice.connect",
     "maurice.connection_check",
 }
+ANSI_ESCAPE = re.compile(r"\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])")
+GITHUB_SOURCE = re.compile(r"^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$")
+GITHUB_REF = re.compile(r"^[A-Za-z0-9._/-]+$")
 
 
 class QualificationError(RuntimeError):
@@ -157,19 +161,50 @@ def assert_tools(status: dict[str, Any], client: str) -> None:
         raise QualificationError(f"{client} exposed unexpected tools: {sorted(tools)}")
 
 
-def native_environment(root: Path, key: str, profile: Path) -> dict[str, str]:
+def assert_plugin_data_dir(profile: Path, client: str) -> Path:
+    candidates = sorted(
+        path
+        for path in profile.glob(f"plugins/data/**/connector/{client}")
+        if path.is_dir() and not path.is_symlink()
+    )
+    if len(candidates) != 1:
+        raise QualificationError(
+            f"expected one native data directory for {client}, found {len(candidates)}"
+        )
+    mode = candidates[0].stat().st_mode & 0o777
+    if mode != 0o700:
+        raise QualificationError(
+            f"native data directory for {client} is not private 0700: {candidates[0]} ({mode:o})"
+        )
+    return candidates[0]
+
+
+def native_environment(key: str, profile: Path) -> dict[str, str]:
     profile.mkdir(parents=True, exist_ok=True)
-    (root / "native-state").mkdir(parents=True, exist_ok=True)
     env = os.environ.copy()
     env[key] = str(profile)
-    env["MAURICE_CONNECTOR_STATE_ROOT"] = str(root / "native-state")
+    env.pop("MAURICE_CONNECTOR_STATE_ROOT", None)
     return env
 
 
-def codex_smoke(codex: str, catalog: Path, scratch: Path) -> int:
+def strip_ansi(value: str) -> str:
+    return ANSI_ESCAPE.sub("", value)
+
+
+def assert_claude_health(output: str) -> None:
+    for raw_line in output.splitlines():
+        line = strip_ansi(raw_line).rstrip()
+        if "maurice" in line.lower() and line.endswith("✔ Connected"):
+            return
+    raise QualificationError(
+        "Claude native MCP health did not report a maurice line ending in ✔ Connected"
+    )
+
+
+def codex_smoke(codex: str, marketplace_args: list[str], scratch: Path) -> int:
     profile = scratch / "codex-profile"
-    env = native_environment(scratch, "CODEX_HOME", profile)
-    run_checked([codex, "plugin", "marketplace", "add", str(catalog)], env, scratch)
+    env = native_environment("CODEX_HOME", profile)
+    run_checked([codex, "plugin", "marketplace", "add", *marketplace_args], env, scratch)
     run_checked([codex, "plugin", "add", "maurice@agentmaurice"], env, scratch)
     rpc = JsonRpcProcess([codex, "app-server", "--stdio"], env, scratch)
     try:
@@ -212,6 +247,7 @@ def codex_smoke(codex: str, catalog: Path, scratch: Path) -> int:
         state = structured_content(result)
         if state.get("client") != "codex" or state.get("status") != "disconnected":
             raise QualificationError(f"unexpected Codex connection status: {state}")
+        assert_plugin_data_dir(profile, "codex")
     finally:
         rpc.close()
     print("PASS codex.mcp.connected tools=3 connection_status=disconnected")
@@ -225,17 +261,17 @@ def installed_claude_root(config: Path) -> Path:
     return roots[0].parent
 
 
-def claude_smoke(claude: str, catalog: Path, scratch: Path) -> int:
+def claude_smoke(claude: str, marketplace: str, scratch: Path) -> int:
     config = scratch / "claude-profile"
-    env = native_environment(scratch, "CLAUDE_CONFIG_DIR", config)
+    env = native_environment("CLAUDE_CONFIG_DIR", config)
     run_checked(
-        [claude, "plugin", "install", "maurice", "--marketplace", str(catalog), "--scope", "user", "-y"],
+        [claude, "plugin", "install", "maurice", "--marketplace", marketplace, "--scope", "user", "-y"],
         env,
         scratch,
     )
     health = run_checked([claude, "mcp", "list"], env, scratch)
-    if "maurice" not in health.lower() or "connected" not in health.lower():
-        raise QualificationError(f"Claude native MCP health did not report connected: {health[-2000:]}")
+    assert_claude_health(health)
+    data_dir = assert_plugin_data_dir(config, "claude-code")
 
     root = installed_claude_root(config)
     manifest = json.loads((root / ".mcp.json").read_text(encoding="utf-8"))
@@ -250,10 +286,8 @@ def claude_smoke(claude: str, catalog: Path, scratch: Path) -> int:
         command = str((root / command).resolve())
     argv = [command, *[str(arg) for arg in server.get("args", [])]]
     direct_env = env.copy()
-    # Exercise the Claude-provided plugin data directory for this direct MCP
-    # protocol check. The CLI health check above keeps its own native state.
     direct_env.pop("MAURICE_CONNECTOR_STATE_ROOT", None)
-    direct_env["CLAUDE_PLUGIN_DATA"] = str(scratch / "claude-plugin-data")
+    direct_env["CLAUDE_PLUGIN_DATA"] = str(data_dir.parent.parent)
     rpc = JsonRpcProcess(argv, direct_env, root)
     try:
         rpc.call(
@@ -275,14 +309,38 @@ def claude_smoke(claude: str, catalog: Path, scratch: Path) -> int:
     return 1
 
 
-def main() -> int:
+def valid_github_source(value: str) -> str:
+    if not GITHUB_SOURCE.fullmatch(value):
+        raise argparse.ArgumentTypeError("GitHub source must be owner/repo")
+    return value
+
+
+def valid_github_ref(value: str) -> str:
+    if not value or not GITHUB_REF.fullmatch(value) or value.startswith("-"):
+        raise argparse.ArgumentTypeError("GitHub ref contains invalid characters")
+    return value
+
+
+def parse_arguments(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--catalog", required=True, type=Path)
+    source = parser.add_mutually_exclusive_group(required=True)
+    source.add_argument("--catalog", type=Path)
+    source.add_argument("--github-source", type=valid_github_source)
+    parser.add_argument("--ref", type=valid_github_ref)
     parser.add_argument("--scratch", required=True, type=Path)
-    args = parser.parse_args()
-    catalog = args.catalog.resolve()
+    args = parser.parse_args(argv)
+    if args.github_source and args.ref is None:
+        parser.error("--ref is required with --github-source")
+    if args.catalog and args.ref is not None:
+        parser.error("--ref is only valid with --github-source")
+    return args
+
+
+def main() -> int:
+    args = parse_arguments()
+    catalog = args.catalog.resolve() if args.catalog else None
     scratch = args.scratch.resolve()
-    if not catalog.is_dir():
+    if catalog is not None and not catalog.is_dir():
         raise QualificationError(f"catalog does not exist: {catalog}")
     scratch.mkdir(parents=True, exist_ok=True)
     if any(scratch.iterdir()):
@@ -291,8 +349,14 @@ def main() -> int:
     claude = shutil.which("claude")
     if not codex or not claude:
         raise QualificationError("codex and claude must both be available on PATH")
-    passed = codex_smoke(codex, catalog, scratch)
-    passed += claude_smoke(claude, catalog, scratch)
+    if catalog is not None:
+        marketplace_args = [str(catalog)]
+        claude_marketplace = str(catalog)
+    else:
+        marketplace_args = [args.github_source, "--ref", args.ref]
+        claude_marketplace = f"{args.github_source}#{args.ref}"
+    passed = codex_smoke(codex, marketplace_args, scratch)
+    passed += claude_smoke(claude, claude_marketplace, scratch)
     print(f"SUMMARY pass={passed} fail=0 skip=0")
     return 0
 

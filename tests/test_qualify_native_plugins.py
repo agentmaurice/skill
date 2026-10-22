@@ -3,10 +3,13 @@
 
 from __future__ import annotations
 
+import contextlib
 import importlib.util
+import io
 import json
 from pathlib import Path
 import sys
+import tempfile
 import time
 import unittest
 
@@ -48,6 +51,40 @@ class JsonRpcProcessTests(unittest.TestCase):
         finally:
             rpc.process.terminate()
             rpc.close()
+
+
+class QualificationArgumentTests(unittest.TestCase):
+    def test_github_source_requires_valid_ref_and_excludes_catalog(self) -> None:
+        args = HARNESS.parse_arguments(
+            ["--github-source", "owner/repo", "--ref", "plugins", "--scratch", "scratch"]
+        )
+        self.assertEqual(args.github_source, "owner/repo")
+        self.assertEqual(args.ref, "plugins")
+        rejected = [
+            ["--github-source", "owner/repo", "--scratch", "scratch"],
+            ["--catalog", "catalog", "--github-source", "owner/repo", "--ref", "plugins", "--scratch", "scratch"],
+            ["--github-source", "owner/repo;echo", "--ref", "plugins", "--scratch", "scratch"],
+        ]
+        for argv in rejected:
+            with self.subTest(argv=argv), contextlib.redirect_stderr(io.StringIO()):
+                with self.assertRaises(SystemExit):
+                    HARNESS.parse_arguments(argv)
+
+    def test_claude_health_requires_checkmark_connected(self) -> None:
+        with self.assertRaises(HARNESS.QualificationError):
+            HARNESS.assert_claude_health("plugin:maurice:maurice: ... Connected")
+        HARNESS.assert_claude_health("plugin:maurice:maurice: ... \x1b[32m✔ Connected\x1b[0m")
+
+    def test_native_data_root_is_profile_scoped_and_private(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            profile = root / "profile"
+            env = HARNESS.native_environment("CODEX_HOME", profile)
+            self.assertNotIn("MAURICE_CONNECTOR_STATE_ROOT", env)
+            data_dir = profile / "plugins" / "data" / "owner-repo" / "connector" / "codex"
+            data_dir.mkdir(parents=True)
+            data_dir.chmod(0o700)
+            self.assertEqual(HARNESS.assert_plugin_data_dir(profile, "codex"), data_dir)
 
 
 if __name__ == "__main__":

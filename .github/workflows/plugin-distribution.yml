@@ -153,7 +153,7 @@ jobs:
           version=$(python3 -c 'import json;print(json.load(open("release.json"))["version"])')
           test "$(plugins/codex/maurice/bin/maurice-connector --version)" = "$version"
           test "$(plugins/claude/maurice/bin/maurice-connector --version)" = "$version"
-      - name: Publish immutable release and advance catalog
+      - name: Create or update immutable draft release
         env:
           GH_TOKEN: ${{ github.token }}
         shell: bash
@@ -163,12 +163,21 @@ jobs:
           git merge-base --is-ancestor "$GITHUB_SHA" origin/main
           version=$(python3 -c 'import json,os;print(json.load(open(os.environ["RUNNER_TEMP"]+"/catalog/release.json"))["version"])')
           tag="plugin-v$version"
+          echo "PLUGIN_VERSION=$version" >> "$GITHUB_ENV"
+          echo "PLUGIN_TAG=$tag" >> "$GITHUB_ENV"
           if gh release view "$tag" --json isDraft,targetCommitish > "$RUNNER_TEMP/existing-release.json" 2>/dev/null; then
             python3 -c 'import json,os; r=json.load(open(os.environ["RUNNER_TEMP"]+"/existing-release.json")); assert r["isDraft"] and r["targetCommitish"]==os.environ["GITHUB_SHA"], "An immutable published release already exists; increment the plugin version."'
             gh release upload "$tag" "$RUNNER_TEMP/catalog/maurice-codex-$version.tar.gz" "$RUNNER_TEMP/catalog/maurice-claude-$version.tar.gz" "$RUNNER_TEMP/catalog/release.json" "$RUNNER_TEMP/catalog/SHA256SUMS" --clobber
           else
             gh release create "$tag" "$RUNNER_TEMP/catalog/maurice-codex-$version.tar.gz" "$RUNNER_TEMP/catalog/maurice-claude-$version.tar.gz" "$RUNNER_TEMP/catalog/release.json" "$RUNNER_TEMP/catalog/SHA256SUMS" --draft --target "$GITHUB_SHA" --title "Maurice plugins $version" --notes "Native Codex and Claude Code plugins with guided One pairing. Source and file checksums: release.json. Requires a One supporting agentmaurice.assistant_pairing/v1."
           fi
+
+      - name: Publish catalog branch
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
           git config user.name 'AgentMaurice distribution'
           git config user.email 'release@agentmaurice.app'
           if git ls-remote --exit-code --heads origin plugins >/dev/null 2>&1; then
@@ -182,7 +191,33 @@ jobs:
           cp -a "$RUNNER_TEMP/catalog/." "$RUNNER_TEMP/published/"
           git -C "$RUNNER_TEMP/published" add --all
           if ! git -C "$RUNNER_TEMP/published" diff --cached --quiet; then
-            git -C "$RUNNER_TEMP/published" commit -m "Publish Maurice plugins $version from $GITHUB_SHA"
+            git -C "$RUNNER_TEMP/published" commit -m "Publish Maurice plugins $PLUGIN_VERSION from $GITHUB_SHA"
             git -C "$RUNNER_TEMP/published" push origin HEAD:plugins
           fi
-          gh release edit "$tag" --draft=false
+
+      - name: Install pinned native clients for GitHub catalog smoke
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Run native smoke against published GitHub catalog
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm install --global @openai/codex@0.163.0 @anthropic-ai/claude-code@2.1.306
+          codex --version
+          claude --version
+          python3 scripts/qualify_native_plugins.py \
+            --github-source agentmaurice/skill \
+            --ref plugins \
+            --scratch "$RUNNER_TEMP/published-native-smoke"
+
+      - name: Finalize release after GitHub catalog smoke
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh release edit "$PLUGIN_TAG" --draft=false
