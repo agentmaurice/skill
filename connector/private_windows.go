@@ -88,7 +88,10 @@ try {
   if ($LASTEXITCODE -ne 0) { throw 'icacls verify failed' }
   & icacls.exe $p '/save' $tmp | Out-Null
   if ($LASTEXITCODE -ne 0) { throw 'icacls save failed' }
-  $sddl = @(Get-Content -LiteralPath $tmp | Where-Object { $_ -match '^D:' } | Select-Object -First 1)
+  $sddl = @(Get-Content -LiteralPath $tmp | ForEach-Object {
+    $index = $_.IndexOf('D:')
+    if ($index -ge 0) { $_.Substring($index) }
+  } | Select-Object -First 1)
   if ($sddl.Count -ne 1) { throw 'missing dacl' }
 } finally {
   Remove-Item -LiteralPath $tmp -Force -ErrorAction SilentlyContinue
