@@ -30,7 +30,40 @@ Write-Output 'OK'`
 const checkACLScript = `$ErrorActionPreference = 'Stop'
 $p = $env:AM_PRIVATE_PATH
 if ([string]::IsNullOrWhiteSpace($p)) { throw 'missing path' }
+Add-Type -TypeDefinition @'
+using System;
+using System.ComponentModel;
+using System.Runtime.InteropServices;
+
+public static class MauriceNativeSecurity {
+  [DllImport("advapi32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+  private static extern uint GetNamedSecurityInfo(
+    string objectName, uint objectType, uint securityInfo,
+    out IntPtr owner, out IntPtr group, out IntPtr dacl, out IntPtr sacl,
+    out IntPtr securityDescriptor);
+
+  [DllImport("advapi32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+  private static extern bool ConvertSidToStringSid(IntPtr sid, out IntPtr stringSid);
+
+  [DllImport("kernel32.dll")]
+  private static extern IntPtr LocalFree(IntPtr handle);
+
+  public static string GetOwner(string path) {
+    IntPtr owner, group, dacl, sacl, descriptor;
+    uint result = GetNamedSecurityInfo(path, 1, 1, out owner, out group, out dacl, out sacl, out descriptor);
+    if (result != 0) throw new Win32Exception((int)result);
+    try {
+      IntPtr stringSid;
+      if (!ConvertSidToStringSid(owner, out stringSid)) throw new Win32Exception(Marshal.GetLastWin32Error());
+      try { return Marshal.PtrToStringUni(stringSid); }
+      finally { LocalFree(stringSid); }
+    } finally { LocalFree(descriptor); }
+  }
+}
+'@
 $sid = [System.Security.Principal.WindowsIdentity]::GetCurrent().User.Value
+$owner = [MauriceNativeSecurity]::GetOwner($p)
+if ($owner -ne $sid) { throw 'wrong owner' }
 $tmp = [System.IO.Path]::GetTempFileName()
 Remove-Item -LiteralPath $tmp -Force
 try {
