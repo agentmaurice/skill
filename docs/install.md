@@ -49,6 +49,10 @@ révoquer ; les droits et approbations métier restent vérifiés côté serveur
 Un refus, une expiration ou une révocation arrêtent le parcours, sans autre
 cible ou secret de secours.
 
+Pour changer de One ou abandonner une mauvaise cible, demander **Déconnecte
+Maurice de ce client**, puis relancer la connexion. Cet oubli est local ;
+l’ancienne autorisation se révoque dans One. Aucun fichier à supprimer.
+
 ## Compatibilité et versions
 
 Le One doit prendre en charge `agentmaurice.assistant_pairing/v1`. Un ancien
