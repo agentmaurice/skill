@@ -20,7 +20,7 @@ ROOT = Path(__file__).resolve().parents[1]
 CANONICAL = ROOT / "skill" / "agentmaurice"
 PLUGIN_NAME = "maurice"
 PLUGIN_VERSION = "0.1.0"
-CONNECTED_PLUGIN_VERSION = "0.2.0"
+CONNECTED_PLUGIN_VERSION = "0.2.1"
 PLUGIN_SCHEMA = "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json"
 PLUGIN_DESCRIPTION = "Accéder aux Workflows AgentMaurice avec un mandat explicite."
 

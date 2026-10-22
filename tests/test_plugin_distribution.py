@@ -31,12 +31,13 @@ class PluginDistribution(unittest.TestCase):
             for client in ('codex', 'claude'):
                 plugin = output / 'plugins' / client / 'maurice'
                 manifest = json.loads((plugin / 'plugin.json').read_text())
-                self.assertEqual(manifest['version'], '0.2.0')
+                self.assertEqual(manifest['version'], '0.2.1')
                 mcp = json.loads((plugin / 'mcp.json').read_text())['mcpServers']['maurice']
                 self.assertEqual(mcp['args'], ['--client', 'codex' if client == 'codex' else 'claude-code'])
                 self.assertEqual(mcp['command'], './bin/maurice-connector')
                 self.assertNotIn('env', mcp)
                 attestation = json.loads((plugin / 'connector-attestation.json').read_text())
+                self.assertEqual(attestation['version'], '0.2.1')
                 for name, digest in attestation['files'].items():
                     self.assertEqual(hashlib.sha256((plugin / name).read_bytes()).hexdigest(), digest)
                     self.assertTrue((plugin / name).stat().st_mode & stat.S_IXUSR)
@@ -54,7 +55,13 @@ class PluginDistribution(unittest.TestCase):
             claude = json.loads((output / '.claude-plugin/marketplace.json').read_text())
             self.assertEqual(codex['plugins'][0]['source']['path'], './plugins/codex/maurice')
             self.assertEqual(claude['plugins'][0]['source'], './plugins/claude/maurice')
+            catalog_readme = (output / 'README.md').read_text()
+            self.assertIn('--ref catalog', catalog_readme)
+            self.assertIn('agentmaurice/skill#catalog', catalog_readme)
+            self.assertNotIn('--ref plugins', catalog_readme)
+            self.assertNotIn('agentmaurice/skill#plugins', catalog_readme)
             release = json.loads((output / 'release.json').read_text())
+            self.assertEqual(release['version'], '0.2.1')
             self.assertEqual(release['source_commit'], 'a' * 40)
             self.assertEqual(set(release['files']), {str(p.relative_to(output)) for p in output.rglob('*') if p.is_file()} - {'release.json', 'SHA256SUMS'})
             for name, digest in release['files'].items():

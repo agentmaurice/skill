@@ -35,9 +35,9 @@ def catalog(output: Path, connectors: Path, source_commit: str) -> None:
             '# Maurice — plugins prêts à installer\n\n'
             'Ce catalogue contient les connecteurs natifs, les instructions et leurs attestations. '
             'Il ne contient pas le runtime One.\n\n'
-            'Codex : `codex plugin marketplace add agentmaurice/skill --ref plugins`, '
+            'Codex : `codex plugin marketplace add agentmaurice/skill --ref catalog`, '
             'puis `codex plugin add maurice@agentmaurice`.\n\n'
-            'Claude Code : `/plugin install maurice --marketplace agentmaurice/skill#plugins`.\n\n'
+            'Claude Code : `/plugin install maurice --marketplace agentmaurice/skill#catalog`.\n\n'
             'Puis demander : **Connecte Maurice à mon One.** '
             'Indiquer son adresse et autoriser dans One. Aucun secret à copier.\n\n'
             'Sources et documentation : https://github.com/agentmaurice/skill\n', encoding='utf-8')

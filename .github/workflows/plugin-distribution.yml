@@ -179,14 +179,15 @@ jobs:
         run: |
           set -euo pipefail
           echo "CANDIDATE_REF=plugin-candidates/v$PLUGIN_VERSION-$GITHUB_SHA" >> "$GITHUB_ENV"
+          echo "PUBLIC_REF=catalog" >> "$GITHUB_ENV"
           git config user.name 'AgentMaurice distribution'
           git config user.email 'release@agentmaurice.app'
-          if git ls-remote --exit-code --heads origin plugins >/dev/null 2>&1; then
-            git fetch origin plugins
+          if git ls-remote --exit-code --heads origin catalog >/dev/null 2>&1; then
+            git fetch origin catalog
             git worktree add "$RUNNER_TEMP/published" FETCH_HEAD
           else
             git worktree add --detach "$RUNNER_TEMP/published" "$GITHUB_SHA"
-            git -C "$RUNNER_TEMP/published" switch --orphan plugins
+            git -C "$RUNNER_TEMP/published" switch --orphan catalog
           fi
           find "$RUNNER_TEMP/published" -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf -- {} +
           cp -a "$RUNNER_TEMP/catalog/." "$RUNNER_TEMP/published/"
@@ -197,6 +198,17 @@ jobs:
           candidate_sha=$(git -C "$RUNNER_TEMP/published" rev-parse HEAD)
           echo "CANDIDATE_SHA=$candidate_sha" >> "$GITHUB_ENV"
           git -C "$RUNNER_TEMP/published" push origin "HEAD:refs/heads/plugin-candidates/v$PLUGIN_VERSION-$GITHUB_SHA"
+
+      - name: Preflight canonical catalog ref
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          git check-ref-format --branch "$PUBLIC_REF"
+          test -z "$(git -C "$RUNNER_TEMP/published" ls-tree --name-only HEAD | grep -Fx "$PUBLIC_REF" || true)"
+          remote_candidate=$(git ls-remote origin "refs/heads/$CANDIDATE_REF" | awk '{print $1}')
+          test "$remote_candidate" = "$CANDIDATE_SHA"
 
       - name: Install pinned native clients for GitHub catalog smoke
         uses: actions/setup-node@v4
@@ -227,7 +239,20 @@ jobs:
         run: |
           set -euo pipefail
           test "$(git -C "$RUNNER_TEMP/published" rev-parse HEAD)" = "$CANDIDATE_SHA"
-          git -C "$RUNNER_TEMP/published" push origin "$CANDIDATE_SHA:refs/heads/plugins"
+          git -C "$RUNNER_TEMP/published" push origin "$CANDIDATE_SHA:refs/heads/$PUBLIC_REF"
+          public_sha=$(git ls-remote origin "refs/heads/$PUBLIC_REF" | awk '{print $1}')
+          test "$public_sha" = "$CANDIDATE_SHA"
+
+      - name: Run native smoke against public GitHub catalog
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/qualify_native_plugins.py \
+            --github-source agentmaurice/skill \
+            --ref catalog \
+            --scratch "$RUNNER_TEMP/public-native-smoke"
 
       - name: Finalize release after GitHub catalog smoke
         env:
