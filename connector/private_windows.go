@@ -45,6 +45,9 @@ public static class MauriceNativeSecurity {
   [DllImport("advapi32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
   private static extern bool ConvertSidToStringSid(IntPtr sid, out IntPtr stringSid);
 
+  [DllImport("advapi32.dll", SetLastError = true)]
+  private static extern bool GetSecurityDescriptorControl(IntPtr securityDescriptor, out ushort control, out uint revision);
+
   [DllImport("kernel32.dll")]
   private static extern IntPtr LocalFree(IntPtr handle);
 
@@ -59,11 +62,25 @@ public static class MauriceNativeSecurity {
       finally { LocalFree(stringSid); }
     } finally { LocalFree(descriptor); }
   }
+
+  public static bool IsDaclProtected(string path) {
+    IntPtr owner, group, dacl, sacl, descriptor;
+    uint result = GetNamedSecurityInfo(path, 1, 4, out owner, out group, out dacl, out sacl, out descriptor);
+    if (result != 0) throw new Win32Exception((int)result);
+    try {
+      ushort control;
+      uint revision;
+      if (!GetSecurityDescriptorControl(descriptor, out control, out revision)) throw new Win32Exception(Marshal.GetLastWin32Error());
+      return (control & 0x1000) != 0;
+    } finally { LocalFree(descriptor); }
+  }
 }
 '@
 $sid = [System.Security.Principal.WindowsIdentity]::GetCurrent().User.Value
 $owner = [MauriceNativeSecurity]::GetOwner($p)
 if ($owner -ne $sid) { throw 'wrong owner' }
+$protected = [MauriceNativeSecurity]::IsDaclProtected($p)
+if (-not $protected) { throw 'inherited acl' }
 $tmp = [System.IO.Path]::GetTempFileName()
 Remove-Item -LiteralPath $tmp -Force
 try {
@@ -72,15 +89,16 @@ try {
   & icacls.exe $p '/save' $tmp | Out-Null
   if ($LASTEXITCODE -ne 0) { throw 'icacls save failed' }
   $sddl = @(Get-Content -LiteralPath $tmp | Where-Object { $_ -match '^D:' } | Select-Object -First 1)
-  if ($sddl.Count -ne 1 -or -not $sddl[0].StartsWith('D:P')) { throw 'inherited acl' }
+  if ($sddl.Count -ne 1) { throw 'missing dacl' }
 } finally {
   Remove-Item -LiteralPath $tmp -Force -ErrorAction SilentlyContinue
 }
 $allowed = @($sid, 'SY', 'BA', 'S-1-5-18', 'S-1-5-32-544')
 $mine = $false
-foreach ($m in [regex]::Matches($sddl[0], '\(([^;]+);[^;]*;[^;]*;[^;]*;[^;]*;([^)]+)\)')) {
-  if ($m.Groups[1].Value -ne 'A' -or $allowed -notcontains $m.Groups[2].Value) { throw 'broad acl' }
-  if ($m.Groups[2].Value -eq $sid) { $mine = $true }
+foreach ($m in [regex]::Matches($sddl[0], '\(([^;]+);([^;]*);[^;]*;[^;]*;[^;]*;([^)]+)\)')) {
+  if ($m.Groups[2].Value -match 'ID') { throw 'inherited acl' }
+  if ($m.Groups[1].Value -ne 'A' -or $allowed -notcontains $m.Groups[3].Value) { throw 'broad acl' }
+  if ($m.Groups[3].Value -eq $sid) { $mine = $true }
 }
 if (-not $mine) { throw 'owner access missing' }
 Write-Output 'OK'`
