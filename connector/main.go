@@ -420,7 +420,7 @@ func validatePairStart(out struct {
 	if out.Schema != "agentmaurice.assistant_pairing/v1" || len(out.RequestID) != 43 || out.UserCode == "" || out.OneOrigin == "" {
 		return errors.New("invalid_pairing_start")
 	}
-	if len(out.UserCode) != 8 || strings.IndexFunc(out.UserCode, func(r rune) bool { return !(r >= 'A' && r <= 'Z' || r >= '0' && r <= '9') }) >= 0 {
+	if len(out.UserCode) != 8 || strings.IndexFunc(out.UserCode, func(r rune) bool { return !(r >= 'A' && r <= 'Z' || r >= '0' && r <= '9' || r == '_' || r == '-') }) >= 0 {
 		return errors.New("invalid_pairing_user_code")
 	}
 	if b, e := base64.RawURLEncoding.DecodeString(out.RequestID); e != nil || len(b) != 32 {

@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -43,6 +44,22 @@ func TestNativePluginDataKeepsEachClientInItsHostProfile(t *testing.T) {
 	}
 }
 
+func TestPairingRejectsCodesThatCannotBeShownOrEntered(t *testing.T) {
+	for _, code := range []string{"ABCD", "ABCD12345", "ABCD123\n", "abcd1234"} {
+		t.Run(fmt.Sprintf("%q", code), func(t *testing.T) {
+			var server *httptest.Server
+			server = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				_ = json.NewEncoder(w).Encode(map[string]any{"schema": "agentmaurice.assistant_pairing/v1", "request_id": strings.Repeat("A", 43), "user_code": code, "verification_uri": server.URL + "/one/#/assistant-pairing/" + strings.Repeat("A", 43), "expires_at": time.Now().Add(time.Minute).UTC().Format(time.RFC3339), "interval_seconds": 1, "one_origin": server.URL})
+			}))
+			defer server.Close()
+			c := &connector{client: "codex", stateDir: privateTestDir(t)}
+			if _, err := c.connect(server.URL); err == nil || err.Error() != "invalid_pairing_user_code" {
+				t.Fatalf("unsafe code accepted: %v", err)
+			}
+		})
+	}
+}
+
 func TestEndpointCannotCrossOrigin(t *testing.T) {
 	if err := validateEndpoint("https://other.example/mcp", "https://one.example"); err == nil {
 		t.Fatal("accepted remote endpoint from another origin")
@@ -64,7 +81,7 @@ func TestPairingAndSinglePoll(t *testing.T) {
 		if r.URL.Path == "/one/api/assistant-pairing/start" {
 			w.Header().Set("Content-Type", "application/json")
 			expires := time.Now().Add(5 * time.Minute).UTC().Format(time.RFC3339)
-			_ = json.NewEncoder(w).Encode(map[string]any{"schema": "agentmaurice.assistant_pairing/v1", "request_id": strings.Repeat("A", 43), "user_code": "ABCD1234", "verification_uri": s.URL + "/one/#/assistant-pairing/" + strings.Repeat("A", 43) + "", "expires_at": expires, "interval_seconds": 1, "one_origin": s.URL})
+			_ = json.NewEncoder(w).Encode(map[string]any{"schema": "agentmaurice.assistant_pairing/v1", "request_id": strings.Repeat("A", 43), "user_code": "AB-_1234", "verification_uri": s.URL + "/one/#/assistant-pairing/" + strings.Repeat("A", 43) + "", "expires_at": expires, "interval_seconds": 1, "one_origin": s.URL})
 			return
 		}
 		if r.URL.Path == "/one/api/assistant-pairing/poll" {
