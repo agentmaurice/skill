@@ -11,11 +11,12 @@ import argparse
 import json
 import os
 from pathlib import Path
-import select
+import queue
 import shlex
 import shutil
 import subprocess
 import sys
+import threading
 import time
 from typing import Any
 
@@ -62,6 +63,27 @@ class JsonRpcProcess:
             bufsize=1,
         )
         self.next_id = 0
+        self._lines: queue.Queue[str | None] = queue.Queue()
+        self._reader = threading.Thread(
+            target=self._read_stdout,
+            name="mcp-json-reader",
+            daemon=True,
+        )
+        self._reader.start()
+
+    def _read_stdout(self) -> None:
+        stream = self.process.stdout
+        if stream is None:
+            self._lines.put(None)
+            return
+        try:
+            while True:
+                line = stream.readline()
+                if not line:
+                    break
+                self._lines.put(line)
+        finally:
+            self._lines.put(None)
 
     def _write(self, payload: dict[str, Any]) -> None:
         if self.process.stdin is None:
@@ -81,11 +103,11 @@ class JsonRpcProcess:
         deadline = time.monotonic() + 45
         while time.monotonic() < deadline:
             wait = max(0.0, deadline - time.monotonic())
-            ready, _, _ = select.select([self.process.stdout], [], [], wait)
-            if not ready:
+            try:
+                line = self._lines.get(timeout=wait)
+            except queue.Empty:
                 break
-            line = self.process.stdout.readline()
-            if not line:
+            if line is None:
                 break
             try:
                 response = json.loads(line)
@@ -107,6 +129,9 @@ class JsonRpcProcess:
         except subprocess.TimeoutExpired:
             self.process.terminate()
             self.process.wait(timeout=5)
+        self._reader.join(timeout=1)
+        if self.process.stdout is not None:
+            self.process.stdout.close()
 
 
 def structured_content(result: dict[str, Any]) -> dict[str, Any]:
@@ -150,7 +175,10 @@ def codex_smoke(codex: str, catalog: Path, scratch: Path) -> int:
     try:
         rpc.call(
             "initialize",
-            {"clientInfo": {"name": "native-client-smoke", "version": "1"}, "capabilities": {}},
+            {
+                "clientInfo": {"name": "native-client-smoke", "version": "1"},
+                "capabilities": {"experimentalApi": True},
+            },
         )
         rpc.notify("initialized")
         thread = rpc.call(
