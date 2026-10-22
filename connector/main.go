@@ -323,8 +323,16 @@ func (c *connector) status() map[string]any {
 		c.st = st
 	}
 	result := map[string]any{"client": c.client, "status": "disconnected"}
+	if c.st.Origin != "" {
+		// A remembered explicit target is a proposal, never an implicit reconnect.
+		result["one_origin"] = c.st.Origin
+		result["one_name"] = c.st.OneName
+	}
 	if c.st.RequestID != "" && c.st.Token == "" {
 		result["status"] = "pending"
+		if !parseTime(c.st.PendingUntil).After(time.Now()) {
+			result["status"] = "expired"
+		}
 		result["one_origin"] = c.st.Origin
 		result["verification_uri"] = c.st.VerifyURI
 		result["user_code"] = c.st.UserCode

@@ -60,6 +60,28 @@ func TestPairingRejectsCodesThatCannotBeShownOrEntered(t *testing.T) {
 	}
 }
 
+func TestDisconnectedStatusRemembersOnlyTheExplicitTarget(t *testing.T) {
+	c := &connector{client: "codex", stateDir: privateTestDir(t), st: state{Version: stateVersion, Client: "codex", Origin: "https://one.example", OneName: "One qualification"}}
+	if err := c.saveLocked(); err != nil {
+		t.Fatal(err)
+	}
+	status := c.status()
+	if status["status"] != "disconnected" || status["one_origin"] != "https://one.example" || status["one_name"] != "One qualification" {
+		t.Fatalf("remembered target lost: %#v", status)
+	}
+	if _, ok := status["verification_uri"]; ok {
+		t.Fatal("disconnected state reused old consent")
+	}
+	c.st.RequestID = "expired-request"
+	c.st.PendingUntil = time.Now().Add(-time.Minute).UTC().Format(time.RFC3339)
+	if err := c.saveLocked(); err != nil {
+		t.Fatal(err)
+	}
+	if c.status()["status"] != "expired" {
+		t.Fatal("expired request reported pending")
+	}
+}
+
 func TestEndpointCannotCrossOrigin(t *testing.T) {
 	if err := validateEndpoint("https://other.example/mcp", "https://one.example"); err == nil {
 		t.Fatal("accepted remote endpoint from another origin")
