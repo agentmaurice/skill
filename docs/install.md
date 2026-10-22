@@ -9,7 +9,7 @@ séparée de MauriceCLI ou fichier de configuration à éditer.
 Ajouter le catalogue une fois, puis installer Maurice :
 
 ```bash
-codex plugin marketplace add agentmaurice/skill --ref plugins
+codex plugin marketplace add agentmaurice/skill --ref catalog
 codex plugin add maurice@agentmaurice
 ```
 
@@ -22,7 +22,7 @@ redémarrer les autres sessions pour activer un test.
 Dans Claude Code :
 
 ```text
-/plugin install maurice --marketplace agentmaurice/skill#plugins
+/plugin install maurice --marketplace agentmaurice/skill#catalog
 ```
 
 Choisir la portée d’installation proposée par le client. Pour un essai,
@@ -61,7 +61,7 @@ n’ouvre aucun port entrant. Les paquets contiennent des exécutables natifs
 pour macOS arm64/amd64, Linux arm64/amd64 et Windows amd64. La disponibilité
 et les limites effectivement qualifiées sont publiées avec la release.
 
-Le catalogue `plugins` est généré par la CI depuis un commit intégré à `main`.
+Le catalogue `catalog` est généré par la CI depuis un commit intégré à `main`.
 Chaque release `plugin-v…` conserve les deux archives, leurs SHA-256 et
 `release.json`, avec le commit source. Les instructions de construction ne
 font pas partie du parcours d’installation.
