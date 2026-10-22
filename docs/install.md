@@ -75,6 +75,39 @@ manque, le Skill guide explicitement `maurice assistant connect codex` avec un
 fichier de jeton privé. La qualification sur un One réel est séparée du
 packaging.
 
+### Projet dédié dans Codex Desktop
+
+Ajouter le dossier comme **projet local**, puis créer le chat dans ce projet.
+Joindre le dossier à un message ne charge pas son `.codex/config.toml`. Préparer
+les connexions MCP du projet avant de créer le chat : dans le build Desktop
+qualifié, un serveur ajouté ensuite n'apparaît pas dans le chat existant.
+
+Le dossier source du plugin et son activation ne remplacent pas l'installation
+par le client. Vérifier que le catalogue effectif expose `maurice:use-maurice`
+depuis le cache installé, puis vérifier séparément les outils MCP. Une lecture
+du fichier `SKILL.md` dans le dossier source ne suffit pas.
+
+Pour limiter l'activation à un projet approuvé, utiliser un nom de marketplace
+distinct et conserver ces réglages dans le `.codex/config.toml` du projet :
+
+```toml
+[marketplaces."maurice-local"]
+source_type = "local"
+source = "/chemin/absolu/du/paquet"
+
+[plugins."maurice@maurice-local"]
+enabled = true
+```
+
+`codex plugin add` écrit aussi `enabled = true` dans la configuration
+utilisateur. L'installation n'est donc pas limitée au projet par cette commande
+seule. Après installation, désactiver cette même entrée au niveau utilisateur
+(`enabled = false`) et conserver l'activation du projet. Préserver les autres
+réglages. Ne pas modifier manuellement le cache du plugin. Le
+[rapport Codex Desktop](qualification/AGENT-613-codex-desktop.md) précise le
+build testé et les limites observées ; une installation CLI isolée ne prouve
+pas à elle seule le chargement dans Desktop.
+
 ## Plugin Claude Code (privé)
 
 Pour Claude Code, construire le paquet dans un répertoire temporaire et le

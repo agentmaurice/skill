@@ -1,0 +1,475 @@
+{
+  "source_session": "rollout-2026-10-22T06-17-56-01a161d4-7806-78d0-ae56-f83c773dd832.jsonl",
+  "session_id": "01a161d4-7806-78d0-ae56-f83c773dd832",
+  "originator": "Codex Desktop",
+  "cli_version": "0.163.0-alpha.10.2",
+  "model_provider": "openai",
+  "model": "gpt-6.1-sol",
+  "effort": "high",
+  "cwd": "/private/tmp/agent613-desktop/project",
+  "turn_ids": [
+    "01a161d4-8115-7372-9ef6-024bd3a39e9a",
+    "01a161da-8ef2-7923-ab22-93844376a6c0",
+    "01a161e2-1ceb-7db1-a554-cfb0a2e81364",
+    "01a161e3-8819-7f81-9360-515492963577",
+    "01a161e4-48a0-70f0-825f-cb9be428382f",
+    "01a161e6-ad75-7823-ad32-058ed4d2e5f9",
+    "01a161e7-5c44-7d73-a529-cfb142d280a7",
+    "01a161e8-05a5-7f71-91af-3eaf122c20d4",
+    "01a161eb-24e4-75b0-8c95-09a475927cb3"
+  ],
+  "skill_presence": {
+    "identifier": "maurice:use-maurice",
+    "present_in_context": true,
+    "first_observed_line": 89,
+    "post_install_context": true
+  },
+  "native_calls": [
+    {
+      "call_line": 63,
+      "server": "maurice_desktop_direct",
+      "operation": "maurice_search",
+      "arguments": {
+        "query": "desktop-record-proof"
+      },
+      "results": [
+        {
+          "is_error": false,
+          "structured_content": {
+            "result_count": 1,
+            "search_mode": "local_lexical",
+            "truncated": false
+          }
+        }
+      ]
+    },
+    {
+      "call_line": 68,
+      "server": "maurice_desktop_direct",
+      "operation": "maurice_explain",
+      "arguments": {
+        "ref": "workflow:dbcoroa4p5cno38qkae0/desktop-record-proof@1",
+        "path": "/qualification/codex-desktop-real.txt",
+        "message": "Preuve fictive Codex Desktop AGENT-613"
+      },
+      "results": [
+        {
+          "is_error": false,
+          "structured_content": {
+            "kind": "workflow",
+            "plan_hash": "d9ac86497d681f516c954af4444145bace1a915125e120a2df24e9c33969d23c",
+            "effective_remaining_effects": 1,
+            "effect_quota": {
+              "scope": "mandate",
+              "unit": "workflow_run",
+              "max_effects": 1,
+              "used_effects": 0,
+              "remaining_effects": 1,
+              "exhausted": false,
+              "charged_at": "admission",
+              "refund_policy": "none"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "call_line": 77,
+      "server": "maurice_desktop_direct",
+      "operation": "maurice_execute",
+      "arguments": {
+        "ref": "workflow:dbcoroa4p5cno38qkae0/desktop-record-proof@1",
+        "path": "/qualification/codex-desktop-real.txt",
+        "message": "Preuve fictive Codex Desktop AGENT-613",
+        "idempotency_key": "agent-613-codex-desktop-direct-1",
+        "expected_plan_hash": "d9ac86497d681f516c954af4444145bace1a915125e120a2df24e9c33969d23c"
+      },
+      "results": [
+        {
+          "is_error": false,
+          "structured_content": {
+            "status": "completed",
+            "job_id": "dbcp42a4p5cp07nm5ac0",
+            "execution_id": "449i4c0mmbmuk3mco0k0",
+            "result": {
+              "path": "/qualification/codex-desktop-real.txt",
+              "message": "Preuve fictive Codex Desktop AGENT-613",
+              "recorded": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "call_line": 101,
+      "server": "maurice_desktop_direct",
+      "operation": "maurice_search",
+      "arguments": {
+        "query": "desktop-record-proof"
+      },
+      "results": [
+        {
+          "is_error": false,
+          "structured_content": {
+            "result_count": 1,
+            "search_mode": "local_lexical",
+            "truncated": false
+          }
+        }
+      ]
+    },
+    {
+      "call_line": 106,
+      "server": "maurice_desktop_direct",
+      "operation": "maurice_explain",
+      "arguments": {
+        "ref": "workflow:dbcoroa4p5cno38qkae0/desktop-record-proof@1",
+        "path": "/qualification/codex-desktop-real.txt",
+        "message": "Preuve fictive Codex Desktop AGENT-613"
+      },
+      "results": [
+        {
+          "is_error": false,
+          "structured_content": {
+            "kind": "workflow",
+            "plan_hash": "d9ac86497d681f516c954af4444145bace1a915125e120a2df24e9c33969d23c",
+            "effective_remaining_effects": 0,
+            "effect_quota": {
+              "scope": "mandate",
+              "unit": "workflow_run",
+              "max_effects": 1,
+              "used_effects": 1,
+              "remaining_effects": 0,
+              "exhausted": true,
+              "charged_at": "admission",
+              "refund_policy": "none"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "call_line": 115,
+      "server": "maurice_desktop_direct",
+      "operation": "maurice_execute",
+      "arguments": {
+        "ref": "workflow:dbcoroa4p5cno38qkae0/desktop-record-proof@1",
+        "path": "/qualification/codex-desktop-real.txt",
+        "message": "Preuve fictive Codex Desktop AGENT-613",
+        "idempotency_key": "agent-613-codex-desktop-direct-1",
+        "expected_plan_hash": "d9ac86497d681f516c954af4444145bace1a915125e120a2df24e9c33969d23c"
+      },
+      "results": [
+        {
+          "is_error": false,
+          "structured_content": {
+            "status": "completed",
+            "job_id": "dbcp42a4p5cp07nm5ac0",
+            "execution_id": "449i4c0mmbmuk3mco0k0",
+            "result": {
+              "path": "/qualification/codex-desktop-real.txt",
+              "message": "Preuve fictive Codex Desktop AGENT-613",
+              "recorded": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "call_line": 137,
+      "server": "maurice_desktop_approval",
+      "operation": "maurice_search",
+      "arguments": {
+        "query": "desktop-approved-proof"
+      },
+      "results": [
+        {
+          "is_error": false,
+          "structured_content": {
+            "result_count": 1,
+            "search_mode": "local_lexical",
+            "truncated": false
+          }
+        }
+      ]
+    },
+    {
+      "call_line": 142,
+      "server": "maurice_desktop_approval",
+      "operation": "maurice_explain",
+      "arguments": {
+        "ref": "workflow:dbcoroa4p5cno38qkae0/desktop-approved-proof@1",
+        "path": "/qualification/codex-desktop-approved.txt",
+        "message": "Preuve fictive Codex Desktop AGENT-613 avec accord humain"
+      },
+      "results": [
+        {
+          "is_error": false,
+          "structured_content": {
+            "kind": "workflow",
+            "plan_hash": "a440bfc7b2de4171c006420b25f31b72cc33473d19ac01d874e8c0c39f77f1de",
+            "effective_remaining_effects": 1,
+            "effect_quota": {
+              "scope": "mandate",
+              "unit": "workflow_run",
+              "max_effects": 1,
+              "used_effects": 0,
+              "remaining_effects": 1,
+              "exhausted": false,
+              "charged_at": "admission",
+              "refund_policy": "none"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "call_line": 149,
+      "server": "maurice_desktop_approval",
+      "operation": "maurice_execute",
+      "arguments": {
+        "ref": "workflow:dbcoroa4p5cno38qkae0/desktop-approved-proof@1",
+        "path": "/qualification/codex-desktop-approved.txt",
+        "message": "Preuve fictive Codex Desktop AGENT-613 avec accord humain",
+        "idempotency_key": "agent-613-codex-desktop-approval-1",
+        "expected_plan_hash": "a440bfc7b2de4171c006420b25f31b72cc33473d19ac01d874e8c0c39f77f1de"
+      },
+      "results": [
+        {
+          "is_error": false,
+          "structured_content": {
+            "status": "pending",
+            "plan_hash": "a440bfc7b2de4171c006420b25f31b72cc33473d19ac01d874e8c0c39f77f1de",
+            "approval_phase": "personal",
+            "approval_surface": "personal",
+            "action_id": "ha_dbcp55i4p5cp07nm5c10",
+            "approval_ref": "pending_action:ha_dbcp55i4p5cp07nm5c10"
+          }
+        }
+      ]
+    },
+    {
+      "call_line": 154,
+      "server": "maurice_desktop_approval",
+      "operation": "maurice_explain",
+      "arguments": {
+        "ref": "pending_action:ha_dbcp55i4p5cp07nm5c10"
+      },
+      "results": [
+        {
+          "is_error": false,
+          "structured_content": {
+            "kind": "pending_action",
+            "status": "waiting",
+            "plan_hash": "a440bfc7b2de4171c006420b25f31b72cc33473d19ac01d874e8c0c39f77f1de",
+            "approval_surface": "personal",
+            "action_id": "ha_dbcp55i4p5cp07nm5c10"
+          }
+        }
+      ]
+    },
+    {
+      "call_line": 171,
+      "server": "maurice_desktop_approval",
+      "operation": "maurice_explain",
+      "arguments": {
+        "ref": "pending_action:ha_dbcp55i4p5cp07nm5c10"
+      },
+      "results": [
+        {
+          "is_error": false,
+          "structured_content": {
+            "kind": "pending_action",
+            "status": "completed",
+            "plan_hash": "a440bfc7b2de4171c006420b25f31b72cc33473d19ac01d874e8c0c39f77f1de",
+            "approval_surface": "personal",
+            "action_id": "ha_dbcp55i4p5cp07nm5c10",
+            "decision": "approved"
+          }
+        }
+      ]
+    },
+    {
+      "call_line": 180,
+      "server": "maurice_desktop_approval",
+      "operation": "maurice_execute",
+      "arguments": {
+        "ref": "workflow:dbcoroa4p5cno38qkae0/desktop-approved-proof@1",
+        "path": "/qualification/codex-desktop-approved.txt",
+        "message": "Preuve fictive Codex Desktop AGENT-613 avec accord humain",
+        "idempotency_key": "agent-613-codex-desktop-approval-1",
+        "expected_plan_hash": "a440bfc7b2de4171c006420b25f31b72cc33473d19ac01d874e8c0c39f77f1de"
+      },
+      "results": [
+        {
+          "is_error": false,
+          "structured_content": {
+            "status": "pending",
+            "job_id": "dbcp6aq4p5cp07nm5c5g",
+            "execution_id": "0okkje2c2ovmankg7m50",
+            "plan_hash": "a440bfc7b2de4171c006420b25f31b72cc33473d19ac01d874e8c0c39f77f1de",
+            "approval_phase": "workflow_step",
+            "approval_surface": "personal",
+            "action_id": "ha_dbcp6aq4p5cp07nm5cng",
+            "approval_ref": "pending_action:ha_dbcp6aq4p5cp07nm5cng",
+            "workflow_action_id": "write",
+            "occurrence_id": "dbcp6aq4p5cp07nm5cig"
+          }
+        }
+      ]
+    },
+    {
+      "call_line": 185,
+      "server": "maurice_desktop_approval",
+      "operation": "maurice_explain",
+      "arguments": {
+        "ref": "pending_action:ha_dbcp6aq4p5cp07nm5cng"
+      },
+      "results": [
+        {
+          "is_error": false,
+          "structured_content": {
+            "kind": "pending_action",
+            "status": "waiting",
+            "job_id": "dbcp6aq4p5cp07nm5c5g",
+            "execution_id": "0okkje2c2ovmankg7m50",
+            "plan_hash": "a440bfc7b2de4171c006420b25f31b72cc33473d19ac01d874e8c0c39f77f1de",
+            "approval_phase": "workflow_step",
+            "approval_surface": "personal",
+            "action_id": "ha_dbcp6aq4p5cp07nm5cng",
+            "workflow_action_id": "write",
+            "occurrence_id": "dbcp6aq4p5cp07nm5cig"
+          }
+        }
+      ]
+    },
+    {
+      "call_line": 202,
+      "server": "maurice_desktop_approval",
+      "operation": "maurice_explain",
+      "arguments": {
+        "ref": "pending_action:ha_dbcp6aq4p5cp07nm5cng"
+      },
+      "results": [
+        {
+          "is_error": false,
+          "structured_content": {
+            "kind": "pending_action",
+            "status": "completed",
+            "job_id": "dbcp6aq4p5cp07nm5c5g",
+            "execution_id": "0okkje2c2ovmankg7m50",
+            "plan_hash": "a440bfc7b2de4171c006420b25f31b72cc33473d19ac01d874e8c0c39f77f1de",
+            "approval_phase": "workflow_step",
+            "approval_surface": "personal",
+            "action_id": "ha_dbcp6aq4p5cp07nm5cng",
+            "workflow_action_id": "write",
+            "occurrence_id": "dbcp6aq4p5cp07nm5cig",
+            "decision": "approved"
+          }
+        }
+      ]
+    },
+    {
+      "call_line": 209,
+      "server": "maurice_desktop_approval",
+      "operation": "maurice_execute",
+      "arguments": {
+        "ref": "workflow:dbcoroa4p5cno38qkae0/desktop-approved-proof@1",
+        "path": "/qualification/codex-desktop-approved.txt",
+        "message": "Preuve fictive Codex Desktop AGENT-613 avec accord humain",
+        "idempotency_key": "agent-613-codex-desktop-approval-1",
+        "expected_plan_hash": "a440bfc7b2de4171c006420b25f31b72cc33473d19ac01d874e8c0c39f77f1de"
+      },
+      "results": [
+        {
+          "is_error": false,
+          "structured_content": {
+            "status": "completed",
+            "job_id": "dbcp6aq4p5cp07nm5c5g",
+            "execution_id": "0okkje2c2ovmankg7m50",
+            "result": {
+              "path": "/qualification/codex-desktop-approved.txt",
+              "message": "Preuve fictive Codex Desktop AGENT-613 avec accord humain",
+              "recorded": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "call_line": 242,
+      "server": "maurice_desktop_direct",
+      "operation": "maurice_search",
+      "arguments": {
+        "ref": "workflow:dbcoroa4p5cno38qkae0/desktop-approved-proof@1"
+      },
+      "results": [
+        {
+          "is_error": true,
+          "structured_content": {
+            "error": {
+              "code": "grant_invalid"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "call_line": 242,
+      "server": "maurice_desktop_approval",
+      "operation": "maurice_explain",
+      "arguments": {
+        "ref": "workflow:dbcoroa4p5cno38qkae0/desktop-approved-proof@1"
+      },
+      "results": [
+        {
+          "is_error": true,
+          "structured_content": {
+            "error": {
+              "code": "grant_invalid"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "native_call_counts": {
+    "direct": 7,
+    "approval": 10,
+    "refusal_server_calls": 0
+  },
+  "shell_provenance": [
+    {
+      "call_line": 16,
+      "tool": "exec_command",
+      "cwd": "/private/tmp/agent613-desktop/project"
+    },
+    {
+      "call_line": 25,
+      "tool": "exec_command",
+      "cwd": "/private/tmp/agent613-desktop/project"
+    },
+    {
+      "call_line": 58,
+      "tool": "exec_command",
+      "cwd": "/private/tmp/agent613-desktop/project"
+    },
+    {
+      "call_line": 96,
+      "tool": "exec_command",
+      "cwd": "/private/tmp/agent613-desktop/project"
+    },
+    {
+      "call_line": 132,
+      "tool": "exec_command",
+      "cwd": "/private/tmp/agent613-desktop/project"
+    }
+  ],
+  "limits": {
+    "reasoning_excluded": true,
+    "system_and_tool_catalogue_excluded": true,
+    "tokens_credentials_config_excluded": true,
+    "other_sessions_excluded": true,
+    "native_refusal_observed": true
+  }
+}

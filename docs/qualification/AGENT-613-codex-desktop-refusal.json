@@ -1,0 +1,468 @@
+{
+  "source_session": "rollout-2026-10-22T06-51-26-01a161f3-1f6b-7af1-9557-590112f50e0d.jsonl",
+  "session_id": "01a161f3-1f6b-7af1-9557-590112f50e0d",
+  "originator": "Codex Desktop",
+  "cli_version": "0.163.0-alpha.10.2",
+  "model_provider": "openai",
+  "model": "gpt-6.1-sol",
+  "effort": "high",
+  "cwd": "/private/tmp/agent613-desktop/project",
+  "turn_ids": [
+    "01a161f3-23e6-73f1-acd6-16a93690f405",
+    "01a161f4-6c92-7aa1-ad04-1e342d4c2a31",
+    "01a161f5-1b0b-7681-9883-b586a47c9532"
+  ],
+  "skill_presence": {
+    "identifier": "maurice:use-maurice",
+    "present_in_context": true,
+    "effective_catalog_observation_line": 17,
+    "post_install_context": true
+  },
+  "native_server_scope": [
+    "maurice_desktop_refusal"
+  ],
+  "native_calls": [
+    {
+      "call_line": 35,
+      "turn_id": "01a161f3-23e6-73f1-acd6-16a93690f405",
+      "server": "maurice_desktop_refusal",
+      "operation": "maurice.search",
+      "arguments": {
+        "kind": [
+          "workflow"
+        ],
+        "query": "workflow:dbcoroa4p5cno38qkae0/desktop-approved-proof@1"
+      },
+      "result": {
+        "status": "completed",
+        "is_error": false,
+        "structured_content": {
+          "limit": 50,
+          "results": [
+            {
+              "agent_id": "dbcoroa4p5cno38qkae0",
+              "application": null,
+              "description": "Workflow publié : desktop-approved-proof",
+              "gesture_policy": "confirm",
+              "input_schema": {
+                "additionalProperties": false,
+                "properties": {
+                  "message": {
+                    "maxLength": 160,
+                    "type": "string"
+                  },
+                  "path": {
+                    "pattern": "^/qualification/codex-desktop-[a-z0-9-]+\\.txt$",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "path",
+                  "message"
+                ],
+                "type": "object"
+              },
+              "kind": "workflow",
+              "ref": "workflow:dbcoroa4p5cno38qkae0/desktop-approved-proof@1",
+              "title": "Preuve fictive Desktop après accord humain distinct",
+              "version": "1",
+              "workflow_id": "desktop-approved-proof"
+            }
+          ],
+          "search_mode": "local_lexical",
+          "truncated": false
+        }
+      }
+    },
+    {
+      "call_line": 40,
+      "turn_id": "01a161f3-23e6-73f1-acd6-16a93690f405",
+      "server": "maurice_desktop_refusal",
+      "operation": "maurice.explain",
+      "arguments": {
+        "ref": "workflow:dbcoroa4p5cno38qkae0/desktop-approved-proof@1",
+        "input": {
+          "path": "/qualification/codex-desktop-refused.txt",
+          "message": "Preuve fictive Codex Desktop AGENT-613 refusée"
+        }
+      },
+      "result": {
+        "status": "completed",
+        "is_error": false,
+        "structured_content": {
+          "approver": {
+            "approval_surface": "personal",
+            "distinct_from_assistant": true,
+            "issuer": "agentmaurice.local_principal/v1",
+            "kind": "human",
+            "subject": "local-operator"
+          },
+          "description": "Workflow publié : desktop-approved-proof",
+          "dry_run": {
+            "executed": false,
+            "mode": "plan",
+            "steps": [
+              {
+                "requires_approval": true,
+                "tool": "dbcoroa4p5cno38qkae0_storage__mcp_storage_server--write_file",
+                "type": "tool_call"
+              },
+              {
+                "requires_approval": false,
+                "tool": "dbcoroa4p5cno38qkae0_storage__mcp_storage_server--read_file",
+                "type": "tool_call"
+              }
+            ]
+          },
+          "effect_quota": {
+            "charged_at": "admission",
+            "exhausted": false,
+            "max_effects": 1,
+            "refund_policy": "none",
+            "remaining_effects": 1,
+            "scope": "mandate",
+            "unit": "workflow_run",
+            "used_effects": 0
+          },
+          "effective_remaining_effects": 1,
+          "execution_supported": true,
+          "gesture_policy": "confirm",
+          "history_scope": "current_workflow_version_and_spec",
+          "input_schema": {
+            "additionalProperties": false,
+            "properties": {
+              "message": {
+                "maxLength": 160,
+                "type": "string"
+              },
+              "path": {
+                "pattern": "^/qualification/codex-desktop-[a-z0-9-]+\\.txt$",
+                "type": "string"
+              }
+            },
+            "required": [
+              "path",
+              "message"
+            ],
+            "type": "object"
+          },
+          "kind": "workflow",
+          "output_schema": {
+            "additionalProperties": false,
+            "properties": {
+              "message": {
+                "type": "string"
+              },
+              "path": {
+                "type": "string"
+              },
+              "recorded": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "path",
+              "message",
+              "recorded"
+            ],
+            "type": "object"
+          },
+          "plan_hash": "2e939ade149431950801c0051546c1f6c274bdb91075f9613fc2e7e29f4bf5d4",
+          "quota_chain": [
+            {
+              "exhausted": false,
+              "mandate_id": "md_dbcp6oq4p5cp07nm5eig",
+              "max_effects": 1,
+              "remaining_effects": 1,
+              "used_effects": 0
+            }
+          ],
+          "recent_executions": [
+            {
+              "execution_id": "0okkje2c2ovmankg7m50",
+              "job_id": "dbcp6aq4p5cp07nm5c5g",
+              "status": "completed",
+              "timestamp": "2026-10-22T04:38:03.058458Z",
+              "usage_summary": {
+                "cost": {
+                  "amount_minor": 0,
+                  "currency": "EUR",
+                  "status": "qualified_zero"
+                },
+                "duration_ms": 438,
+                "input_tokens": 0,
+                "llm_calls": 0,
+                "output_tokens": 0,
+                "tool_calls": 2
+              }
+            }
+          ],
+          "ref": "workflow:dbcoroa4p5cno38qkae0/desktop-approved-proof@1",
+          "sample_window": 50,
+          "title": "Preuve fictive Desktop après accord humain distinct",
+          "usage_summary": {
+            "cost": {
+              "amount_minor": 0,
+              "cost_sample_size": 1,
+              "currency": "EUR",
+              "status": "qualified_zero"
+            },
+            "duration_ms": 438,
+            "input_tokens": 0,
+            "llm_calls": 0,
+            "method": "median",
+            "output_tokens": 0,
+            "sample_size": 1,
+            "source": "agent_job_results",
+            "tool_calls": 2
+          }
+        }
+      }
+    },
+    {
+      "call_line": 49,
+      "turn_id": "01a161f3-23e6-73f1-acd6-16a93690f405",
+      "server": "maurice_desktop_refusal",
+      "operation": "maurice.execute",
+      "arguments": {
+        "ref": "workflow:dbcoroa4p5cno38qkae0/desktop-approved-proof@1",
+        "input": {
+          "path": "/qualification/codex-desktop-refused.txt",
+          "message": "Preuve fictive Codex Desktop AGENT-613 refusée"
+        },
+        "idempotency_key": "agent-613-codex-desktop-refusal-1",
+        "expected_plan_hash": "2e939ade149431950801c0051546c1f6c274bdb91075f9613fc2e7e29f4bf5d4"
+      },
+      "result": {
+        "status": "completed",
+        "is_error": false,
+        "structured_content": {
+          "action_id": "ha_dbcpcta4p5cp07nm5el0",
+          "approval_explanation": {
+            "action": "Démarrer le parcours de 2 actions décrit ci-dessous.",
+            "approval_label": "Autoriser le démarrage",
+            "consequences": "Les effets dépendent des actions et des outils du plan. Leur description ci-dessus est celle de l’auteur du Workflow.",
+            "cost": "Ce parcours local autorise uniquement les outils qualifiés sans coût.",
+            "data": [
+              "Entrées fournies au parcours ; les cibles dépendant de résultats précédents seront précisées à chaque pause.",
+              "message : Preuve fictive Codex Desktop AGENT-613 refusée",
+              "path : /qualification/codex-desktop-refused.txt"
+            ],
+            "future_gates": [
+              "Étape 1 : Action sans description : outil « dbcoroa4p5cno38qkae0_storage__mcp_storage_server--write_file »"
+            ],
+            "objective": "Non documenté par le Workflow versionné",
+            "outcome": "Restituer à l’assistant le résultat prévu par le Workflow ; le détail métier dépend de sa description déclarée.",
+            "plan_steps": [
+              "1. Action sans description : outil « dbcoroa4p5cno38qkae0_storage__mcp_storage_server--write_file » — accord distinct avant cette action",
+              "2. Action sans description : outil « dbcoroa4p5cno38qkae0_storage__mcp_storage_server--read_file »"
+            ],
+            "progress": "Aucune action de ce parcours n’a encore été exécutée.",
+            "provenance": [
+              "workflow_declaration",
+              "server_policy",
+              "plan_sha256"
+            ],
+            "recipients": [
+              "L’assistant demandeur recevra le résultat du Workflow.",
+              "Autres destinataires éventuels des outils : non documentés dans cette carte."
+            ],
+            "rejection_effect": "Le parcours ne démarre pas ; aucune de ses actions n’est exécutée.",
+            "reversibility": "Aucune annulation automatique des effets déjà produits n’est garantie.",
+            "schema": "agentmaurice.human_action.description/v1",
+            "scope": "Ce clic autorise le démarrage uniquement. Une autre carte sera présentée avant la première action.",
+            "source": "workflow_declaration",
+            "technical_details": [
+              "Paramètres déclarés et entrées (clés sensibles masquées) : {\"actions\":[{\"id\":\"write\",\"output_key\":\"written\",\"parameters\":{\"content\":\"{{ message }}\",\"overwrite\":false,\"path\":\"{{ path }}\"},\"require_approval\":true,\"tool\":\"dbcoroa4p5cno38qkae0_storage__mcp_storage_server--write_file\"},{\"id\":\"read\",\"output_key\":\"readback\",\"parameters\":{\"path\":\"{{ path }}\"},\"require_approval\":false,\"tool\":\"dbcoroa4p5cno38qkae0_storage__mcp_storage_server--read_file\"}],\"approval_policy\":\"Chaque étape protégée demande une décision humaine distincte avant son effet.\",\"input\":{\"message\":\"Preuve fictive Codex Desktop AGENT-613 refusée\",\"path\":\"/qualification/codex-desktop-refused.txt\"}}"
+            ],
+            "workflow_description": "Non documenté par le Workflow versionné",
+            "workflow_ref": "workflow:dbcoroa4p5cno38qkae0/desktop-approved-proof@1",
+            "workflow_title": "Preuve fictive Desktop après accord humain distinct"
+          },
+          "approval_phase": "personal",
+          "approval_ref": "pending_action:ha_dbcpcta4p5cp07nm5el0",
+          "approval_surface": "personal",
+          "expires_at": "2026-10-22T07:07:05.301314+02:00",
+          "plan_hash": "2e939ade149431950801c0051546c1f6c274bdb91075f9613fc2e7e29f4bf5d4",
+          "status": "pending"
+        }
+      }
+    },
+    {
+      "call_line": 54,
+      "turn_id": "01a161f3-23e6-73f1-acd6-16a93690f405",
+      "server": "maurice_desktop_refusal",
+      "operation": "maurice.explain",
+      "arguments": {
+        "ref": "pending_action:ha_dbcpcta4p5cp07nm5el0"
+      },
+      "result": {
+        "status": "completed",
+        "is_error": false,
+        "structured_content": {
+          "action_id": "ha_dbcpcta4p5cp07nm5el0",
+          "approval_explanation": {
+            "action": "Démarrer le parcours de 2 actions décrit ci-dessous.",
+            "approval_label": "Autoriser le démarrage",
+            "consequences": "Les effets dépendent des actions et des outils du plan. Leur description ci-dessus est celle de l’auteur du Workflow.",
+            "cost": "Ce parcours local autorise uniquement les outils qualifiés sans coût.",
+            "data": [
+              "Entrées fournies au parcours ; les cibles dépendant de résultats précédents seront précisées à chaque pause.",
+              "message : Preuve fictive Codex Desktop AGENT-613 refusée",
+              "path : /qualification/codex-desktop-refused.txt"
+            ],
+            "future_gates": [
+              "Étape 1 : Action sans description : outil « dbcoroa4p5cno38qkae0_storage__mcp_storage_server--write_file »"
+            ],
+            "objective": "Non documenté par le Workflow versionné",
+            "outcome": "Restituer à l’assistant le résultat prévu par le Workflow ; le détail métier dépend de sa description déclarée.",
+            "plan_steps": [
+              "1. Action sans description : outil « dbcoroa4p5cno38qkae0_storage__mcp_storage_server--write_file » — accord distinct avant cette action",
+              "2. Action sans description : outil « dbcoroa4p5cno38qkae0_storage__mcp_storage_server--read_file »"
+            ],
+            "progress": "Aucune action de ce parcours n’a encore été exécutée.",
+            "provenance": [
+              "workflow_declaration",
+              "server_policy",
+              "plan_sha256"
+            ],
+            "recipients": [
+              "L’assistant demandeur recevra le résultat du Workflow.",
+              "Autres destinataires éventuels des outils : non documentés dans cette carte."
+            ],
+            "rejection_effect": "Le parcours ne démarre pas ; aucune de ses actions n’est exécutée.",
+            "reversibility": "Aucune annulation automatique des effets déjà produits n’est garantie.",
+            "schema": "agentmaurice.human_action.description/v1",
+            "scope": "Ce clic autorise le démarrage uniquement. Une autre carte sera présentée avant la première action.",
+            "source": "workflow_declaration",
+            "technical_details": [
+              "Paramètres déclarés et entrées (clés sensibles masquées) : {\"actions\":[{\"id\":\"write\",\"output_key\":\"written\",\"parameters\":{\"content\":\"{{ message }}\",\"overwrite\":false,\"path\":\"{{ path }}\"},\"require_approval\":true,\"tool\":\"dbcoroa4p5cno38qkae0_storage__mcp_storage_server--write_file\"},{\"id\":\"read\",\"output_key\":\"readback\",\"parameters\":{\"path\":\"{{ path }}\"},\"require_approval\":false,\"tool\":\"dbcoroa4p5cno38qkae0_storage__mcp_storage_server--read_file\"}],\"approval_policy\":\"Chaque étape protégée demande une décision humaine distincte avant son effet.\",\"input\":{\"message\":\"Preuve fictive Codex Desktop AGENT-613 refusée\",\"path\":\"/qualification/codex-desktop-refused.txt\"}}"
+            ],
+            "workflow_description": "Non documenté par le Workflow versionné",
+            "workflow_ref": "workflow:dbcoroa4p5cno38qkae0/desktop-approved-proof@1",
+            "workflow_title": "Preuve fictive Desktop après accord humain distinct"
+          },
+          "approval_surface": "personal",
+          "approver": {
+            "approval_surface": "personal",
+            "distinct_from_assistant": true,
+            "issuer": "agentmaurice.local_principal/v1",
+            "kind": "human",
+            "subject": "local-operator"
+          },
+          "expires_at": "2026-10-22T07:07:05.301314+02:00",
+          "kind": "pending_action",
+          "plan_hash": "2e939ade149431950801c0051546c1f6c274bdb91075f9613fc2e7e29f4bf5d4",
+          "ref": "pending_action:ha_dbcpcta4p5cp07nm5el0",
+          "status": "waiting"
+        }
+      }
+    },
+    {
+      "call_line": 71,
+      "turn_id": "01a161f4-6c92-7aa1-ad04-1e342d4c2a31",
+      "server": "maurice_desktop_refusal",
+      "operation": "maurice.explain",
+      "arguments": {
+        "ref": "pending_action:ha_dbcpcta4p5cp07nm5el0"
+      },
+      "result": {
+        "status": "completed",
+        "is_error": false,
+        "structured_content": {
+          "action_id": "ha_dbcpcta4p5cp07nm5el0",
+          "approval_explanation": {
+            "action": "Démarrer le parcours de 2 actions décrit ci-dessous.",
+            "approval_label": "Autoriser le démarrage",
+            "consequences": "Les effets dépendent des actions et des outils du plan. Leur description ci-dessus est celle de l’auteur du Workflow.",
+            "cost": "Ce parcours local autorise uniquement les outils qualifiés sans coût.",
+            "data": [
+              "Entrées fournies au parcours ; les cibles dépendant de résultats précédents seront précisées à chaque pause.",
+              "message : Preuve fictive Codex Desktop AGENT-613 refusée",
+              "path : /qualification/codex-desktop-refused.txt"
+            ],
+            "future_gates": [
+              "Étape 1 : Action sans description : outil « dbcoroa4p5cno38qkae0_storage__mcp_storage_server--write_file »"
+            ],
+            "objective": "Non documenté par le Workflow versionné",
+            "outcome": "Restituer à l’assistant le résultat prévu par le Workflow ; le détail métier dépend de sa description déclarée.",
+            "plan_steps": [
+              "1. Action sans description : outil « dbcoroa4p5cno38qkae0_storage__mcp_storage_server--write_file » — accord distinct avant cette action",
+              "2. Action sans description : outil « dbcoroa4p5cno38qkae0_storage__mcp_storage_server--read_file »"
+            ],
+            "progress": "Aucune action de ce parcours n’a encore été exécutée.",
+            "provenance": [
+              "workflow_declaration",
+              "server_policy",
+              "plan_sha256"
+            ],
+            "recipients": [
+              "L’assistant demandeur recevra le résultat du Workflow.",
+              "Autres destinataires éventuels des outils : non documentés dans cette carte."
+            ],
+            "rejection_effect": "Le parcours ne démarre pas ; aucune de ses actions n’est exécutée.",
+            "reversibility": "Aucune annulation automatique des effets déjà produits n’est garantie.",
+            "schema": "agentmaurice.human_action.description/v1",
+            "scope": "Ce clic autorise le démarrage uniquement. Une autre carte sera présentée avant la première action.",
+            "source": "workflow_declaration",
+            "technical_details": [
+              "Paramètres déclarés et entrées (clés sensibles masquées) : {\"actions\":[{\"id\":\"write\",\"output_key\":\"written\",\"parameters\":{\"content\":\"{{ message }}\",\"overwrite\":false,\"path\":\"{{ path }}\"},\"require_approval\":true,\"tool\":\"dbcoroa4p5cno38qkae0_storage__mcp_storage_server--write_file\"},{\"id\":\"read\",\"output_key\":\"readback\",\"parameters\":{\"path\":\"{{ path }}\"},\"require_approval\":false,\"tool\":\"dbcoroa4p5cno38qkae0_storage__mcp_storage_server--read_file\"}],\"approval_policy\":\"Chaque étape protégée demande une décision humaine distincte avant son effet.\",\"input\":{\"message\":\"Preuve fictive Codex Desktop AGENT-613 refusée\",\"path\":\"/qualification/codex-desktop-refused.txt\"}}"
+            ],
+            "workflow_description": "Non documenté par le Workflow versionné",
+            "workflow_ref": "workflow:dbcoroa4p5cno38qkae0/desktop-approved-proof@1",
+            "workflow_title": "Preuve fictive Desktop après accord humain distinct"
+          },
+          "approval_surface": "personal",
+          "approver": {
+            "approval_surface": "personal",
+            "distinct_from_assistant": true,
+            "issuer": "agentmaurice.local_principal/v1",
+            "kind": "human",
+            "subject": "local-operator"
+          },
+          "decision": "rejected",
+          "expires_at": "2026-10-22T07:07:05.301314+02:00",
+          "kind": "pending_action",
+          "plan_hash": "2e939ade149431950801c0051546c1f6c274bdb91075f9613fc2e7e29f4bf5d4",
+          "ref": "pending_action:ha_dbcpcta4p5cp07nm5el0",
+          "status": "completed"
+        }
+      }
+    },
+    {
+      "call_line": 88,
+      "turn_id": "01a161f5-1b0b-7681-9883-b586a47c9532",
+      "server": "maurice_desktop_refusal",
+      "operation": "maurice.explain",
+      "arguments": {
+        "ref": "workflow:dbcoroa4p5cno38qkae0/desktop-approved-proof@1"
+      },
+      "result": {
+        "status": "failed",
+        "is_error": true,
+        "structured_content": {
+          "error": {
+            "code": "grant_invalid"
+          }
+        }
+      }
+    }
+  ],
+  "assertions": {
+    "refusal_action_id": "ha_dbcpcta4p5cp07nm5el0",
+    "rejected_pending_action": true,
+    "no_execute_after_decision_rejected": true,
+    "only_refusal_profile_called": true,
+    "grant_invalid_after_revocation": true,
+    "execute_count": 1,
+    "other_native_servers_observed": [],
+    "non_pending_workflow_refs": [
+      "workflow:dbcoroa4p5cno38qkae0/desktop-approved-proof@1"
+    ]
+  },
+  "limits": [
+    "La décision refusée est observée dans la sortie serveur ; elle ne prouve pas à elle seule l’identité d’une personne ayant cliqué.",
+    "Le fichier est une exportation réduite de la session : aucune instruction système, raisonnement, catalogue d’outils, configuration, credential ou autre session n’est inclus.",
+    "Le diagnostic post-révocation est explain uniquement et retourne grant_invalid ; aucun nouvel execute n’a été lancé."
+  ]
+}
