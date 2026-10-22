@@ -6,6 +6,7 @@ import (
 	"errors"
 	"os"
 	"os/exec"
+	"strings"
 )
 
 // Windows has no portable chmod equivalent. Use the OS ACL provider through
@@ -16,15 +17,15 @@ const privateACLScript = `$ErrorActionPreference = 'Stop'
 $p = $env:AM_PRIVATE_PATH
 if ([string]::IsNullOrWhiteSpace($p)) { throw 'missing path' }
 $isDir = Test-Path -LiteralPath $p -PathType Container
-if ($isDir) { $acl = New-Object System.Security.AccessControl.DirectorySecurity } else { $acl = New-Object System.Security.AccessControl.FileSecurity }
-$acl.SetAccessRuleProtection($true, $false)
+if ($isDir) { $acl = New-Object -TypeName System.Security.AccessControl.DirectorySecurity } else { $acl = New-Object -TypeName System.Security.AccessControl.FileSecurity }
+[void]$acl.SetAccessRuleProtection($true, $false)
 $sid = [System.Security.Principal.WindowsIdentity]::GetCurrent().User
-$acl.SetOwner($sid)
+[void]$acl.SetOwner($sid)
 $flags = [System.Security.AccessControl.InheritanceFlags]::None
 if ($isDir) { $flags = [System.Security.AccessControl.InheritanceFlags]'ContainerInherit,ObjectInherit' }
-$rule = New-Object System.Security.AccessControl.FileSystemAccessRule($sid, [System.Security.AccessControl.FileSystemRights]::FullControl, $flags, [System.Security.AccessControl.PropagationFlags]::None, [System.Security.AccessControl.AccessControlType]::Allow)
-$acl.AddAccessRule($rule)
-Set-Acl -LiteralPath $p -AclObject $acl
+$rule = New-Object -TypeName System.Security.AccessControl.FileSystemAccessRule -ArgumentList @($sid, [System.Security.AccessControl.FileSystemRights]::FullControl, $flags, [System.Security.AccessControl.PropagationFlags]::None, [System.Security.AccessControl.AccessControlType]::Allow)
+[void]$acl.AddAccessRule($rule)
+Set-Acl -LiteralPath $p -AclObject $acl | Out-Null
 Write-Output 'OK'`
 
 const checkACLScript = `$ErrorActionPreference = 'Stop'
@@ -65,7 +66,7 @@ func checkPrivate(path string, info os.FileInfo) error {
 func runACL(script, path string) error {
 	cmd := exec.Command("powershell.exe", "-NoProfile", "-NonInteractive", "-Command", script)
 	cmd.Env = append(os.Environ(), "AM_PRIVATE_PATH="+path)
-	if out, err := cmd.Output(); err != nil || string(out) != "OK\r\n" && string(out) != "OK\n" {
+	if out, err := cmd.Output(); err != nil || strings.TrimSpace(string(out)) != "OK" {
 		return errors.New("private_acl_rejected")
 	}
 	return nil
