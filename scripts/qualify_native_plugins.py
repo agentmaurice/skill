@@ -26,6 +26,7 @@ EXPECTED_TOOLS = {
     "maurice.connection_status",
     "maurice.connect",
     "maurice.connection_check",
+    "maurice.disconnect",
 }
 ANSI_ESCAPE = re.compile(r"\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])")
 GITHUB_SOURCE = re.compile(r"^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$")
@@ -250,7 +251,7 @@ def codex_smoke(codex: str, marketplace_args: list[str], scratch: Path) -> int:
         assert_plugin_data_dir(profile, "codex")
     finally:
         rpc.close()
-    print("PASS codex.mcp.connected tools=3 connection_status=disconnected")
+    print("PASS codex.mcp.connected tools=4 connection_status=disconnected")
     return 1
 
 
@@ -305,7 +306,7 @@ def claude_smoke(claude: str, marketplace: str, scratch: Path) -> int:
             raise QualificationError(f"unexpected Claude connection status: {state}")
     finally:
         rpc.close()
-    print("PASS claude.mcp.health connected tools=3 connection_status=disconnected")
+    print("PASS claude.mcp.health connected tools=4 connection_status=disconnected")
     return 1
 
 

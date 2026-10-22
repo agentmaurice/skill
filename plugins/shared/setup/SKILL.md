@@ -14,4 +14,6 @@ description: Connecter Maurice à votre One depuis Codex ou Claude Code, sans bu
 
 Une révocation (`grant_invalid`), une indisponibilité ou une incompatibilité restent des états distincts. Ne pas contourner un refus avec un autre jeton ou une autre cible. Si One ne prend pas en charge l’appairage, indiquer qu’une version compatible de One est requise ; ne pas proposer un build manuel ou une configuration cachée.
 
+Si la personne demande de changer de One ou d’abandonner une mauvaise cible, appeler `maurice.disconnect` avant une nouvelle connexion. Cet oubli est local : il ne révoque pas le droit côté One. Expliquer le résultat `authorization_may_remain_on_one` et le lien vers la cible précédente pour y refuser ou révoquer ce droit. Ne jamais oublier une connexion pour contourner un refus.
+
 Après connexion, reprendre les instructions d’usage du plugin : `maurice.search` → `maurice.explain` → `maurice.execute`, référence exacte et idempotence. Les approbations métier restent sur One et distinctes de l’autorisation de connexion.

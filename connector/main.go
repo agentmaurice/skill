@@ -138,11 +138,11 @@ func (c *connector) serve() {
 				Name string `json:"name"`
 			}
 			_ = json.Unmarshal(req.Params, &args)
-			if args.Name == "maurice.connection_check" {
+			if args.Name == "maurice.connection_check" || args.Name == "maurice.disconnect" {
 				c.mu.Lock()
 				verified := c.st.Verified
 				c.mu.Unlock()
-				if verified {
+				if verified || args.Name == "maurice.disconnect" {
 					_, _ = w.WriteString("{\"jsonrpc\":\"2.0\",\"method\":\"notifications/tools/list_changed\"}\n")
 				}
 			}
@@ -228,6 +228,7 @@ func localTools() []map[string]any {
 	return []map[string]any{
 		{"name": "maurice.connection_status", "description": "Etat redacte de la connexion One.", "inputSchema": schema(map[string]any{"type": "object", "properties": map[string]any{}, "additionalProperties": false})},
 		{"name": "maurice.connect", "description": "Demarre un pairing One explicite.", "inputSchema": schema(map[string]any{"type": "object", "properties": map[string]any{"one_url": map[string]string{"type": "string"}}, "required": []string{"one_url"}, "additionalProperties": false})},
+		{"name": "maurice.disconnect", "description": "Oublie seulement la connexion locale ou la demande en cours. Les autorisations existantes doivent être révoquées dans One.", "inputSchema": schema(map[string]any{"type": "object", "properties": map[string]any{}, "additionalProperties": false})},
 		{"name": "maurice.connection_check", "description": "Observe une fois le pairing puis verifie le catalogue.", "inputSchema": schema(map[string]any{"type": "object", "properties": map[string]any{}, "additionalProperties": false})},
 	}
 }
@@ -280,6 +281,8 @@ func (c *connector) toolCall(name string, args json.RawMessage) (any, error) {
 		return c.connect(p.OneURL)
 	case "maurice.connection_check":
 		return c.check()
+	case "maurice.disconnect":
+		return c.disconnect()
 	case "maurice.search", "maurice.explain", "maurice.execute":
 		unlock, err := acquireStateLock(c.stateDir)
 		if err != nil {
@@ -287,8 +290,11 @@ func (c *connector) toolCall(name string, args json.RawMessage) (any, error) {
 		}
 		defer unlock()
 		latest, err := loadState(c.stateDir, c.client)
+		if errors.Is(err, os.ErrNotExist) {
+			return nil, errors.New("not_connected")
+		}
 		if err != nil {
-			return nil, err
+			return nil, errors.New("state_unavailable")
 		}
 		c.mu.Lock()
 		if latest.Token != c.st.Token || latest.Endpoint != c.st.Endpoint {
@@ -352,7 +358,41 @@ func (c *connector) status() map[string]any {
 	return result
 }
 
+// disconnect abandons local credentials, including pending verifier material.
+// It never claims to revoke an authorization on an unavailable One.
+func (c *connector) disconnect() (any, error) {
+	unlock, err := acquireStateLock(c.stateDir)
+	if err != nil {
+		return nil, err
+	}
+	defer unlock()
+	latest, err := loadState(c.stateDir, c.client)
+	if err != nil && !errors.Is(err, os.ErrNotExist) {
+		return nil, errors.New("state_unavailable")
+	}
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	previous := c.st
+	c.st = state{Version: stateVersion, Client: c.client}
+	if err := c.saveLocked(); err != nil {
+		c.st = previous
+		return nil, err
+	}
+	result := map[string]any{"status": "disconnected", "client": c.client}
+	if latest.Token != "" || latest.RequestID != "" {
+		result["authorization_may_remain_on_one"] = true
+		result["previous_one_origin"] = latest.Origin
+		result["next_action"] = "Revoke or refuse the previous authorization in One; local disconnect does not revoke it."
+	}
+	return result, nil
+}
+
 func (c *connector) connect(raw string) (any, error) {
+	candidate, err := url.Parse(strings.TrimSpace(raw))
+	if err == nil && candidate != nil && candidate.Fragment == "/" && (candidate.Path == "/one" || candidate.Path == "/one/" || candidate.Path == "/maurice" || candidate.Path == "/maurice/") {
+		candidate.Fragment = ""
+		raw = candidate.String()
+	}
 	origin, err := normalizeOrigin(raw)
 	if err != nil {
 		return nil, err
