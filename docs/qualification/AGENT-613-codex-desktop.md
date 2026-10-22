@@ -1,9 +1,9 @@
 # Qualification du plugin Codex Desktop — AGENT-613
 
-Qualification locale du 22 octobre 2026 sur données fictives, encore en cours.
+Qualification locale réussie le 22 octobre 2026 sur données fictives.
 Le plugin est installé et chargé dans le client réel ; les parcours direct,
-idempotent, approuvé et révoqué sont vérifiés. Le refus d’une carte reste à
-qualifier dans un second chat, dont la création attend une autorisation.
+idempotent, approuvé, refusé et révoqué sont vérifiés dans deux chats dédiés.
+La portée est limitée aux versions et scénarios décrits ici.
 La preuve CLI historique demeure dans [son rapport](AGENT-613-codex.md).
 
 ## Client, paquet et environnement
@@ -14,7 +14,8 @@ La preuve CLI historique demeure dans [son rapport](AGENT-613-codex.md).
   `turn_context` du chat de qualification.
 - Projet local dédié `maurice-plugin`, dossier
   `/private/tmp/agent613-desktop/project`. Chat principal :
-  `01a161d4-7806-78d0-ae56-f83c773dd832`.
+  `01a161d4-7806-78d0-ae56-f83c773dd832`. Second chat autorisé pour le refus :
+  `01a161f3-1f6b-7af1-9557-590112f50e0d`.
 - Plugin privé `maurice 0.1.0`, Skill canonique `2.0.40`, source
   `64c980c6ce787c4e19bfbc7522998f9e2b4d1584`.
 - Archive SHA-256
@@ -27,10 +28,10 @@ La preuve CLI historique demeure dans [son rapport](AGENT-613-codex.md).
   `df523801ccef28cd03eb8ce4f94ca4030854d72f`. Aucun OS démarré.
   Le provider BYOK de test existe, mais les deux Workflows de stockage
   synthétiques n’utilisent aucun appel LLM AgentMaurice.
-- Deux mandats consommés, chacun limité à un seul Workflow et un seul run,
-  ont été révoqués. Le troisième, pour le refus, est limité au même Workflow,
-  un run et une heure ; émis le 22 octobre 2026, il expire à 05:38:59 UTC.
-  Son état actif décrit ici est celui de la préparation du cas.
+- Trois mandats de test révoqués après les contrôles. Deux, consommés, étaient
+  limités chacun à un seul Workflow et un seul run. Le troisième, pour le refus,
+  était limité au même Workflow, un run et une heure ; aucun run consommé.
+  Les trois connexions retournent ensuite `grant_invalid`.
   Aucun jeton n’est inclus dans les preuves publiques.
 
 ## Résultats réellement observés
@@ -45,9 +46,11 @@ La preuve CLI historique demeure dans [son rapport](AGENT-613-codex.md).
 | Accord distinct | Attente avant démarrage, carte `ha_dbcp55i4p5cp07nm5c10`, puis avant écriture, carte `ha_dbcp6aq4p5cp07nm5cng`. Le plugin explique chaque carte et s’arrête. Après les décisions du pilote, il reprend avec la même clé et distingue le résultat métier du statut de carte. |
 | Résultat approuvé | Job `dbcp6aq4p5cp07nm5c5g`, exécution `0okkje2c2ovmankg7m50`, statut `completed`, fichier `/qualification/codex-desktop-approved.txt` écrit puis relu avec le message attendu et `recorded=true`. Deux Jobs completed au total. |
 | Révocation | Après révocation par le propriétaire, les lectures natives direct et approval renvoient `isError=true`, `structuredContent.error.code=grant_invalid`. Le modèle arrête le parcours sans execute, nouvelle clé ou rebranchement. La CLI renvoie aussi exit 4 ; Jobs et fichiers restent identiques. |
-| Refus de carte | Encore en attente. Le nouveau serveur MCP du mandat de refus n’apparaît pas dans le chat existant ; le modèle s’arrête sans appel métier. Une seconde création de chat est demandée avant de poursuivre. |
+| Refus de carte | Le second chat charge le Skill et le serveur refusal, puis suit `search` → `explain` → `execute`. Carte `ha_dbcpcta4p5cp07nm5el0` en attente, refusée par le pilote autorisé dans One. Le client observe `status: completed`, `decision: rejected` et s’arrête sans execute, nouvelle clé ou cible. Fichier refusé absent, aucun nouveau Job, quota non consommé (`used_effects=0`, `remaining_effects=1`). |
+| Nettoyage du mandat refusal | Après révocation du troisième mandat, le second chat observe aussi `grant_invalid` et s’arrête. Les deux Jobs completed et les hashes des fichiers restent identiques. |
 
-Les décisions des deux cartes ont été réalisées dans la véritable interface One
+Les décisions des deux cartes d’accord et de la carte de refus ont été réalisées
+dans la véritable interface One
 par le pilote de qualification, selon l’autorisation explicite du fondateur
 pour les tests fictifs. Elles ne sont jamais soumises par le plugin. Ce test
 ne prouve pas une présence humaine ; il qualifie l’attente et la reprise du
@@ -74,7 +77,9 @@ manuellement. Voir [l’installation](../install.md#projet-dédié-dans-codex-de
 
 Le Skill ajouté apparaît dans le même chat au tour suivant, mais un nouveau
 serveur MCP ajouté au projet n’y apparaît pas. Les connexions doivent donc
-être préparées avant de créer le chat. Le mandat approval ayant consommé son
+être préparées avant de créer le chat. Le second chat expressément autorisé
+charge bien le troisième serveur et permet de terminer le refus. Le mandat
+approval ayant consommé son
 quota, le cas de refus utilise un troisième mandat avec quota disponible ;
 aucune augmentation du budget consommé ni nouvelle clé ne contourne le garde.
 
@@ -84,12 +89,13 @@ ni qualification générale du Viewer. Claude et ses sessions ne sont pas utilis
 
 ## Preuves et contrôles
 
-[La transcription native réduite](AGENT-613-codex-desktop-native.json) contient
-la provenance du client, la présence du Skill dans son contexte et les appels
-MCP structurés. Elle exclut reasoning, instructions système, catalogue tiers,
-configuration, credentials et autres sessions. Les contrôles du serveur sont
-conservés séparément : ils corroborent Jobs, quotas et fichiers, mais ne prouvent
-pas à eux seuls une provenance Desktop.
+Les transcriptions natives réduites du [premier chat](AGENT-613-codex-desktop-native.json)
+et du [second chat](AGENT-613-codex-desktop-refusal.json) contiennent la provenance
+du client, la présence du Skill dans son contexte et les appels MCP structurés.
+Elles excluent reasoning, instructions système, catalogue tiers, configuration,
+credentials et autres sessions. Les [contrôles serveur et d’installation](AGENT-613-codex-desktop-runtime.json)
+corroborent Jobs, quotas, fichiers et portée du chargement ; ils ne prouvent pas
+à eux seuls une provenance Desktop.
 
 Les deux validateurs de Skills et les 22 selftests Python de la CI réussissent
 localement. Le paquet a également été comparé : 35 fichiers canoniques sans
@@ -101,7 +107,9 @@ Exploration : `ripwire . --query='Codex plugin marketplace AGENT-613 qualificati
 
 ## Gouvernance et état de livraison
 
-AGENT-613 reste In Progress. Une admission `work:start` a réussi avant toute
+Le rapport porte la qualification. La livraison documentaire et sa clôture sont
+suivies séparément dans la PR #56 et Plane AGENT-613. Une admission `work:start`
+a réussi avant toute
 restauration. Un premier échec HTTP 429 a été repris en respectant le délai
 GitLab, avec les mêmes credentials et tous les contrôles canoniques.
 
@@ -114,7 +122,12 @@ n’est pas établi. Les preuves avant cet incident ne sont pas présentées com
 celles du One restauré.
 
 Le contrôle Cua interdit le pilotage de Codex Desktop. La création et les tests
-dans le seul chat dédié passent par les outils natifs de l’application,
+dans les deux chats dédiés passent par les outils natifs de l’application,
 explicitement autorisés par le fondateur. Aucun autre chat n’est lu ou piloté.
-La seconde création demandée, le refus, la revue finale, la CI distante et la
-clôture restent en cours. Aucune réussite complète n’est annoncée à ce stade.
+Le refus est acquis avant de finaliser la livraison. Le diff documentaire seul
+relève de l’exemption canonique de reçu de relecture adverse et de rejeu produit
+au SHA documentaire ; une revue documentaire indépendante est effectuée.
+La fusion, la CI de main, le nettoyage Git et la purge officielle du One doivent
+être vérifiés avant le passage Done par `work:closeout`. Le suivi Plane conserve
+les références CI et le résultat de cette commande. La qualification locale
+ne vaut pas déploiement ni publication du plugin.

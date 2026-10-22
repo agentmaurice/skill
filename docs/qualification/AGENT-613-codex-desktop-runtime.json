@@ -1,0 +1,293 @@
+{
+  "captured_at": "2026-10-22T04:55:38.214044+00:00",
+  "ticket": "AGENT-613",
+  "synthetic_data_only": true,
+  "installation": {
+    "plugin": "maurice@maurice-codex-desktop-613",
+    "installation_exit_code": 0,
+    "unrelated_configuration_unchanged": true,
+    "global_enabled": false,
+    "project_enabled": true,
+    "cache_exists": true,
+    "installed_files_match_source": true
+  },
+  "context_checks": [
+    {
+      "cwd": "/private/tmp/agent613-desktop/project",
+      "skill_present": true,
+      "exit_code": 0
+    },
+    {
+      "cwd": "/private/tmp/agent613-desktop/install-other-project-probe",
+      "skill_present": false,
+      "exit_code": 0
+    }
+  ],
+  "after_refusal": {
+    "stage": "refused",
+    "jobs": [
+      {
+        "job_id": "dbcp42a4p5cp07nm5ac0",
+        "organization_id": "dbcoroa4p5cno38qkabg",
+        "agent_id": "dbcoroa4p5cno38qkae0",
+        "idempotency_key": "agent-613-codex-desktop-direct-1",
+        "status": "completed",
+        "recipe_execution_id": "449i4c0mmbmuk3mco0k0",
+        "blocked_reason": null
+      },
+      {
+        "job_id": "dbcp6aq4p5cp07nm5c5g",
+        "organization_id": "dbcoroa4p5cno38qkabg",
+        "agent_id": "dbcoroa4p5cno38qkae0",
+        "idempotency_key": "agent-613-codex-desktop-approval-1",
+        "status": "completed",
+        "recipe_execution_id": "0okkje2c2ovmankg7m50",
+        "blocked_reason": null
+      }
+    ],
+    "files": {
+      "codex-desktop-seed-approval.txt": "b43475745190c81873f4fe7f77dad7e8d882c371940312114717d8ca54e8ed51",
+      "codex-desktop-approved.txt": "6c7caf56a3eb198505807b90861f24df865f38cf680770964cb341c5511d17ff",
+      "codex-desktop-seed.txt": "b43475745190c81873f4fe7f77dad7e8d882c371940312114717d8ca54e8ed51",
+      "codex-desktop-real.txt": "667f1f4100ecd09b79a21829dd93d2cad4ea3dee15e29f71bb3325165c5de688"
+    },
+    "profiles": {
+      "direct": {
+        "exit_code": 4,
+        "result": {
+          "$schema": "agentmaurice.cli_error/v2",
+          "error": {
+            "code": "grant_invalid",
+            "exit_code": 4,
+            "message": "front door grant is invalid or no longer active",
+            "retryable": false
+          },
+          "schema_version": 2
+        }
+      },
+      "approval": {
+        "exit_code": 4,
+        "result": {
+          "$schema": "agentmaurice.cli_error/v2",
+          "error": {
+            "code": "grant_invalid",
+            "exit_code": 4,
+            "message": "front door grant is invalid or no longer active",
+            "retryable": false
+          },
+          "schema_version": 2
+        }
+      },
+      "refusal": {
+        "exit_code": 0,
+        "result": {
+          "approver": {
+            "approval_surface": "personal",
+            "distinct_from_assistant": true,
+            "issuer": "agentmaurice.local_principal/v1",
+            "kind": "human",
+            "subject": "local-operator"
+          },
+          "description": "Workflow publié : desktop-approved-proof",
+          "dry_run": {
+            "executed": false,
+            "mode": "plan",
+            "steps": [
+              {
+                "requires_approval": true,
+                "tool": "dbcoroa4p5cno38qkae0_storage__mcp_storage_server--write_file",
+                "type": "tool_call"
+              },
+              {
+                "requires_approval": false,
+                "tool": "dbcoroa4p5cno38qkae0_storage__mcp_storage_server--read_file",
+                "type": "tool_call"
+              }
+            ]
+          },
+          "effect_quota": {
+            "charged_at": "admission",
+            "exhausted": false,
+            "max_effects": 1,
+            "refund_policy": "none",
+            "remaining_effects": 1,
+            "scope": "mandate",
+            "unit": "workflow_run",
+            "used_effects": 0
+          },
+          "effective_remaining_effects": 1,
+          "execution_supported": true,
+          "gesture_policy": "confirm",
+          "history_scope": "current_workflow_version_and_spec",
+          "input_schema": {
+            "additionalProperties": false,
+            "properties": {
+              "message": {
+                "maxLength": 160,
+                "type": "string"
+              },
+              "path": {
+                "pattern": "^/qualification/codex-desktop-[a-z0-9-]+\\.txt$",
+                "type": "string"
+              }
+            },
+            "required": [
+              "path",
+              "message"
+            ],
+            "type": "object"
+          },
+          "kind": "workflow",
+          "output_schema": {
+            "additionalProperties": false,
+            "properties": {
+              "message": {
+                "type": "string"
+              },
+              "path": {
+                "type": "string"
+              },
+              "recorded": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "path",
+              "message",
+              "recorded"
+            ],
+            "type": "object"
+          },
+          "plan_hash": "2e939ade149431950801c0051546c1f6c274bdb91075f9613fc2e7e29f4bf5d4",
+          "quota_chain": [
+            {
+              "exhausted": false,
+              "mandate_id": "md_dbcp6oq4p5cp07nm5eig",
+              "max_effects": 1,
+              "remaining_effects": 1,
+              "used_effects": 0
+            }
+          ],
+          "recent_executions": [
+            {
+              "execution_id": "0okkje2c2ovmankg7m50",
+              "job_id": "dbcp6aq4p5cp07nm5c5g",
+              "status": "completed",
+              "timestamp": "2026-10-22T04:38:03.058458Z",
+              "usage_summary": {
+                "cost": {
+                  "amount_minor": 0,
+                  "currency": "EUR",
+                  "status": "qualified_zero"
+                },
+                "duration_ms": 438,
+                "input_tokens": 0,
+                "llm_calls": 0,
+                "output_tokens": 0,
+                "tool_calls": 2
+              }
+            }
+          ],
+          "ref": "workflow:dbcoroa4p5cno38qkae0/desktop-approved-proof@1",
+          "sample_window": 50,
+          "title": "Preuve fictive Desktop après accord humain distinct",
+          "usage_summary": {
+            "cost": {
+              "amount_minor": 0,
+              "cost_sample_size": 1,
+              "currency": "EUR",
+              "status": "qualified_zero"
+            },
+            "duration_ms": 438,
+            "input_tokens": 0,
+            "llm_calls": 0,
+            "method": "median",
+            "output_tokens": 0,
+            "sample_size": 1,
+            "source": "agent_job_results",
+            "tool_calls": 2
+          }
+        }
+      }
+    }
+  },
+  "after_all_revocations": {
+    "stage": "revoked",
+    "jobs": [
+      {
+        "job_id": "dbcp42a4p5cp07nm5ac0",
+        "organization_id": "dbcoroa4p5cno38qkabg",
+        "agent_id": "dbcoroa4p5cno38qkae0",
+        "idempotency_key": "agent-613-codex-desktop-direct-1",
+        "status": "completed",
+        "recipe_execution_id": "449i4c0mmbmuk3mco0k0",
+        "blocked_reason": null
+      },
+      {
+        "job_id": "dbcp6aq4p5cp07nm5c5g",
+        "organization_id": "dbcoroa4p5cno38qkabg",
+        "agent_id": "dbcoroa4p5cno38qkae0",
+        "idempotency_key": "agent-613-codex-desktop-approval-1",
+        "status": "completed",
+        "recipe_execution_id": "0okkje2c2ovmankg7m50",
+        "blocked_reason": null
+      }
+    ],
+    "files": {
+      "codex-desktop-seed-approval.txt": "b43475745190c81873f4fe7f77dad7e8d882c371940312114717d8ca54e8ed51",
+      "codex-desktop-approved.txt": "6c7caf56a3eb198505807b90861f24df865f38cf680770964cb341c5511d17ff",
+      "codex-desktop-seed.txt": "b43475745190c81873f4fe7f77dad7e8d882c371940312114717d8ca54e8ed51",
+      "codex-desktop-real.txt": "667f1f4100ecd09b79a21829dd93d2cad4ea3dee15e29f71bb3325165c5de688"
+    },
+    "profiles": {
+      "direct": {
+        "exit_code": 4,
+        "result": {
+          "$schema": "agentmaurice.cli_error/v2",
+          "error": {
+            "code": "grant_invalid",
+            "exit_code": 4,
+            "message": "front door grant is invalid or no longer active",
+            "retryable": false
+          },
+          "schema_version": 2
+        }
+      },
+      "approval": {
+        "exit_code": 4,
+        "result": {
+          "$schema": "agentmaurice.cli_error/v2",
+          "error": {
+            "code": "grant_invalid",
+            "exit_code": 4,
+            "message": "front door grant is invalid or no longer active",
+            "retryable": false
+          },
+          "schema_version": 2
+        }
+      },
+      "refusal": {
+        "exit_code": 4,
+        "result": {
+          "$schema": "agentmaurice.cli_error/v2",
+          "error": {
+            "code": "grant_invalid",
+            "exit_code": 4,
+            "message": "front door grant is invalid or no longer active",
+            "retryable": false
+          },
+          "schema_version": 2
+        }
+      }
+    }
+  },
+  "native_transcripts": {
+    "AGENT-613-codex-desktop-native.json": "ea6bf2ee4e075f1607b0bf267079f9c00dbd9634383972b122fb9c119f730cbb",
+    "AGENT-613-codex-desktop-refusal.json": "75d75e8ecaaebefef75e1faded3819eeffadf3c8233f99d871eca7a852882f6a"
+  },
+  "limits": [
+    "Server assertions alone do not establish Desktop provenance.",
+    "Test-driver decisions do not prove human presence.",
+    "No Desktop restart, public marketplace publication or product release qualification."
+  ]
+}
