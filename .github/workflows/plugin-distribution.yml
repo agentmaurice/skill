@@ -172,12 +172,13 @@ jobs:
             gh release create "$tag" "$RUNNER_TEMP/catalog/maurice-codex-$version.tar.gz" "$RUNNER_TEMP/catalog/maurice-claude-$version.tar.gz" "$RUNNER_TEMP/catalog/release.json" "$RUNNER_TEMP/catalog/SHA256SUMS" --draft --target "$GITHUB_SHA" --title "Maurice plugins $version" --notes "Native Codex and Claude Code plugins with guided One pairing. Source and file checksums: release.json. Requires a One supporting agentmaurice.assistant_pairing/v1."
           fi
 
-      - name: Publish catalog branch
+      - name: Stage immutable candidate catalog
         env:
           GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
           set -euo pipefail
+          echo "CANDIDATE_REF=plugin-candidates/v$PLUGIN_VERSION-$GITHUB_SHA" >> "$GITHUB_ENV"
           git config user.name 'AgentMaurice distribution'
           git config user.email 'release@agentmaurice.app'
           if git ls-remote --exit-code --heads origin plugins >/dev/null 2>&1; then
@@ -192,15 +193,17 @@ jobs:
           git -C "$RUNNER_TEMP/published" add --all
           if ! git -C "$RUNNER_TEMP/published" diff --cached --quiet; then
             git -C "$RUNNER_TEMP/published" commit -m "Publish Maurice plugins $PLUGIN_VERSION from $GITHUB_SHA"
-            git -C "$RUNNER_TEMP/published" push origin HEAD:plugins
           fi
+          candidate_sha=$(git -C "$RUNNER_TEMP/published" rev-parse HEAD)
+          echo "CANDIDATE_SHA=$candidate_sha" >> "$GITHUB_ENV"
+          git -C "$RUNNER_TEMP/published" push origin "HEAD:refs/heads/plugin-candidates/v$PLUGIN_VERSION-$GITHUB_SHA"
 
       - name: Install pinned native clients for GitHub catalog smoke
         uses: actions/setup-node@v4
         with:
           node-version: '22'
 
-      - name: Run native smoke against published GitHub catalog
+      - name: Run native smoke against candidate GitHub catalog
         env:
           GH_TOKEN: ${{ github.token }}
         shell: bash
@@ -211,8 +214,20 @@ jobs:
           claude --version
           python3 scripts/qualify_native_plugins.py \
             --github-source agentmaurice/skill \
-            --ref plugins \
+            --ref "$CANDIDATE_REF" \
             --scratch "$RUNNER_TEMP/published-native-smoke"
+
+      # The supported install channel moves only after the exact candidate was
+      # installed from GitHub by both clients. Fast-forward-only promotion also
+      # refuses a concurrent change to the existing public catalog.
+      - name: Promote tested candidate to public catalog
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C "$RUNNER_TEMP/published" rev-parse HEAD)" = "$CANDIDATE_SHA"
+          git -C "$RUNNER_TEMP/published" push origin "$CANDIDATE_SHA:refs/heads/plugins"
 
       - name: Finalize release after GitHub catalog smoke
         env:
