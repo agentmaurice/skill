@@ -11,7 +11,6 @@ import (
 	"flag"
 	"fmt"
 	"io"
-	"net"
 	"net/http"
 	"net/url"
 	"os"
@@ -282,13 +281,33 @@ func (c *connector) toolCall(name string, args json.RawMessage) (any, error) {
 	case "maurice.connection_check":
 		return c.check()
 	case "maurice.search", "maurice.explain", "maurice.execute":
+		unlock, err := acquireStateLock(c.stateDir)
+		if err != nil {
+			return nil, err
+		}
+		defer unlock()
+		latest, err := loadState(c.stateDir, c.client)
+		if err != nil {
+			return nil, err
+		}
 		c.mu.Lock()
+		if latest.Token != c.st.Token || latest.Endpoint != c.st.Endpoint {
+			c.st = latest
+		}
 		ok := c.st.Token != ""
 		c.mu.Unlock()
 		if !ok {
 			return nil, errors.New("not_connected")
 		}
-		return c.remoteTool(name, args)
+		value, err := c.remoteTool(name, args)
+		if err != nil {
+			c.revokeOnGrantInvalid(err)
+			return nil, err
+		}
+		if failure := toolFailure(value); failure != nil {
+			c.revokeOnGrantInvalid(failure)
+		}
+		return value, nil
 	default:
 		return nil, errors.New("tool_not_found")
 	}
@@ -400,6 +419,9 @@ func validatePairStart(out struct {
 }, origin string) error {
 	if out.Schema != "agentmaurice.assistant_pairing/v1" || len(out.RequestID) != 43 || out.UserCode == "" || out.OneOrigin == "" {
 		return errors.New("invalid_pairing_start")
+	}
+	if len(out.UserCode) != 8 || strings.IndexFunc(out.UserCode, func(r rune) bool { return !(r >= 'A' && r <= 'Z' || r >= '0' && r <= '9') }) >= 0 {
+		return errors.New("invalid_pairing_user_code")
 	}
 	if b, e := base64.RawURLEncoding.DecodeString(out.RequestID); e != nil || len(b) != 32 {
 		return errors.New("invalid_pairing_request_id")
@@ -643,7 +665,11 @@ func (c *connector) remoteRPC(method string, params any) (rpcResponse, error) {
 		return res, errors.New("invalid_mcp_response_id")
 	}
 	if res.Error != nil {
-		return res, errors.New(safeRemoteCode(res.Error.Message))
+		code := safeRemoteCode(res.Error.Message)
+		if code == "grant_invalid" {
+			return res, errors.New("grant_invalid:remote_grant_invalid")
+		}
+		return res, errors.New(code)
 	}
 	if len(res.Result) == 0 {
 		return res, errors.New("invalid_mcp_response")
@@ -822,11 +848,9 @@ func normalizeOrigin(raw string) (string, error) {
 	}
 	u.Path = ""
 	u.RawPath = ""
+	u.Host = strings.ToLower(u.Host)
 	if u.Scheme == "http" {
-		host, _, _ := net.SplitHostPort(u.Host)
-		if host == "" {
-			host = u.Host
-		}
+		host := u.Hostname()
 		if host != "localhost" && host != "127.0.0.1" && host != "::1" {
 			return "", errors.New("http_requires_loopback")
 		}
@@ -853,16 +877,10 @@ func validateEndpoint(raw, origin string) error {
 		return nil
 	}
 	// A local One may expose its stdio relay on another loopback port.
-	host, _, _ := net.SplitHostPort(u.Host)
-	if host == "" {
-		host = u.Host
-	}
+	host := strings.ToLower(u.Hostname())
 	if u.Scheme == "http" && (host == "localhost" || host == "127.0.0.1" || host == "::1") {
 		originURL, _ := url.Parse(allowed)
-		originHost, _, _ := net.SplitHostPort(originURL.Host)
-		if originHost == "" {
-			originHost = originURL.Host
-		}
+		originHost := originURL.Hostname()
 		if originHost == host {
 			return nil
 		}
@@ -874,6 +892,15 @@ func resolveStateDir(client, explicit string) (string, error) {
 	dir := explicit
 	if dir == "" && os.Getenv("MAURICE_CONNECTOR_STATE_ROOT") != "" {
 		dir = filepath.Join(os.Getenv("MAURICE_CONNECTOR_STATE_ROOT"), client)
+	}
+	if dir == "" {
+		key := "PLUGIN_DATA"
+		if client == "claude-code" {
+			key = "CLAUDE_PLUGIN_DATA"
+		}
+		if root := os.Getenv(key); root != "" {
+			dir = filepath.Join(root, "connector", client)
+		}
 	}
 	if dir == "" {
 		base, err := os.UserConfigDir()

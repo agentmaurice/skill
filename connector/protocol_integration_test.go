@@ -85,7 +85,7 @@ func TestRealEnvelopeAndHTTP200Revocation(t *testing.T) {
 		t.Fatal(err)
 	}
 	revoked.Store(true)
-	value, err = fresh.call("tools/call", json.RawMessage(`{"name":"maurice.connection_check","arguments":{}}`))
+	value, err = fresh.call("tools/call", json.RawMessage(`{"name":"maurice.search","arguments":{}}`))
 	if err != nil {
 		t.Fatal(err)
 	}

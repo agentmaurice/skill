@@ -13,7 +13,7 @@ import (
 )
 
 func TestNormalizeOrigin(t *testing.T) {
-	for _, tc := range []struct{ in, want string }{{"http://127.0.0.1:8080/one/", "http://127.0.0.1:8080"}, {"https://one.example/maurice", "https://one.example"}} {
+	for _, tc := range []struct{ in, want string }{{"http://127.0.0.1:8080/one/", "http://127.0.0.1:8080"}, {"https://one.example/maurice", "https://one.example"}, {"https://One.Example", "https://one.example"}, {"http://[::1]/one", "http://[::1]"}} {
 		got, err := normalizeOrigin(tc.in)
 		if err != nil || got != tc.want {
 			t.Fatalf("%q -> %q, %v", tc.in, got, err)
@@ -22,6 +22,23 @@ func TestNormalizeOrigin(t *testing.T) {
 	for _, in := range []string{"http://example.com", "https://u:p@example.com", "https://example.com/?x=1", "https://example.com/other", "ftp://example.com"} {
 		if _, err := normalizeOrigin(in); err == nil {
 			t.Fatalf("accepted %q", in)
+		}
+	}
+}
+
+func TestNativePluginDataKeepsEachClientInItsHostProfile(t *testing.T) {
+	root := privateTestDir(t)
+	t.Setenv("MAURICE_CONNECTOR_STATE_ROOT", "")
+	t.Setenv("PLUGIN_DATA", filepath.Join(root, "codex-profile"))
+	t.Setenv("CLAUDE_PLUGIN_DATA", filepath.Join(root, "claude-profile"))
+	for _, client := range []string{"codex", "claude-code"} {
+		dir, err := resolveStateDir(client, "")
+		profile := "codex-profile"
+		if client == "claude-code" {
+			profile = "claude-profile"
+		}
+		if err != nil || dir != filepath.Join(root, profile, "connector", client) {
+			t.Fatalf("native %s state: %q, %v", client, dir, err)
 		}
 	}
 }
@@ -47,7 +64,7 @@ func TestPairingAndSinglePoll(t *testing.T) {
 		if r.URL.Path == "/one/api/assistant-pairing/start" {
 			w.Header().Set("Content-Type", "application/json")
 			expires := time.Now().Add(5 * time.Minute).UTC().Format(time.RFC3339)
-			_ = json.NewEncoder(w).Encode(map[string]any{"schema": "agentmaurice.assistant_pairing/v1", "request_id": strings.Repeat("A", 43), "user_code": "ABCD", "verification_uri": s.URL + "/one/#/assistant-pairing/" + strings.Repeat("A", 43) + "", "expires_at": expires, "interval_seconds": 1, "one_origin": s.URL})
+			_ = json.NewEncoder(w).Encode(map[string]any{"schema": "agentmaurice.assistant_pairing/v1", "request_id": strings.Repeat("A", 43), "user_code": "ABCD1234", "verification_uri": s.URL + "/one/#/assistant-pairing/" + strings.Repeat("A", 43) + "", "expires_at": expires, "interval_seconds": 1, "one_origin": s.URL})
 			return
 		}
 		if r.URL.Path == "/one/api/assistant-pairing/poll" {

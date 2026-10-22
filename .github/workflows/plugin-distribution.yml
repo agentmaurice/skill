@@ -90,11 +90,12 @@ jobs:
           sha256sum -c SHA256SUMS
           plugins/codex/maurice/bin/maurice-connector --version
           plugins/claude/maurice/bin/maurice-connector --version
+      - name: Preserve executable modes across artifact transfer
+        run: tar -C "$RUNNER_TEMP/catalog" -czf "$RUNNER_TEMP/maurice-plugin-catalog.tar.gz" .
       - uses: actions/upload-artifact@v4
         with:
           name: maurice-plugin-catalog
-          path: ${{ runner.temp }}/catalog
-          include-hidden-files: true
+          path: ${{ runner.temp }}/maurice-plugin-catalog.tar.gz
 
   publish:
     if: github.event_name == 'workflow_dispatch' && inputs.publish && github.ref == 'refs/heads/main'
@@ -109,7 +110,17 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: maurice-plugin-catalog
-          path: ${{ runner.temp }}/catalog
+          path: ${{ runner.temp }}
+      - name: Restore and verify the exact catalog to publish
+        run: |
+          mkdir -p "$RUNNER_TEMP/catalog"
+          tar -C "$RUNNER_TEMP/catalog" -xzf "$RUNNER_TEMP/maurice-plugin-catalog.tar.gz"
+          cd "$RUNNER_TEMP/catalog"
+          sha256sum -c SHA256SUMS
+          python3 -c 'from pathlib import Path; paths=[p for p in Path("plugins").glob("*/maurice/bin/**/*") if p.is_file()]; assert paths and all(p.stat().st_mode & 0o111 for p in paths), "Catalog executables lost their mode"'
+          version=$(python3 -c 'import json;print(json.load(open("release.json"))["version"])')
+          test "$(plugins/codex/maurice/bin/maurice-connector --version)" = "$version"
+          test "$(plugins/claude/maurice/bin/maurice-connector --version)" = "$version"
       - name: Publish immutable release and advance catalog
         env:
           GH_TOKEN: ${{ github.token }}
