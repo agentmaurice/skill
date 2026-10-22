@@ -129,7 +129,9 @@ exec "$base/$platform/maurice-connector" "$@"
         "files": hashes,
     })
     native_client = "claude-code" if client == "claude" else "codex"
-    server = {"type": "stdio", "command": "${PLUGIN_ROOT}/bin/maurice-connector", "args": ["--client", native_client]}
+    # Agent Plugins resolves contained commands relative to the plugin root.
+    # Its native loader rejects environment placeholders in executable paths.
+    server = {"type": "stdio", "command": "./bin/maurice-connector", "args": ["--client", native_client]}
     write_json(plugin / "mcp.json", {
         "$schema": "https://agent-plugins.org/schemas/1.0.0/mcp.schema.json",
         "mcpServers": {"maurice": server},
@@ -177,7 +179,7 @@ def build_codex(output: Path, connector_dir: Path | None = None) -> Path:
             "author": {"name": "AgentMaurice"},
             "skills": "./skills/",
             "interface": portable_manifest["extensions"]["com.openai"]["interface"],
-            **({"mcpServers": "./.mcp.json", "extensions": {"com.openai": {"onboardingSkill": "./skills/setup/SKILL.md"}}} if connector_dir else {}),
+            **({"mcpServers": "./mcp.json", "extensions": {"com.openai": {"onboardingSkill": "./skills/setup/SKILL.md"}}} if connector_dir else {}),
         })
         write_json(plugin / "source-attestation.json", {
             "source": "skill/agentmaurice",

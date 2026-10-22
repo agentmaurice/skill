@@ -34,7 +34,7 @@ class PluginDistribution(unittest.TestCase):
                 self.assertEqual(manifest['version'], '0.2.0')
                 mcp = json.loads((plugin / 'mcp.json').read_text())['mcpServers']['maurice']
                 self.assertEqual(mcp['args'], ['--client', 'codex' if client == 'codex' else 'claude-code'])
-                self.assertEqual(mcp['command'], '${PLUGIN_ROOT}/bin/maurice-connector')
+                self.assertEqual(mcp['command'], './bin/maurice-connector')
                 self.assertNotIn('env', mcp)
                 attestation = json.loads((plugin / 'connector-attestation.json').read_text())
                 for name, digest in attestation['files'].items():
