@@ -21,8 +21,10 @@ $sid = [System.Security.Principal.WindowsIdentity]::GetCurrent().User
 $grant = if ($isDir) { "*$($sid.Value):(OI)(CI)F" } else { "*$($sid.Value):F" }
 $system = if ($isDir) { '*S-1-5-18:(OI)(CI)F' } else { '*S-1-5-18:F' }
 $admins = if ($isDir) { '*S-1-5-32-544:(OI)(CI)F' } else { '*S-1-5-32-544:F' }
-& icacls.exe $p '/inheritance:r' '/grant:r' $grant $system $admins '/setowner' "*$($sid.Value)" | Out-Null
+& icacls.exe $p '/inheritance:r' '/grant:r' $grant $system $admins | Out-Null
 if ($LASTEXITCODE -ne 0) { throw 'icacls failed' }
+& icacls.exe $p '/setowner' "*$($sid.Value)" | Out-Null
+if ($LASTEXITCODE -ne 0) { throw 'icacls owner failed' }
 Write-Output 'OK'`
 
 const checkACLScript = `$ErrorActionPreference = 'Stop'
