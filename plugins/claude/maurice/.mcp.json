@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "maurice": {
+      "type": "stdio",
+      "command": "${CLAUDE_PLUGIN_ROOT}/bin/maurice-connector",
+      "args": [
+        "--client",
+        "claude-code"
+      ]
+    }
+  }
+}

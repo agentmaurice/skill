@@ -1,0 +1,16 @@
+{
+  "prospects": [
+    {
+      "id": "p1",
+      "kind": "new"
+    },
+    {
+      "id": "p2",
+      "kind": "existing"
+    },
+    {
+      "id": "p3",
+      "kind": "unknown"
+    }
+  ]
+}

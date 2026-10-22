@@ -1,0 +1,20 @@
+{
+  "name": "agentmaurice",
+  "interface": {
+    "displayName": "AgentMaurice"
+  },
+  "plugins": [
+    {
+      "name": "maurice",
+      "source": {
+        "source": "local",
+        "path": "./plugins/codex/maurice"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL",
+        "category": "Productivity"
+      }
+    }
+  ]
+}

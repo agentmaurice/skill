@@ -1,0 +1,35 @@
+{
+  "$schema": "agentmaurice.test_plan/v2",
+  "schema_version": 2,
+  "test_plan_id": "support-regression",
+  "cases": [
+    {
+      "id": "triage-billing-request",
+      "description": "La demande de facturation est correctement classée.",
+      "workflow": {
+        "workflow_id": "triage-request",
+        "input": {
+          "message": "Je souhaite une copie de ma facture."
+        }
+      },
+      "assertions": [
+        {
+          "type": "status",
+          "expected": "completed"
+        },
+        {
+          "type": "result_jsonpath",
+          "path": "$.classification.category",
+          "operator": "equals",
+          "expected": "billing"
+        },
+        {
+          "type": "usage_threshold",
+          "max_cost_usd": 0.05,
+          "max_tokens": 2000
+        }
+      ]
+    }
+  ]
+}
+

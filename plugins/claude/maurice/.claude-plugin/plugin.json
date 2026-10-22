@@ -1,0 +1,9 @@
+{
+  "name": "maurice",
+  "version": "0.2.1",
+  "description": "Accéder aux Workflows AgentMaurice avec un mandat explicite.",
+  "author": {
+    "name": "AgentMaurice"
+  },
+  "license": "Proprietary"
+}

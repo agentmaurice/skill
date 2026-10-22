@@ -1,0 +1,55 @@
+{
+  "$schema": "agentmaurice.workflow/v2",
+  "schema_version": 2,
+  "workflow_id": "triage-request",
+  "kind": "workflow",
+  "title": "Trier une demande",
+  "description": "Qualifie une demande de support.",
+  "version": "2.0",
+  "metadata": {
+    "labels": {
+      "domain": "support",
+      "tier": "critical"
+    },
+    "annotations": {
+      "model": "configured-by-platform",
+      "thresholds": {
+        "confidence": 0.8
+      },
+      "perimeter": [
+        "qualification"
+      ]
+    }
+  },
+  "input_schema": {
+    "type": "object",
+    "required": [
+      "message"
+    ],
+    "properties": {
+      "message": {
+        "type": "string"
+      }
+    }
+  },
+  "output_schema": {
+    "type": "object"
+  },
+  "forms": [],
+  "actions": [
+    {
+      "id": "classify",
+      "type": "llm_call",
+      "llm_prompt": "Classe la demande : {{ message }}",
+      "llm_response_format": "json",
+      "llm_max_tokens": 512,
+      "output_key": "classification",
+      "llm_response_schema": {
+        "type": "object"
+      }
+    }
+  ],
+  "output": {
+    "classification": "{{ classification }}"
+  }
+}
