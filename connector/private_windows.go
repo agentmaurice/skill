@@ -16,6 +16,7 @@ import (
 const privateACLScript = `$ErrorActionPreference = 'Stop'
 $p = $env:AM_PRIVATE_PATH
 if ([string]::IsNullOrWhiteSpace($p)) { throw 'missing path' }
+Add-Type -AssemblyName System.IO.FileSystem.AccessControl
 $isDir = Test-Path -LiteralPath $p -PathType Container
 if ($isDir) { $acl = New-Object -TypeName System.Security.AccessControl.DirectorySecurity } else { $acl = New-Object -TypeName System.Security.AccessControl.FileSecurity }
 [void]$acl.SetAccessRuleProtection($true, $false)
@@ -25,12 +26,14 @@ $flags = [System.Security.AccessControl.InheritanceFlags]::None
 if ($isDir) { $flags = [System.Security.AccessControl.InheritanceFlags]'ContainerInherit,ObjectInherit' }
 $rule = New-Object -TypeName System.Security.AccessControl.FileSystemAccessRule -ArgumentList @($sid, [System.Security.AccessControl.FileSystemRights]::FullControl, $flags, [System.Security.AccessControl.PropagationFlags]::None, [System.Security.AccessControl.AccessControlType]::Allow)
 [void]$acl.AddAccessRule($rule)
-Set-Acl -LiteralPath $p -AclObject $acl | Out-Null
+if ($isDir) { [System.IO.FileSystemAclExtensions]::SetAccessControl([System.IO.DirectoryInfo]::new($p), $acl) } else { [System.IO.FileSystemAclExtensions]::SetAccessControl([System.IO.FileInfo]::new($p), $acl) }
 Write-Output 'OK'`
 
 const checkACLScript = `$ErrorActionPreference = 'Stop'
 $p = $env:AM_PRIVATE_PATH
-$acl = Get-Acl -LiteralPath $p
+Add-Type -AssemblyName System.IO.FileSystem.AccessControl
+$isDir = Test-Path -LiteralPath $p -PathType Container
+if ($isDir) { $acl = [System.IO.FileSystemAclExtensions]::GetAccessControl([System.IO.DirectoryInfo]::new($p)) } else { $acl = [System.IO.FileSystemAclExtensions]::GetAccessControl([System.IO.FileInfo]::new($p)) }
 if (-not $acl.AreAccessRulesProtected) { throw 'inherited acl' }
 $sid = [System.Security.Principal.WindowsIdentity]::GetCurrent().User.Value
 $owner = $acl.GetOwner([System.Security.Principal.SecurityIdentifier]).Value
