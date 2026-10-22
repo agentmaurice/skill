@@ -6,8 +6,10 @@ description: Utiliser la porte MCP AgentMaurice avec un mandat explicite.
 # Utiliser Maurice
 
 Ce skill guide l'usage de la porte MCP déjà branchée au One AgentMaurice. Il
-ne crée pas de grant, ne démarre ni n'arrête le One, ne fait pas de setup et
-n'utilise jamais `maurice agent connect`.
+ne démarre ni n'arrête le One et n'utilise jamais `maurice agent connect`.
+Pour une première connexion ou une demande « Connecte Maurice à mon One »,
+utilise le parcours `setup` livré dans le plugin : `maurice.connection_status`,
+`maurice.connect`, puis `maurice.connection_check`. L’accord reste dans One.
 
 ## Parcours
 
@@ -40,13 +42,11 @@ jamais le statut de la carte en réussite métier. N'annonce une réussite
 fonctionnelle qu'après le résultat de l'opération autorisée, pas depuis le
 statut de la carte. Ne parse aucun fichier de configuration ni aucun jeton.
 
-Si la connexion MCP manque, demande seulement la cible du One et le chemin
-privé manquant. Après l'accord déjà donné, utilise explicitement
-`maurice assistant connect codex --endpoint <endpoint> --config-file <config>
---token-file <token-file>` ; ne lis jamais le contenu du fichier de jeton.
-Cette connexion réutilise un mandat existant, ne crée aucun droit et ne
-démarre aucun service. Vérifie ensuite `search` puis `explain` sur le One
-réellement visé.
+Si la connexion manque, utilise les outils de connexion du paquet publié.
+Demande seulement l’adresse de One, présente le lien et le code retournés,
+puis attends la décision de la personne. Ne demande jamais un chemin privé,
+un fichier de configuration ou un jeton. Si ces outils ne sont pas chargés,
+indique que le paquet connecté doit être installé depuis le catalogue AM.
 
 L'approbation humaine reste distincte du mandat de l'assistant. Ne demande
 jamais de secret dans le chat, ne copie pas de jeton dans un fichier partagé,

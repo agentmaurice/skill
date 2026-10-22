@@ -16,7 +16,6 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
-	"runtime"
 	"strings"
 	"sync"
 	"time"
@@ -42,8 +41,8 @@ type state struct {
 	UserCode        string `json:"user_code,omitempty"`
 	VerifyURI       string `json:"verification_uri,omitempty"`
 	PendingUntil    string `json:"pending_until,omitempty"`
-	SessionID       string `json:"session_id,omitempty"`
-	Verified        bool   `json:"verified,omitempty"`
+	SessionID       string `json:"-"`
+	Verified        bool   `json:"-"`
 	IntervalSeconds int    `json:"interval_seconds,omitempty"`
 	LastPoll        string `json:"last_poll,omitempty"`
 }
@@ -115,13 +114,18 @@ func (c *connector) serve() {
 		var req rpcRequest
 		if len(s.Bytes()) > maxMessage || json.Unmarshal(s.Bytes(), &req) != nil {
 			writeRPC(w, nil, nil, &rpcError{Code: -32700, Message: "invalid_json"})
+			w.Flush()
 			continue
 		}
-		if req.JSONRPC == "" {
-			req.JSONRPC = "2.0"
+		if req.JSONRPC != "2.0" || req.Method == "" {
+			writeRPC(w, req.ID, nil, &rpcError{Code: -32600, Message: "invalid_request"})
+			w.Flush()
+			continue
 		}
-		if len(req.ID) == 0 && strings.HasPrefix(req.Method, "notifications/") {
-			_, _ = c.call(req.Method, req.Params)
+		if len(req.ID) == 0 || string(req.ID) == "null" {
+			if strings.HasPrefix(req.Method, "notifications/") {
+				_, _ = c.call(req.Method, req.Params)
+			}
 			continue
 		}
 		res, err := c.call(req.Method, req.Params)
@@ -129,6 +133,20 @@ func (c *connector) serve() {
 			writeRPC(w, req.ID, nil, typedError(err))
 		} else {
 			writeRPC(w, req.ID, res, nil)
+		}
+		if req.Method == "tools/call" && err == nil {
+			var args struct {
+				Name string `json:"name"`
+			}
+			_ = json.Unmarshal(req.Params, &args)
+			if args.Name == "maurice.connection_check" {
+				c.mu.Lock()
+				verified := c.st.Verified
+				c.mu.Unlock()
+				if verified {
+					_, _ = w.WriteString("{\"jsonrpc\":\"2.0\",\"method\":\"notifications/tools/list_changed\"}\n")
+				}
+			}
 		}
 		w.Flush()
 	}
@@ -189,6 +207,9 @@ func (c *connector) call(method string, raw json.RawMessage) (any, error) {
 		if err != nil {
 			return toolErrorResult(err), nil
 		}
+		if p.Name == "maurice.search" || p.Name == "maurice.explain" || p.Name == "maurice.execute" {
+			return v, nil
+		}
 		return toolResult(v), nil
 	default:
 		return nil, fmt.Errorf("method_not_supported:%s", method)
@@ -200,10 +221,7 @@ func toolResult(v any) map[string]any {
 	return map[string]any{"content": []map[string]string{{"type": "text", "text": string(b)}}, "structuredContent": v}
 }
 func toolErrorResult(err error) map[string]any {
-	code := "tool_error"
-	if strings.HasPrefix(err.Error(), "grant_invalid:") {
-		code = "grant_invalid"
-	}
+	code := safeRemoteCode(strings.SplitN(err.Error(), ":", 2)[0])
 	return map[string]any{"content": []map[string]string{{"type": "text", "text": err.Error()}}, "structuredContent": map[string]any{"code": code, "message": err.Error()}, "isError": true}
 }
 
@@ -218,15 +236,21 @@ func schema(v map[string]any) map[string]any { return v }
 
 func (c *connector) toolsList() (any, error) {
 	c.mu.Lock()
-	connected := c.st.Token != "" && c.st.Endpoint != "" && c.st.Verified
+	connected := c.st.Token != "" && c.st.Endpoint != ""
+	verified := c.st.Verified
 	c.mu.Unlock()
 	t := localTools()
+	if connected && !verified {
+		if _, err := c.check(); err != nil {
+			return map[string]any{"tools": t}, nil
+		}
+	}
 	if !connected {
 		return map[string]any{"tools": t}, nil
 	}
 	remote, err := c.remoteRPC("tools/list", nil)
 	if err != nil {
-		return nil, err
+		return map[string]any{"tools": t}, nil
 	}
 	var obj struct {
 		Tools []map[string]any `json:"tools"`
@@ -240,6 +264,12 @@ func (c *connector) toolsList() (any, error) {
 func (c *connector) toolCall(name string, args json.RawMessage) (any, error) {
 	switch name {
 	case "maurice.connection_status":
+		c.mu.Lock()
+		hasToken := c.st.Token != ""
+		c.mu.Unlock()
+		if hasToken {
+			return c.check()
+		}
 		return c.status(), nil
 	case "maurice.connect":
 		var p struct {
@@ -268,6 +298,9 @@ func (c *connector) status() map[string]any {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 	if st, err := loadState(c.stateDir, c.client); err == nil {
+		if st.Token == c.st.Token && st.Endpoint == c.st.Endpoint {
+			st.Verified, st.SessionID = c.st.Verified, c.st.SessionID
+		}
 		c.st = st
 	}
 	result := map[string]any{"client": c.client, "status": "disconnected"}
@@ -306,11 +339,16 @@ func (c *connector) connect(raw string) (any, error) {
 		c.mu.Lock()
 		c.st = st
 		c.mu.Unlock()
+	} else if !errors.Is(e, os.ErrNotExist) {
+		return nil, e
 	}
 	c.mu.Lock()
 	defer c.mu.Unlock()
 	if c.st.Token != "" {
 		return nil, errors.New("active_connection")
+	}
+	if c.st.RequestID != "" && !parseTime(c.st.PendingUntil).After(time.Now()) {
+		c.st.RequestID, c.st.Verifier = "", ""
 	}
 	if c.st.RequestID != "" && c.st.Token == "" && c.st.Origin != origin {
 		return nil, errors.New("active_pairing")
@@ -360,8 +398,11 @@ func validatePairStart(out struct {
 	OneOrigin       string `json:"one_origin"`
 	IntervalSeconds int    `json:"interval_seconds"`
 }, origin string) error {
-	if out.Schema != "agentmaurice.assistant_pairing/v1" || out.RequestID == "" || out.UserCode == "" || out.OneOrigin == "" {
+	if out.Schema != "agentmaurice.assistant_pairing/v1" || len(out.RequestID) != 43 || out.UserCode == "" || out.OneOrigin == "" {
 		return errors.New("invalid_pairing_start")
+	}
+	if b, e := base64.RawURLEncoding.DecodeString(out.RequestID); e != nil || len(b) != 32 {
+		return errors.New("invalid_pairing_request_id")
 	}
 	o, err := normalizeOrigin(out.OneOrigin)
 	if err != nil || o != origin {
@@ -372,7 +413,7 @@ func validatePairStart(out struct {
 		return errors.New("invalid_verification_uri")
 	}
 	vo, err := normalizeOrigin(u.Scheme + "://" + u.Host)
-	if err != nil || vo != origin || !strings.HasPrefix(u.Path, "/one/") {
+	if err != nil || vo != origin || u.Path != "/one/" || u.Fragment != "/assistant-pairing/"+out.RequestID {
 		return errors.New("invalid_verification_uri")
 	}
 	if t, err := time.Parse(time.RFC3339, out.ExpiresAt); err != nil || !t.After(time.Now()) || t.After(time.Now().Add(15*time.Minute)) {
@@ -391,6 +432,8 @@ func (c *connector) check() (any, error) {
 		c.mu.Lock()
 		c.st = st
 		c.mu.Unlock()
+	} else if !errors.Is(e, os.ErrNotExist) {
+		return nil, e
 	}
 	c.mu.Lock()
 	if c.st.Token != "" {
@@ -420,7 +463,10 @@ func (c *connector) check() (any, error) {
 		return nil, errors.New("poll_interval_not_elapsed")
 	}
 	c.st.LastPoll = time.Now().UTC().Format(time.RFC3339Nano)
-	_ = c.saveLocked()
+	if err := c.saveLocked(); err != nil {
+		c.mu.Unlock()
+		return nil, err
+	}
 	c.mu.Unlock()
 	err = c.httpJSON(origin+"/one/api/assistant-pairing/poll", body, "", &out)
 	if err != nil {
@@ -438,7 +484,7 @@ func (c *connector) check() (any, error) {
 		}
 		return map[string]any{"status": out.Status}, nil
 	}
-	if out.Token == "" || out.Endpoint == "" {
+	if out.Schema != "agentmaurice.assistant_pairing/v1" || out.Token == "" || out.Endpoint == "" || out.GrantID == "" || !parseTime(out.ExpiresAt).After(time.Now()) {
 		return nil, errors.New("invalid_pairing_result")
 	}
 	if out.OneOrigin != "" {
@@ -463,23 +509,11 @@ func (c *connector) check() (any, error) {
 	return c.status(), nil
 }
 
-func acquireStateLock(dir string) (func(), error) {
-	path := filepath.Join(dir, ".lock")
-	for i := 0; i < 80; i++ {
-		f, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0600)
-		if err == nil {
-			_ = f.Close()
-			return func() { _ = os.Remove(path) }, nil
-		}
-		if !errors.Is(err, os.ErrExist) {
-			return nil, err
-		}
-		time.Sleep(25 * time.Millisecond)
-	}
-	return nil, errors.New("state_locked")
-}
-
 func (c *connector) proveConnection() (any, error) {
+	c.mu.Lock()
+	c.st.Verified = false
+	c.st.SessionID = ""
+	c.mu.Unlock()
 	init, err := c.remoteRPC("initialize", map[string]any{"protocolVersion": "2025-06-18", "capabilities": map[string]any{}, "clientInfo": map[string]string{"name": "maurice-connector", "version": version}})
 	if err != nil {
 		c.revokeOnGrantInvalid(err)
@@ -497,16 +531,35 @@ func (c *connector) proveConnection() (any, error) {
 	var cat struct {
 		Tools []map[string]any `json:"tools"`
 	}
-	if json.Unmarshal(tools.Result, &cat) != nil || len(cat.Tools) == 0 {
+	if json.Unmarshal(tools.Result, &cat) != nil || len(cat.Tools) != 3 {
 		return nil, errors.New("invalid_remote_tools_catalog")
 	}
-	if _, err := c.remoteTool("maurice.search", json.RawMessage(`{"query":""}`)); err != nil {
+	seen := map[string]bool{}
+	for _, tool := range cat.Tools {
+		name, ok := tool["name"].(string)
+		if !ok || (name != "maurice.search" && name != "maurice.explain" && name != "maurice.execute") || seen[name] {
+			return nil, errors.New("invalid_remote_tools_catalog")
+		}
+		if _, ok := tool["inputSchema"].(map[string]any); !ok {
+			return nil, errors.New("invalid_remote_tools_schema")
+		}
+		seen[name] = true
+	}
+	value, err := c.remoteTool("maurice.search", json.RawMessage(`{"query":""}`))
+	if err == nil {
+		err = toolFailure(value)
+	}
+	if err != nil {
 		c.revokeOnGrantInvalid(err)
 		return nil, err
 	}
 	c.mu.Lock()
 	c.st.Verified = true
-	_ = c.saveLocked()
+	if err := c.saveLocked(); err != nil {
+		c.st.Verified = false
+		c.mu.Unlock()
+		return nil, err
+	}
 	c.mu.Unlock()
 	return c.status(), nil
 }
@@ -530,12 +583,42 @@ func (c *connector) remoteTool(name string, args json.RawMessage) (any, error) {
 	if err := json.Unmarshal(res.Result, &v); err != nil {
 		return nil, errors.New("invalid_tool_result")
 	}
-	if obj, ok := v.(map[string]any); ok {
-		if bad, _ := obj["isError"].(bool); bad {
-			return nil, errors.New("remote_tool_error")
-		}
+	if _, ok := v.(map[string]any); !ok {
+		return nil, errors.New("invalid_tool_result")
 	}
 	return v, nil
+}
+
+func toolFailure(v any) error {
+	obj, ok := v.(map[string]any)
+	if !ok {
+		return errors.New("invalid_tool_result")
+	}
+	bad, _ := obj["isError"].(bool)
+	if !bad {
+		return nil
+	}
+	code := "remote_tool_error"
+	for _, key := range []string{"structuredContent", "structured_content"} {
+		if value, ok := obj[key].(map[string]any); ok {
+			if failure, ok := value["error"].(map[string]any); ok {
+				if text, ok := failure["code"].(string); ok {
+					code = safeRemoteCode(text)
+				}
+			}
+		}
+	}
+	if code == "grant_invalid" {
+		return errors.New("grant_invalid:remote_grant_invalid")
+	}
+	return errors.New(code)
+}
+func safeRemoteCode(code string) string {
+	switch code {
+	case "grant_invalid", "out_of_scope", "rate_limited", "quota_exhausted", "invalid_input", "approval_denied", "requires_approval", "request_failed":
+		return code
+	}
+	return "remote_tool_error"
 }
 
 func (c *connector) remoteRPC(method string, params any) (rpcResponse, error) {
@@ -556,8 +639,14 @@ func (c *connector) remoteRPC(method string, params any) (rpcResponse, error) {
 	if err := c.httpRPC(endpoint, body, token, session, &res); err != nil {
 		return res, err
 	}
+	if string(res.ID) != string(req.ID) || res.JSONRPC != "2.0" {
+		return res, errors.New("invalid_mcp_response_id")
+	}
 	if res.Error != nil {
-		return res, errors.New(res.Error.Message)
+		return res, errors.New(safeRemoteCode(res.Error.Message))
+	}
+	if len(res.Result) == 0 {
+		return res, errors.New("invalid_mcp_response")
 	}
 	return res, nil
 }
@@ -583,13 +672,6 @@ func (c *connector) httpRPC(endpoint string, body []byte, token, session string,
 		return err
 	}
 	defer resp.Body.Close()
-	b, err := io.ReadAll(io.LimitReader(resp.Body, maxMessage+1))
-	if err != nil {
-		return err
-	}
-	if len(b) > maxMessage {
-		return errors.New("response_too_large")
-	}
 	if resp.StatusCode == http.StatusUnauthorized {
 		return errors.New("grant_invalid:remote_grant_invalid")
 	}
@@ -599,8 +681,9 @@ func (c *connector) httpRPC(endpoint string, body []byte, token, session string,
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
 		return fmt.Errorf("remote_http_%d", resp.StatusCode)
 	}
-	if strings.Contains(resp.Header.Get("Content-Type"), "text/event-stream") {
-		b = sseData(b)
+	b, err := readRPCBody(resp)
+	if err != nil {
+		return err
 	}
 	if json.Unmarshal(b, out) != nil {
 		return errors.New("invalid_mcp_response")
@@ -608,10 +691,52 @@ func (c *connector) httpRPC(endpoint string, body []byte, token, session string,
 	if sid := resp.Header.Get("Mcp-Session-Id"); sid != "" {
 		c.mu.Lock()
 		c.st.SessionID = sid
-		_ = c.saveLocked()
 		c.mu.Unlock()
 	}
 	return nil
+}
+
+func readRPCBody(resp *http.Response) ([]byte, error) {
+	if !strings.Contains(resp.Header.Get("Content-Type"), "text/event-stream") {
+		b, err := io.ReadAll(io.LimitReader(resp.Body, maxMessage+1))
+		if err != nil {
+			return nil, err
+		}
+		if len(b) > maxMessage {
+			return nil, errors.New("response_too_large")
+		}
+		return b, nil
+	}
+	scanner := bufio.NewScanner(io.LimitReader(resp.Body, maxMessage+1))
+	scanner.Buffer(make([]byte, 4096), maxMessage)
+	var data []string
+	size := 0
+	for scanner.Scan() {
+		line := scanner.Text()
+		size += len(line) + 1
+		if size > maxMessage {
+			return nil, errors.New("response_too_large")
+		}
+		if line == "" && len(data) > 0 {
+			b := []byte(strings.Join(data, "\n"))
+			data = nil
+			var reply rpcResponse
+			if json.Unmarshal(b, &reply) == nil && len(reply.ID) > 0 {
+				return b, nil
+			}
+			continue
+		}
+		if strings.HasPrefix(line, "data:") {
+			data = append(data, strings.TrimPrefix(strings.TrimPrefix(line, "data:"), " "))
+		}
+	}
+	if err := scanner.Err(); err != nil {
+		return nil, errors.New("invalid_mcp_stream")
+	}
+	if len(data) > 0 {
+		return []byte(strings.Join(data, "\n")), nil
+	}
+	return nil, errors.New("missing_mcp_reply")
 }
 
 var httpClient = &http.Client{Timeout: 10 * time.Second, CheckRedirect: func(_ *http.Request, _ []*http.Request) error { return errors.New("redirect_refused") }}
@@ -653,10 +778,24 @@ func (c *connector) httpJSON(endpoint string, body []byte, token string, out any
 	return nil
 }
 func sseData(b []byte) []byte {
-	for _, line := range strings.Split(string(b), "\n") {
-		if strings.HasPrefix(line, "data:") {
-			return []byte(strings.TrimSpace(strings.TrimPrefix(line, "data:")))
+	var data []string
+	for _, line := range strings.Split(strings.ReplaceAll(string(b), "\r\n", "\n"), "\n") {
+		if line == "" {
+			if len(data) > 0 {
+				candidate := []byte(strings.Join(data, "\n"))
+				if json.Valid(candidate) {
+					return candidate
+				}
+				data = nil
+			}
+			continue
 		}
+		if strings.HasPrefix(line, "data:") {
+			data = append(data, strings.TrimPrefix(strings.TrimPrefix(line, "data:"), " "))
+		}
+	}
+	if len(data) > 0 {
+		return []byte(strings.Join(data, "\n"))
 	}
 	return b
 }
@@ -733,6 +872,9 @@ func validateEndpoint(raw, origin string) error {
 
 func resolveStateDir(client, explicit string) (string, error) {
 	dir := explicit
+	if dir == "" && os.Getenv("MAURICE_CONNECTOR_STATE_ROOT") != "" {
+		dir = filepath.Join(os.Getenv("MAURICE_CONNECTOR_STATE_ROOT"), client)
+	}
 	if dir == "" {
 		base, err := os.UserConfigDir()
 		if err != nil {
@@ -740,50 +882,124 @@ func resolveStateDir(client, explicit string) (string, error) {
 		}
 		dir = filepath.Join(base, "agentmaurice", "connector", client)
 	}
-	if err := os.MkdirAll(dir, 0700); err != nil {
+	dir, err := filepath.Abs(dir)
+	if err != nil {
 		return "", err
 	}
+	if err = checkStateParents(dir); err != nil {
+		return "", err
+	}
+	_, statErr := os.Lstat(dir)
+	if statErr != nil && !errors.Is(statErr, os.ErrNotExist) {
+		return "", statErr
+	}
+	if errors.Is(statErr, os.ErrNotExist) {
+		if err = os.MkdirAll(dir, 0700); err != nil {
+			return "", err
+		}
+		if err = makePrivate(dir, true); err != nil {
+			return "", err
+		}
+	}
 	info, err := os.Lstat(dir)
-	if err != nil || !info.IsDir() || info.Mode()&os.ModeSymlink != 0 {
+	if err != nil || !info.IsDir() {
 		return "", errors.New("unsafe_state_dir")
 	}
-	if info.Mode().Perm()&0077 != 0 {
-		return "", errors.New("state_dir_must_be_private")
+	if err = checkPrivate(dir, info); err != nil {
+		return "", err
 	}
 	return dir, nil
+}
+func checkStateParents(dir string) error {
+	for path := filepath.Clean(dir); ; path = filepath.Dir(path) {
+		info, err := os.Lstat(path)
+		if err != nil && !errors.Is(err, os.ErrNotExist) {
+			return err
+		}
+		if err == nil && info.Mode()&os.ModeSymlink != 0 {
+			// macOS system aliases, before any application-owned path.
+			if path != "/var" && path != "/tmp" {
+				return errors.New("unsafe_state_path_symlink")
+			}
+		}
+		if filepath.Dir(path) == path {
+			break
+		}
+	}
+	return nil
 }
 func statePath(dir, client string) string { return filepath.Join(dir, client+".json") }
 func loadState(dir, client string) (state, error) {
 	var st state
-	b, err := os.ReadFile(statePath(dir, client))
+	path := statePath(dir, client)
+	info, err := os.Lstat(path)
+	if err != nil {
+		return st, err
+	}
+	if err = checkPrivate(path, info); err != nil || !info.Mode().IsRegular() {
+		return st, errors.New("unsafe_state_file")
+	}
+	f, err := os.Open(path)
+	if err != nil {
+		return st, err
+	}
+	defer f.Close()
+	opened, err := f.Stat()
+	if err != nil || !os.SameFile(info, opened) {
+		return st, errors.New("state_file_changed")
+	}
+	b, err := io.ReadAll(io.LimitReader(f, maxMessage+1))
 	if err != nil {
 		return st, err
 	}
 	if len(b) > maxMessage || json.Unmarshal(b, &st) != nil || st.Client != client || st.Version != stateVersion {
 		return st, errors.New("invalid_state")
 	}
+	st.Verified = false
+	st.SessionID = ""
 	return st, nil
 }
 func (c *connector) saveLocked() error {
-	b, _ := json.MarshalIndent(c.st, "", "  ")
-	b = append(b, '\n')
-	tmp := statePath(c.stateDir, c.client) + ".tmp"
-	f, err := os.OpenFile(tmp, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0600)
+	if err := checkStateParents(c.stateDir); err != nil {
+		return err
+	}
+	info, err := os.Lstat(c.stateDir)
 	if err != nil {
 		return err
 	}
-	if _, err = f.Write(b); err == nil {
+	if err = checkPrivate(c.stateDir, info); err != nil {
+		return err
+	}
+	path := statePath(c.stateDir, c.client)
+	if existing, err := os.Lstat(path); err == nil {
+		if err = checkPrivate(path, existing); err != nil {
+			return err
+		}
+	} else if !errors.Is(err, os.ErrNotExist) {
+		return err
+	}
+	b, err := json.Marshal(c.st)
+	if err != nil {
+		return errors.New("invalid_state")
+	}
+	f, err := os.CreateTemp(c.stateDir, "."+c.client+"-*.tmp")
+	if err != nil {
+		return err
+	}
+	tmp := f.Name()
+	defer os.Remove(tmp)
+	if err = makePrivate(tmp, false); err == nil {
+		_, err = f.Write(append(b, '\n'))
+	}
+	if err == nil {
 		err = f.Sync()
 	}
-	if closeErr := f.Close(); err == nil {
+	closeErr := f.Close()
+	if err == nil {
 		err = closeErr
 	}
 	if err != nil {
-		_ = os.Remove(tmp)
 		return err
 	}
-	return os.Rename(tmp, statePath(c.stateDir, c.client))
+	return os.Rename(tmp, path)
 }
-
-// Keep runtime in the binary metadata so cross-compilation does not require a client runtime.
-var _ = runtime.GOOS

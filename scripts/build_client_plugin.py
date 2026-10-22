@@ -12,6 +12,7 @@ import subprocess
 import sys
 import tarfile
 import tempfile
+import hashlib
 from urllib.parse import urlparse
 from pathlib import Path
 
@@ -19,6 +20,7 @@ ROOT = Path(__file__).resolve().parents[1]
 CANONICAL = ROOT / "skill" / "agentmaurice"
 PLUGIN_NAME = "maurice"
 PLUGIN_VERSION = "0.1.0"
+CONNECTED_PLUGIN_VERSION = "0.2.0"
 PLUGIN_SCHEMA = "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json"
 PLUGIN_DESCRIPTION = "Accéder aux Workflows AgentMaurice avec un mandat explicite."
 
@@ -86,7 +88,61 @@ def write_json(path: Path, value: object) -> None:
     path.write_text(json.dumps(value, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
 
-def build_codex(output: Path) -> Path:
+def package_connector(plugin: Path, connector_dir: Path, client: str) -> None:
+    """Copy CI-built executables; installation never builds or downloads code."""
+    if not connector_dir.is_dir() or connector_dir.is_symlink():
+        fail("--connector-dir doit désigner les binaires construits par la CI")
+    ensure_no_symlinks(connector_dir)
+    hashes = {}
+    for platform in ("darwin-arm64", "darwin-amd64", "linux-amd64", "linux-arm64", "windows-amd64"):
+        name = "maurice-connector.exe" if platform.startswith("windows-") else "maurice-connector"
+        source = connector_dir / platform / name
+        if not source.is_file() or source.stat().st_size == 0:
+            fail(f"connecteur absent ou vide pour {platform}")
+        target = plugin / "bin" / platform / name
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(source, target)
+        target.chmod(0o755)
+        hashes[str(target.relative_to(plugin))] = hashlib.sha256(target.read_bytes()).hexdigest()
+    launcher = plugin / "bin" / "maurice-connector"
+    launcher.write_text('''#!/bin/sh
+set -eu
+case "$(uname -s):$(uname -m)" in
+  Darwin:arm64) platform=darwin-arm64 ;;
+  Darwin:x86_64) platform=darwin-amd64 ;;
+  Linux:aarch64|Linux:arm64) platform=linux-arm64 ;;
+  Linux:x86_64|Linux:amd64) platform=linux-amd64 ;;
+  *) echo 'Maurice: unsupported platform; use a supported native package.' >&2; exit 1 ;;
+esac
+base=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+exec "$base/$platform/maurice-connector" "$@"
+''', encoding="utf-8")
+    launcher.chmod(0o755)
+    # Windows CreateProcess resolves the extensionless command to this .exe.
+    shutil.copyfile(plugin / "bin/windows-amd64/maurice-connector.exe", plugin / "bin/maurice-connector.exe")
+    (plugin / "bin/maurice-connector.exe").chmod(0o755)
+    for path in (launcher, plugin / "bin/maurice-connector.exe"):
+        hashes[str(path.relative_to(plugin))] = hashlib.sha256(path.read_bytes()).hexdigest()
+    write_json(plugin / "connector-attestation.json", {
+        "schema": "agentmaurice.connector_distribution/v1",
+        "version": CONNECTED_PLUGIN_VERSION,
+        "files": hashes,
+    })
+    native_client = "claude-code" if client == "claude" else "codex"
+    server = {"type": "stdio", "command": "${PLUGIN_ROOT}/bin/maurice-connector", "args": ["--client", native_client]}
+    write_json(plugin / "mcp.json", {
+        "$schema": "https://agent-plugins.org/schemas/1.0.0/mcp.schema.json",
+        "mcpServers": {"maurice": server},
+    })
+    write_json(plugin / ".mcp.json", {"mcpServers": {"maurice": {
+        **server, "command": "${CLAUDE_PLUGIN_ROOT}/bin/maurice-connector",
+    }}})
+    setup = plugin / "skills/setup"
+    setup.mkdir(parents=True, exist_ok=True)
+    shutil.copyfile(ROOT / "plugins/shared/setup/SKILL.md", setup / "SKILL.md")
+
+
+def build_codex(output: Path, connector_dir: Path | None = None) -> Path:
     manifest = validate_canonical()
     assert_output(output)
     template = ROOT / "plugins" / "codex" / "use-maurice" / "SKILL.md"
@@ -103,21 +159,25 @@ def build_codex(output: Path) -> Path:
         portable_manifest = {
             "$schema": PLUGIN_SCHEMA,
             "name": PLUGIN_NAME,
-            "version": PLUGIN_VERSION,
+            "version": CONNECTED_PLUGIN_VERSION if connector_dir else PLUGIN_VERSION,
             "description": PLUGIN_DESCRIPTION,
             "author": {"name": "AgentMaurice"},
             "license": "Proprietary",
             "keywords": ["agentmaurice", "workflow", "mcp"],
             "extensions": {"com.openai": {"interface": {"displayName": "Maurice", "developerName": "AgentMaurice", "shortDescription": "Workflows AgentMaurice", "category": "Productivity"}}},
         }
+        if connector_dir:
+            package_connector(plugin, connector_dir, "codex")
+            portable_manifest["extensions"]["com.openai"]["onboardingSkill"] = "./skills/setup/SKILL.md"
         write_json(plugin / "plugin.json", portable_manifest)
         write_json(plugin / ".codex-plugin" / "plugin.json", {
             "name": PLUGIN_NAME,
-            "version": PLUGIN_VERSION,
+            "version": portable_manifest["version"],
             "description": PLUGIN_DESCRIPTION,
             "author": {"name": "AgentMaurice"},
             "skills": "./skills/",
             "interface": portable_manifest["extensions"]["com.openai"]["interface"],
+            **({"mcpServers": "./.mcp.json", "extensions": {"com.openai": {"onboardingSkill": "./skills/setup/SKILL.md"}}} if connector_dir else {}),
         })
         write_json(plugin / "source-attestation.json", {
             "source": "skill/agentmaurice",
@@ -134,6 +194,7 @@ def build_codex(output: Path) -> Path:
             else:
                 target.parent.mkdir(parents=True, exist_ok=True)
                 shutil.copyfile(path, target)
+                target.chmod(path.stat().st_mode & 0o777)
     archive = output / f"{PLUGIN_NAME}.plugin.tar.gz"
     with archive.open("wb") as raw, gzip.GzipFile(fileobj=raw, mode="wb", mtime=0) as compressed, tarfile.open(fileobj=compressed, mode="w", format=tarfile.PAX_FORMAT) as tar:
         plugin_root = output / "plugins" / PLUGIN_NAME
@@ -150,7 +211,7 @@ def build_codex(output: Path) -> Path:
     return archive
 
 
-def build_claude(output: Path) -> Path:
+def build_claude(output: Path, connector_dir: Path | None = None) -> Path:
     manifest = validate_canonical()
     assert_output(output)
     template_root = ROOT / "plugins" / "claude" / "maurice"
@@ -170,10 +231,12 @@ def build_claude(output: Path) -> Path:
         shutil.copyfile(readme, plugin / "README.md")
         copy_tree(template_root, plugin / "skills" / "maurice")
         validate_guide_links(plugin / "skills" / "maurice", plugin)
+        if connector_dir:
+            package_connector(plugin, connector_dir, "claude")
         write_json(plugin / "plugin.json", {
             "$schema": PLUGIN_SCHEMA,
             "name": PLUGIN_NAME,
-            "version": PLUGIN_VERSION,
+            "version": CONNECTED_PLUGIN_VERSION if connector_dir else PLUGIN_VERSION,
             "description": PLUGIN_DESCRIPTION,
             "author": {"name": "AgentMaurice"},
             "license": "Proprietary",
@@ -181,7 +244,7 @@ def build_claude(output: Path) -> Path:
         })
         write_json(plugin / ".claude-plugin" / "plugin.json", {
             "name": PLUGIN_NAME,
-            "version": PLUGIN_VERSION,
+            "version": CONNECTED_PLUGIN_VERSION if connector_dir else PLUGIN_VERSION,
             "description": PLUGIN_DESCRIPTION,
             "author": {"name": "AgentMaurice"},
             "license": "Proprietary",
@@ -205,6 +268,7 @@ def build_claude(output: Path) -> Path:
             else:
                 target.parent.mkdir(parents=True, exist_ok=True)
                 shutil.copyfile(path, target)
+                target.chmod(path.stat().st_mode & 0o777)
     archive = output / f"{PLUGIN_NAME}.plugin.tar.gz"
     with archive.open("wb") as raw, gzip.GzipFile(fileobj=raw, mode="wb", mtime=0) as compressed, tarfile.open(fileobj=compressed, mode="w", format=tarfile.PAX_FORMAT) as tar:
         plugin_root = output / "plugins" / PLUGIN_NAME
@@ -221,11 +285,11 @@ def build_claude(output: Path) -> Path:
     return archive
 
 
-def build(output: Path, client: str) -> Path:
+def build(output: Path, client: str, connector_dir: Path | None = None) -> Path:
     if client == "codex":
-        return build_codex(output)
+        return build_codex(output, connector_dir)
     if client == "claude":
-        return build_claude(output)
+        return build_claude(output, connector_dir)
     fail("client non supporté: choisir codex ou claude")
 
 
@@ -233,8 +297,9 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--client", required=True)
     parser.add_argument("--output", required=True, type=Path)
+    parser.add_argument("--connector-dir", type=Path, help="CI-built native executables for the connected distribution")
     args = parser.parse_args()
-    archive = build(args.output, args.client)
+    archive = build(args.output, args.client, args.connector_dir)
     print(f"built {args.output / 'plugins' / PLUGIN_NAME}")
     print(f"archive {archive}")
 

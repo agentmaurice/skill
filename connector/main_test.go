@@ -6,6 +6,8 @@ import (
 	"net/http/httptest"
 	"os"
 	"path/filepath"
+	"runtime"
+	"strings"
 	"testing"
 	"time"
 )
@@ -37,7 +39,7 @@ func TestEndpointCannotCrossOrigin(t *testing.T) {
 }
 
 func TestPairingAndSinglePoll(t *testing.T) {
-	dir := t.TempDir()
+	dir := privateTestDir(t)
 	_ = os.Chmod(dir, 0700)
 	polls := 0
 	var s *httptest.Server
@@ -45,7 +47,7 @@ func TestPairingAndSinglePoll(t *testing.T) {
 		if r.URL.Path == "/one/api/assistant-pairing/start" {
 			w.Header().Set("Content-Type", "application/json")
 			expires := time.Now().Add(5 * time.Minute).UTC().Format(time.RFC3339)
-			_ = json.NewEncoder(w).Encode(map[string]any{"schema": "agentmaurice.assistant_pairing/v1", "request_id": "r1", "user_code": "ABCD", "verification_uri": s.URL + "/one/#/assistant-pairing/r1", "expires_at": expires, "interval_seconds": 1, "one_origin": s.URL})
+			_ = json.NewEncoder(w).Encode(map[string]any{"schema": "agentmaurice.assistant_pairing/v1", "request_id": strings.Repeat("A", 43), "user_code": "ABCD", "verification_uri": s.URL + "/one/#/assistant-pairing/" + strings.Repeat("A", 43) + "", "expires_at": expires, "interval_seconds": 1, "one_origin": s.URL})
 			return
 		}
 		if r.URL.Path == "/one/api/assistant-pairing/poll" {
@@ -61,9 +63,9 @@ func TestPairingAndSinglePoll(t *testing.T) {
 			case "initialize":
 				_ = json.NewEncoder(w).Encode(map[string]any{"jsonrpc": "2.0", "id": q.ID, "result": map[string]any{"protocolVersion": "2025-06-18"}})
 			case "tools/list":
-				_ = json.NewEncoder(w).Encode(map[string]any{"jsonrpc": "2.0", "id": q.ID, "result": map[string]any{"tools": []any{map[string]any{"name": "maurice.search", "inputSchema": map[string]any{}}}}})
+				_ = json.NewEncoder(w).Encode(map[string]any{"jsonrpc": "2.0", "id": q.ID, "result": map[string]any{"tools": []any{map[string]any{"name": "maurice.search", "inputSchema": map[string]any{"type": "object"}}, map[string]any{"name": "maurice.explain", "inputSchema": map[string]any{"type": "object"}}, map[string]any{"name": "maurice.execute", "inputSchema": map[string]any{"type": "object"}}}}})
 			case "tools/call":
-				_ = json.NewEncoder(w).Encode(map[string]any{"jsonrpc": "2.0", "id": q.ID, "result": map[string]any{"ok": true}})
+				_ = json.NewEncoder(w).Encode(map[string]any{"jsonrpc": "2.0", "id": q.ID, "result": map[string]any{"content": []any{}, "structuredContent": map[string]any{"results": []any{}}}})
 			}
 			return
 		}
@@ -115,13 +117,22 @@ func TestSSEData(t *testing.T) {
 }
 
 func TestStatePermissions(t *testing.T) {
-	dir := t.TempDir()
+	dir := privateTestDir(t)
 	c := &connector{client: "codex", stateDir: dir, st: state{Version: stateVersion, Client: "codex", Token: "x"}}
 	if err := c.saveLocked(); err != nil {
 		t.Fatal(err)
 	}
 	info, err := os.Stat(filepath.Join(dir, "codex.json"))
-	if err != nil || info.Mode().Perm() != 0600 {
+	if err != nil || (runtime.GOOS != "windows" && info.Mode().Perm() != 0600) || checkPrivate(filepath.Join(dir, "codex.json"), info) != nil {
 		t.Fatalf("state mode: %v %v", info.Mode(), err)
 	}
+}
+
+func privateTestDir(t *testing.T) string {
+	t.Helper()
+	dir, err := resolveStateDir("codex", filepath.Join(t.TempDir(), "state"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	return dir
 }

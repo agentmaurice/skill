@@ -31,7 +31,17 @@ découverte ; ne déduis jamais une cible depuis son nom affiché.
 - Ne lis jamais un fichier de jeton et ne demande jamais une valeur secrète
   dans le chat.
 
-Un changement de contexte CLI ne rebranche pas le MCP déjà connecté. Invalide les références et plans observés sur l’ancienne cible. Avant une exécution sur une autre instance, vérifie son endpoint et son mandat explicites, puis refais le préflight, `search` et `explain` sur cette connexion. Si elle manque, guide le branchement public `maurice assistant connect generic --config-file <private-mcp-config> --endpoint <endpoint> --token-file <private-token-file>` ; aucun droit nouveau n’est créé et aucun fichier global n’est remplacé implicitement. Ce branchement concerne uniquement la front door. Pour External Inception / org-builder, conserve le bootstrap MCP `amb_` et la configuration renvoyée par son propre contrat ; ne les passe pas à `assistant connect` ou `agent connect`.
+Pour une première connexion ou « Connecte Maurice à mon One », suis le
+parcours `setup` du plugin : `maurice.connection_status`, `maurice.connect`
+avec l’adresse confirmée de One, puis `maurice.connection_check` après la
+décision dans One. Aucun fichier à éditer, chemin privé ou secret à demander.
+Sans ces outils, proposer l’installation du paquet connecté depuis le
+catalogue AM ; ne pas improviser une configuration MCP manuelle.
+
+Un changement de contexte CLI ne rebranche pas le MCP. Invalide les références
+et plans de l’ancienne cible, puis vérifie la connexion explicitement choisie
+avant toute nouvelle découverte. External Inception / org-builder conserve
+son bootstrap `amb_`, distinct de ce parcours d’appairage front door.
 
 ## Accueil et usage
 

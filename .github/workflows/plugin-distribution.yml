@@ -1,0 +1,145 @@
+name: Maurice plugin distribution
+
+on:
+  pull_request:
+    paths: ['connector/**', 'plugins/**', 'scripts/build*plugin*.py', 'tests/test*plugin*.py', '.github/workflows/plugin-distribution.yml']
+  push:
+    branches: [main, 'codex/**']
+    paths: ['connector/**', 'plugins/**', 'scripts/build*plugin*.py', 'tests/test*plugin*.py', '.github/workflows/plugin-distribution.yml']
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: Publish the tested catalog and GitHub release from main
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: plugin-distribution-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  native-tests:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: connector/go.mod
+          cache: false
+      - run: go test -race -v ./...
+        working-directory: connector
+      - run: go build -trimpath -o maurice-connector .
+        working-directory: connector
+      - run: ./maurice-connector --version
+        working-directory: connector
+        shell: bash
+
+  binaries:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        target: [darwin-arm64, darwin-amd64, linux-amd64, linux-arm64, windows-amd64]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: connector/go.mod
+          cache: false
+      - name: Build standalone connector
+        shell: bash
+        env:
+          TARGET: ${{ matrix.target }}
+        run: |
+          export GOOS="${TARGET%-*}" GOARCH="${TARGET#*-}" CGO_ENABLED=0
+          filename=maurice-connector
+          if [ "$GOOS" = windows ]; then filename=maurice-connector.exe; fi
+          mkdir -p "$RUNNER_TEMP/connectors/$TARGET"
+          cd connector
+          go build -trimpath -buildvcs=false -ldflags='-s -w' -o "$RUNNER_TEMP/connectors/$TARGET/$filename" .
+      - uses: actions/upload-artifact@v4
+        with:
+          name: connector-${{ matrix.target }}
+          path: ${{ runner.temp }}/connectors
+
+  catalog:
+    needs: [native-tests, binaries]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: connector-*
+          path: ${{ runner.temp }}/connectors
+          merge-multiple: true
+      - run: python scripts/validate_v2_skill.py && python scripts/validate_diagnostic_skill.py
+      - run: python -m unittest discover -s tests -v
+      - name: Assemble both native plugins
+        run: python scripts/build_plugin_catalog.py --connector-dir "$RUNNER_TEMP/connectors" --output "$RUNNER_TEMP/catalog" --source-commit "$GITHUB_SHA"
+      - name: Verify shipped executable and checksums
+        run: |
+          cd "$RUNNER_TEMP/catalog"
+          sha256sum -c SHA256SUMS
+          plugins/codex/maurice/bin/maurice-connector --version
+          plugins/claude/maurice/bin/maurice-connector --version
+      - uses: actions/upload-artifact@v4
+        with:
+          name: maurice-plugin-catalog
+          path: ${{ runner.temp }}/catalog
+          include-hidden-files: true
+
+  publish:
+    if: github.event_name == 'workflow_dispatch' && inputs.publish && github.ref == 'refs/heads/main'
+    needs: catalog
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/download-artifact@v4
+        with:
+          name: maurice-plugin-catalog
+          path: ${{ runner.temp }}/catalog
+      - name: Publish immutable release and advance catalog
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          git merge-base --is-ancestor "$GITHUB_SHA" origin/main
+          version=$(python3 -c 'import json,os;print(json.load(open(os.environ["RUNNER_TEMP"]+"/catalog/release.json"))["version"])')
+          tag="plugin-v$version"
+          if gh release view "$tag" --json isDraft,targetCommitish > "$RUNNER_TEMP/existing-release.json" 2>/dev/null; then
+            python3 -c 'import json,os; r=json.load(open(os.environ["RUNNER_TEMP"]+"/existing-release.json")); assert r["isDraft"] and r["targetCommitish"]==os.environ["GITHUB_SHA"], "An immutable published release already exists; increment the plugin version."'
+            gh release upload "$tag" "$RUNNER_TEMP/catalog/maurice-codex-$version.tar.gz" "$RUNNER_TEMP/catalog/maurice-claude-$version.tar.gz" "$RUNNER_TEMP/catalog/release.json" "$RUNNER_TEMP/catalog/SHA256SUMS" --clobber
+          else
+            gh release create "$tag" "$RUNNER_TEMP/catalog/maurice-codex-$version.tar.gz" "$RUNNER_TEMP/catalog/maurice-claude-$version.tar.gz" "$RUNNER_TEMP/catalog/release.json" "$RUNNER_TEMP/catalog/SHA256SUMS" --draft --target "$GITHUB_SHA" --title "Maurice plugins $version" --notes "Native Codex and Claude Code plugins with guided One pairing. Source and file checksums: release.json. Requires a One supporting agentmaurice.assistant_pairing/v1."
+          fi
+          git config user.name 'AgentMaurice distribution'
+          git config user.email 'release@agentmaurice.app'
+          if git ls-remote --exit-code --heads origin plugins >/dev/null 2>&1; then
+            git fetch origin plugins
+            git worktree add "$RUNNER_TEMP/published" FETCH_HEAD
+          else
+            git worktree add --detach "$RUNNER_TEMP/published" "$GITHUB_SHA"
+            git -C "$RUNNER_TEMP/published" switch --orphan plugins
+          fi
+          find "$RUNNER_TEMP/published" -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf -- {} +
+          cp -a "$RUNNER_TEMP/catalog/." "$RUNNER_TEMP/published/"
+          git -C "$RUNNER_TEMP/published" add --all
+          if ! git -C "$RUNNER_TEMP/published" diff --cached --quiet; then
+            git -C "$RUNNER_TEMP/published" commit -m "Publish Maurice plugins $version from $GITHUB_SHA"
+            git -C "$RUNNER_TEMP/published" push origin HEAD:plugins
+          fi
+          gh release edit "$tag" --draft=false
