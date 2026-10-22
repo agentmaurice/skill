@@ -16,35 +16,36 @@ import (
 const privateACLScript = `$ErrorActionPreference = 'Stop'
 $p = $env:AM_PRIVATE_PATH
 if ([string]::IsNullOrWhiteSpace($p)) { throw 'missing path' }
-Add-Type -AssemblyName System.IO.FileSystem.AccessControl
 $isDir = Test-Path -LiteralPath $p -PathType Container
-if ($isDir) { $acl = New-Object -TypeName System.Security.AccessControl.DirectorySecurity } else { $acl = New-Object -TypeName System.Security.AccessControl.FileSecurity }
-[void]$acl.SetAccessRuleProtection($true, $false)
 $sid = [System.Security.Principal.WindowsIdentity]::GetCurrent().User
-[void]$acl.SetOwner($sid)
-$flags = [System.Security.AccessControl.InheritanceFlags]::None
-if ($isDir) { $flags = [System.Security.AccessControl.InheritanceFlags]'ContainerInherit,ObjectInherit' }
-$rule = New-Object -TypeName System.Security.AccessControl.FileSystemAccessRule -ArgumentList @($sid, [System.Security.AccessControl.FileSystemRights]::FullControl, $flags, [System.Security.AccessControl.PropagationFlags]::None, [System.Security.AccessControl.AccessControlType]::Allow)
-[void]$acl.AddAccessRule($rule)
-if ($isDir) { [System.IO.FileSystemAclExtensions]::SetAccessControl([System.IO.DirectoryInfo]::new($p), $acl) } else { [System.IO.FileSystemAclExtensions]::SetAccessControl([System.IO.FileInfo]::new($p), $acl) }
+$grant = if ($isDir) { "*$($sid.Value):(OI)(CI)F" } else { "*$($sid.Value):F" }
+$system = if ($isDir) { '*S-1-5-18:(OI)(CI)F' } else { '*S-1-5-18:F' }
+$admins = if ($isDir) { '*S-1-5-32-544:(OI)(CI)F' } else { '*S-1-5-32-544:F' }
+& icacls.exe $p '/inheritance:r' '/grant:r' $grant $system $admins '/setowner' "*$($sid.Value)" | Out-Null
+if ($LASTEXITCODE -ne 0) { throw 'icacls failed' }
 Write-Output 'OK'`
 
 const checkACLScript = `$ErrorActionPreference = 'Stop'
 $p = $env:AM_PRIVATE_PATH
-Add-Type -AssemblyName System.IO.FileSystem.AccessControl
-$isDir = Test-Path -LiteralPath $p -PathType Container
-if ($isDir) { $acl = [System.IO.FileSystemAclExtensions]::GetAccessControl([System.IO.DirectoryInfo]::new($p)) } else { $acl = [System.IO.FileSystemAclExtensions]::GetAccessControl([System.IO.FileInfo]::new($p)) }
-if (-not $acl.AreAccessRulesProtected) { throw 'inherited acl' }
+if ([string]::IsNullOrWhiteSpace($p)) { throw 'missing path' }
 $sid = [System.Security.Principal.WindowsIdentity]::GetCurrent().User.Value
-$owner = $acl.GetOwner([System.Security.Principal.SecurityIdentifier]).Value
-if ($owner -ne $sid) { throw 'wrong owner' }
-$allowed = @($sid, 'S-1-5-18', 'S-1-5-32-544')
+$tmp = [System.IO.Path]::GetTempFileName()
+Remove-Item -LiteralPath $tmp -Force
+try {
+  & icacls.exe $p '/verify' | Out-Null
+  if ($LASTEXITCODE -ne 0) { throw 'icacls verify failed' }
+  & icacls.exe $p '/save' $tmp | Out-Null
+  if ($LASTEXITCODE -ne 0) { throw 'icacls save failed' }
+  $sddl = @(Get-Content -LiteralPath $tmp | Where-Object { $_ -match '^D:' } | Select-Object -First 1)
+  if ($sddl.Count -ne 1 -or -not $sddl[0].StartsWith('D:P')) { throw 'inherited acl' }
+} finally {
+  Remove-Item -LiteralPath $tmp -Force -ErrorAction SilentlyContinue
+}
+$allowed = @($sid, 'SY', 'BA', 'S-1-5-18', 'S-1-5-32-544')
 $mine = $false
-foreach ($r in $acl.GetAccessRules($true,$true,[System.Security.Principal.SecurityIdentifier])) {
-  if ($r.AccessControlType -eq [System.Security.AccessControl.AccessControlType]::Allow) {
-    if ($allowed -notcontains $r.IdentityReference.Value) { throw 'broad acl' }
-    if ($r.IdentityReference.Value -eq $sid) { $mine = $true }
-  }
+foreach ($m in [regex]::Matches($sddl[0], '\(([^;]+);[^;]*;[^;]*;[^;]*;[^;]*;([^)]+)\)')) {
+  if ($m.Groups[1].Value -ne 'A' -or $allowed -notcontains $m.Groups[2].Value) { throw 'broad acl' }
+  if ($m.Groups[2].Value -eq $sid) { $mine = $true }
 }
 if (-not $mine) { throw 'owner access missing' }
 Write-Output 'OK'`
