@@ -17,6 +17,19 @@ maurice tools call <exact-tool-name> --input-file ./tool-input.json \
   --idempotency-key "<stable-key>" --json
 ```
 
+Without a selected deployment, `maurice tools list` returns only the paid
+public Hosted Services catalogue preview: `services_discover_v2` searches it
+and `services_inspect_v2` returns a schema. Both are metadata-only
+(`execution_available: false`), take `--arg key=value` or `--input-file`, and
+refuse `--idempotency-key`. Using a Hosted Service still requires an active
+One-to-Console account link, a supported runtime and credits; never infer it
+from the preview, and re-list after the link changes. An explicit organization,
+deployment, space or session target never falls back to this preview.
+
+`maurice ping --json` checks `/live` on, in order, `--api`, the bound context,
+a configured `api.base_url`, then the local One of the default data directory.
+It never assumes the cloud API and exits non-zero without a target.
+
 From External Inception, use the equivalent read-only tools directly:
 
 1. `inception_tools_list` for the authoritative runtime inventory;

@@ -2,7 +2,7 @@
 
 Les plugins connectés sont distribués prêts à installer depuis le catalogue
 GitHub AgentMaurice. Le connecteur est inclus : aucun build, installation
-séparée de MauriceCLI ou fichier de configuration à éditer.
+séparée de la CLI `maurice` ou fichier de configuration à éditer.
 
 ## Codex
 

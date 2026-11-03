@@ -52,9 +52,9 @@ Classify bootstrap input before running it:
 
 | Input | Action |
 |---|---|
-| `amb_...` or `bootstrap_kind: external_inception_mcp` | Consume only through MCP client setup; never pass to MauriceCLI. |
+| `amb_...` or `bootstrap_kind: external_inception_mcp` | Consume only through MCP client setup; never pass to the `maurice` CLI. |
 | `amc_...` or `bootstrap_kind: maurice_cli` | Run the exact user/OS-provided `maurice agent connect` command. |
-| Existing External Inception | Use its exposed Agent scopes/tools; do not reconnect MauriceCLI. |
+| Existing External Inception | Use its exposed Agent scopes/tools; do not reconnect the `maurice` CLI. |
 
 `wrong_bootstrap_kind` is not evidence of a version mismatch; follow the
 returned remediation. For an `amc_` URL, use:

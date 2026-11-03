@@ -10,7 +10,7 @@ integration needs credentials.
   prompts, logs, test fixtures, plans, events, or user-facing answers.
 - Store only a credential reference: identifier, alias, scope, expiry, status,
   and provider metadata may be reviewed; the value may not.
-- Keep MauriceCLI credentials in its private local configuration. Require
+- Keep `maurice` CLI credentials in its private local configuration. Require
   user-only file permissions.
 - Scope credentials to the organization, environment, Agent, and capability
   needed by the task. Do not broaden scope for convenience.

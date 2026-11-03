@@ -27,6 +27,6 @@ du rapport AGENT-1034. La release générale reste distincte. Le profil optionne
 fermé de commandes CLI locales après choix explicite de `--config`, `--context`
 et `--workspace-root`; `--data-dir` et `--server-bin` sont explicites pour le
 lifecycle. Ses droits d'écriture et de lifecycle sont opt-in.
-Il n'installe pas MauriceCLI et ne démarre aucun service automatiquement.
+Il n'installe pas la CLI `maurice` et ne démarre aucun service automatiquement.
 Les mods, hooks et le domaine `dev` appartiennent aux lots suivants. La
 qualification Desktop reste distincte du test terminal.

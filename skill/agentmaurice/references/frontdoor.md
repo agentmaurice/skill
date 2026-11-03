@@ -318,7 +318,7 @@ endpoint must be literal loopback HTTP or verified HTTPS at `/mcp/maurice`
 and no environment proxy. Never disable certificate validation or publish a
 workstation to imitate a VM.
 
-For MauriceCLI API calls to a private-CA deployment, set
+For `maurice` CLI API calls to a private-CA deployment, set
 `MAURICE_TLS_CA_FILE=<private-ca-pem>` for that process. The client appends this
 CA to system roots, verifies the hostname, preserves the normal environment
 proxy, and refuses a missing or invalid PEM before networking. This option
@@ -344,6 +344,8 @@ from human output. `ok: true` proves local reachability and the expected
 catalogue only. It does not call a Workflow or prove
 the whole assistant-to-runtime path. If either option is omitted, the check is
 not run or is invalid; do not silently fall back to an environment token.
+`maurice doctor` exits non-zero when any check fails, including the front
+door; the JSON still lists every check, with top-level `ok` and `problems`.
 
 For HTTPS, also read `vm_profile_readiness.checked`, `ok`, and `public_ready`.
 This is separate from the MCP catalogue. A positive result requires fresh,

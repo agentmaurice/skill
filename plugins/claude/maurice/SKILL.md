@@ -19,7 +19,7 @@ Toute action qui parle à une instance Maurice, un deployment, une Application o
 doit nommer sa cible. Conserve la référence complète renvoyée par la
 découverte ; ne déduis jamais une cible depuis son nom affiché.
 
-- `--context <name>` désigne explicitement un contexte MauriceCLI pour un
+- `--context <name>` désigne explicitement un contexte de la CLI `maurice` pour un
   appel. Le raccourci conversationnel `/maurice:maurice use <name>` doit être
   traduit en `--context <name>` sur l'appel suivant ; `maurice use` n'accepte
   pas de nom positionnel. N'exécute pas `maurice context use <name>` sans
