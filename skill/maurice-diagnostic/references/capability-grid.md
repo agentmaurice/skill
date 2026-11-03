@@ -51,8 +51,8 @@ Say them plainly in "Where Maurice brings nothing":
 - Sub-second latency is critical in the core loop.
 - The real need is to replace an ERP, invoicing or accounting tool: Maurice
   connects to them, it does not replace them.
-- The team only uses Windows computers (Maurice on Windows is coming soon) or
-  Intel Macs (not yet).
+- The team only uses Intel Macs: Maurice has no Intel Mac build yet. Windows,
+  macOS on Apple Silicon and Linux are supported.
 - The volume is too low for compilation to pay off (a task run a few times a
   month).
 
