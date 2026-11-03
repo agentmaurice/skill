@@ -60,7 +60,7 @@ publish or install from a mutable source without resolved provenance.
 
 ## Installation lifecycle
 
-Use the commands exposed by MauriceCLI:
+Use the commands exposed by the `maurice` CLI:
 
 ```text
 maurice module init <key> [--dir <path>] [--version <version>]

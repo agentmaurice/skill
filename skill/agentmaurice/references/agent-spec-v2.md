@@ -132,6 +132,18 @@ commit, merge request URL and a distinct human approver. Without the
 declaration, a project below a repository root reports no Git provenance and
 never runs `git init`.
 
+## Code execution runtime
+
+A `code_execution` action without `runtime`, or with `runtime: "deno"`,
+requires `code`. `runtime: "wasm"` requires `artifact: {sha256, size}` and
+forbids `code`: the artifact is a module already built, validated and published
+for the target deployment (`maurice docs wasm` describes that operator chain).
+Never ship module source or an SDK inside the Agent project. A WASM failure
+never falls back to Deno. The runtime is disabled by default: "WASM runtime is
+disabled on this instance" is a stop condition to report to the operator, not a
+reason to rewrite the action for Deno. `spec check` proves the shape only;
+prove execution with a real run.
+
 ## Typed questions before routing
 
 Use a pure `question` action for classification, scoring, or a yes/no assessment

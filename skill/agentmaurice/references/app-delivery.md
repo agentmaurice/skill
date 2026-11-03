@@ -72,7 +72,7 @@ Stable refusal codes include `surface_capability_not_exposed`,
 Chat requires a published `entrypoints.chat` agent that is an Application
 member.
 
-### MauriceCLI runtime commands
+### `maurice` runtime commands
 
 ```text
 maurice app surface get <applicationKey> [--app-key sk_maurice_app_…] [--json]

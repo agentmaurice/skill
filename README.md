@@ -56,7 +56,7 @@ delivery procedures are loaded from references only when needed.
 
 The contract generator copies its hash-bound reference and nine canonical
 examples into `references/generated/`; `skill-version.json` inventories every
-file and pins the same bundle hash as MauriceCLI. Full JSON Schemas remain
+file and pins the same bundle hash as the `maurice` CLI. Full JSON Schemas remain
 on-demand through the installed client:
 
 ```bash
@@ -91,7 +91,7 @@ python3 scripts/validate_diagnostic_skill.py
 
 ## Install
 
-See [`docs/install.md`](docs/install.md). MauriceCLI normally installs the
+See [`docs/install.md`](docs/install.md). The `maurice` CLI normally installs the
 embedded package during `maurice agent connect --skill auto` for clients with a
 native skill format.
 

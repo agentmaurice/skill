@@ -30,7 +30,7 @@ Avant toute commande, recueille ces entrées :
 - environnement exact (`sandbox`, `development`, `integration_test`,
   `staging` ou `production`) ;
 - chemin du projet Agent Spec ou du Module ;
-- contexte MauriceCLI explicite et endpoint MCP explicite si le parcours
+- contexte de CLI `maurice` explicite et endpoint MCP explicite si le parcours
   passe par MCP ;
 - test plan déclaré, s'il existe, et son emplacement dans le projet.
 
