@@ -1,8 +1,8 @@
 {
   "schema_version": "agentmaurice.skill/v2",
   "name": "maurice-diagnostic",
-  "version": "0.1.0",
-  "content_hash": "b6485944ecf1a8441f7bd6ad627408b7fab1c6c78fd02f5c7d4969a4a382a9c4",
+  "version": "0.1.1",
+  "content_hash": "c167ad1d1359e3451a543f39b808d4ccc81f845f610fd4c47e995f03c7069838",
   "files": [
     {
       "path": "SKILL.md",
@@ -14,7 +14,7 @@
     },
     {
       "path": "references/capability-grid.md",
-      "sha256": "1535e344e8a889d624754c6908ddc0d1b6fe0bc5bf453c5e3cefab62dce6875a"
+      "sha256": "d681a8519c94f6a4e6c2917393e1179ce75501aa897cc9d35a8a39c381d14bbc"
     },
     {
       "path": "references/generated/cib-modules.json",

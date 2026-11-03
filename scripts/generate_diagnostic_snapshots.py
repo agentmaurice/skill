@@ -20,7 +20,7 @@ REPO = Path(__file__).resolve().parents[1]
 ROOT = REPO / "skill" / "maurice-diagnostic"
 GENERATED = ROOT / "references" / "generated"
 MANIFEST = ROOT / "skill-version.json"
-VERSION = "0.1.0"
+VERSION = "0.1.1"
 MCP_CATALOG_URL = "https://raw.githubusercontent.com/agentmaurice/mcp/main/catalog.json"
 CIB_PUBLIC = REPO / "scripts" / "diagnostic" / "cib-public.json"
 
