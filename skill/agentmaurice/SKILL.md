@@ -74,6 +74,10 @@ Do not conclude a runtime MCP/tool is absent before `inception_tools_list` or
 `maurice tools list`; `inception_mcp_capabilities` is control-plane inventory,
 and `workflow_only` means governed availability.
 
+No browser for the One (server, container, SSH), or `maurice doctor` reports
+`console_binding.not_linked`: read [Console link](references/console-link.md).
+The human approves on their machine; never take credentials or drive a browser.
+
 When the task is to use the local `maurice` MCP front door, read
 [Front door](references/frontdoor.md). The compact rail is
 `search → explain → execute`: discovery and explanation are read-only, while
@@ -124,8 +128,7 @@ never hand-edit a partial migration.
 Git-native authoring and must not mix provenance with a Studio plan; `maurice
 test studio` is the hermetic or live closed-loop harness. Lifecycle, exit
 codes, organization handoff, dialogue replay, and Doctor preflight are in
-[Expert operations](references/expert-operations.md). Never approve on the
-user's behalf from a code-agent or service credential.
+[Expert operations](references/expert-operations.md).
 
 ### Initialize, author, and check
 For a fresh Agent:
@@ -166,7 +169,6 @@ Exit code 2 means an invalid contract: repair from diagnostics and check
 again. Do not plan an invalid or dirty workspace.
 
 ### Plan, apply, and verify
-
 ```bash
 maurice spec deploy --env <environment> --agent-alias <agent-alias> --tests auto --dir . --json
 ```
@@ -174,10 +176,10 @@ maurice spec deploy --env <environment> --agent-alias <agent-alias> --tests auto
 Deploy performs check, plan, apply, and `maurice spec verify`. Sandbox,
 development, and integration-test plans may continue under policy authorization.
 Exit 4 / `awaiting_approval` means present the Studio link and stop.
-Never approve with an agent/service credential. Never approve on the user's behalf.
-Do not run `spec approve` with the code-agent credential. After a distinct human confirms
-the persisted plan, rerun the same deploy. Exit 3 requires pull, merge/rebase,
-commit, and redeploy. Success is a green verify before the lock is written.
+Never approve with an agent/service credential or on the user's behalf; do not
+run `spec approve` with the code-agent credential. After a distinct human
+confirms the persisted plan, rerun the same deploy. Exit 3 requires pull,
+merge/rebase, commit, and redeploy. Success is a green verify before the lock is written.
 
 After a MiniApp deploy, `spec verify` and `maurice doctor` do not prove the page
 works: follow the launch/debug loop in [App delivery](references/app-delivery.md)
@@ -185,7 +187,6 @@ from the Maurice home page. A missing control or failed action is a failed
 delivery and requires a spec repair.
 
 ## Find models, connectors, and request secrets
-
 Before writing `llm_model` or naming a service, query the live catalog; do not
 guess or download one:
 
@@ -232,7 +233,6 @@ provider or stand-in server. Airtable uses the same masked flow, then
 [Frontend starter](references/frontend-starter.md), and [App delivery](references/app-delivery.md).
 
 ## Stop conditions
-
 Stop on ambiguous Agent/environment, blocking Studio Doctor, incompatible
 contract hash, ambiguous migration, managed drift, absent/mismatched approval,
 stale plan/thread revision, unreconciled mutation, secret disclosure requests,
