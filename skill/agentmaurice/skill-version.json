@@ -1,13 +1,13 @@
 {
   "schema_version": "agentmaurice.skill/v2",
   "name": "agentmaurice",
-  "version": "2.0.41",
+  "version": "2.0.42",
   "contract_bundle_sha256": "781642b0dd961739c8051c117259544e0f410b4cdd70f7555d3551c956c2d0c9",
-  "content_hash": "baff8a0d8412abdfb33d44e607bc0c721ba360cd8c5d2b2b7ba122040d3ffdce",
+  "content_hash": "38d1bd4674f17d353403f2d6e0be1b5756a2000a13384c8fd0bdbb2a4ca996cb",
   "files": [
     {
       "path": "SKILL.md",
-      "sha256": "bd36f117cf7c01222de30a01e31afb14bec004f386306393f07b26ccda2790f0"
+      "sha256": "99dad3a3589abb5d8313de9df57d460a334cc5141b81d25e5ac916f753a2c32b"
     },
     {
       "path": "agents/openai.yaml",
@@ -20,6 +20,10 @@
     {
       "path": "references/app-delivery.md",
       "sha256": "da35926c20577b28e44f86479cb740641770af9b0281a8a0a99990a5c13410ce"
+    },
+    {
+      "path": "references/console-link.md",
+      "sha256": "5d618b34ed2b2fa27a7fb6094a0efa119843c444ae05183875615230238d686a"
     },
     {
       "path": "references/credential-hygiene.md",

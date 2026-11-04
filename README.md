@@ -39,6 +39,7 @@ skill/agentmaurice/
 └── references/
     ├── agent-spec-v2.md
     ├── app-delivery.md
+    ├── console-link.md
     ├── credential-hygiene.md
     ├── end-user-auth.md
     ├── expert-operations.md
