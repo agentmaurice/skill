@@ -128,7 +128,7 @@ never hand-edit a partial migration.
 Git-native authoring and must not mix provenance with a Studio plan; `maurice
 test studio` is the hermetic or live closed-loop harness. Lifecycle, exit
 codes, organization handoff, dialogue replay, and Doctor preflight are in
-[Expert operations](references/expert-operations.md).
+[Expert operations](references/expert-operations.md). Never approve on the user's behalf from a code-agent or service credential.
 
 ### Initialize, author, and check
 For a fresh Agent:
@@ -176,10 +176,10 @@ maurice spec deploy --env <environment> --agent-alias <agent-alias> --tests auto
 Deploy performs check, plan, apply, and `maurice spec verify`. Sandbox,
 development, and integration-test plans may continue under policy authorization.
 Exit 4 / `awaiting_approval` means present the Studio link and stop.
-Never approve with an agent/service credential or on the user's behalf; do not
-run `spec approve` with the code-agent credential. After a distinct human
-confirms the persisted plan, rerun the same deploy. Exit 3 requires pull,
-merge/rebase, commit, and redeploy. Success is a green verify before the lock is written.
+Never approve with an agent/service credential. Never approve on the user's behalf.
+Do not run `spec approve` with the code-agent credential. After a distinct human confirms
+the persisted plan, rerun the same deploy. Exit 3 requires pull, merge/rebase,
+commit, and redeploy. Success is a green verify before the lock is written.
 
 After a MiniApp deploy, `spec verify` and `maurice doctor` do not prove the page
 works: follow the launch/debug loop in [App delivery](references/app-delivery.md)
