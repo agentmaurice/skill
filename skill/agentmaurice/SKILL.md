@@ -79,7 +79,7 @@ No browser for the One (server, container, SSH), or `maurice doctor` reports
 The human approves on their machine; never take credentials or drive a browser.
 
 When the task is to use the local `maurice` MCP front door, read
-[Front door](references/frontdoor.md). The compact rail is
+[Front door](references/frontdoor.md), including [sharing static Workflows](references/frontdoor.md#share-a-static-workflow-between-ones). The compact rail is
 `search → explain → execute`: discovery and explanation are read-only, while
 execution always carries a validated resource reference, an idempotency key,
 and optionally the plan hash expected by the caller. Use the explicit local

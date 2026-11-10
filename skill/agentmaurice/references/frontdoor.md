@@ -325,6 +325,28 @@ proxy, and refuses a missing or invalid PEM before networking. This option
 does not alter system trust or configure the MCP stdio bridge, whose transport
 remains separate. Never substitute an insecure TLS flag.
 
+## Share a static Workflow between Ones
+
+Use the One that publishes the Workflow on an Application surface. For a
+Console organization, open the One's **Settings** and select **Share a Workflow
+in this organization**. Verify the enrolled owner's identity, enter the
+caller's exact `did:key`, and preview the Workflow, caller, tools and duration.
+The preview lists violated static rules and does not open access. The
+organization operator must attest its `capability_ref` before confirmation.
+
+From the publishing One, run `maurice peer allow <node> --workflow <id>
+--organization-workflow --preview-publication --json` to obtain the publication
+and confirmation references. Use `--application <application-id>` if several
+Applications publish the Workflow, and `--expires 7d` for a seven-day grant
+(the default lasts until revoked). Keep those options on both commands. After
+human review, repeat the same caller,
+Workflow, Application and duration. Replace `--preview-publication` with
+`--publication-capability-ref <capability-ref> --confirmation-ref <confirmation-ref>`.
+For another node of the same account, omit `--organization-workflow`, preview
+with `--preview --json` and confirm with `--expected-capability-ref <capability-ref>
+--confirmation-ref <confirmation-ref>`. Re-preview and review any change. A
+Workflow publication does not grant an assistant permission to invoke it.
+
 ## Bounded Doctor check
 
 Use both options together and request JSON:
