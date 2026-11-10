@@ -325,6 +325,25 @@ proxy, and refuses a missing or invalid PEM before networking. This option
 does not alter system trust or configure the MCP stdio bridge, whose transport
 remains separate. Never substitute an insecure TLS flag.
 
+## Share a static Workflow between Ones
+
+Use the One that publishes the Workflow on an Application surface. For a
+Console organization, open Home and select **Share a Workflow in this
+organization**. Verify the enrolled owner's identity, enter the caller's exact
+`did:key`, and preview the Workflow, caller, tools and duration. The preview
+reports all violated static rules. Fix them before trying again. The preview
+does not open access. The organization operator must attest the exact preview
+reference before the owner can confirm it.
+
+From the publishing One, `maurice peer allow <node> --workflow <id>
+--organization-workflow --preview-publication --json` shows the capability
+reference. After the owner confirms the exact proposal, keep the same caller,
+Workflow, Application and expiry and replace `--preview-publication` with
+`--publication-capability-ref <capability-ref>`. On a conflict, get a new
+preview and a new confirmation. For another enrolled node of the same account,
+use `--preview --json` and `--expected-capability-ref` instead. A Workflow
+publication does not grant an assistant permission to invoke it.
+
 ## Bounded Doctor check
 
 Use both options together and request JSON:
