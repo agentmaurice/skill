@@ -336,7 +336,10 @@ organization operator must attest its `capability_ref` before confirmation.
 
 From the publishing One, run `maurice peer allow <node> --workflow <id>
 --organization-workflow --preview-publication --json` to obtain the publication
-and confirmation references. After human review, repeat the same caller,
+and confirmation references. Use `--application <application-id>` if several
+Applications publish the Workflow, and `--expires 7d` for a seven-day grant
+(the default lasts until revoked). Keep those options on both commands. After
+human review, repeat the same caller,
 Workflow, Application and duration. Replace `--preview-publication` with
 `--publication-capability-ref <capability-ref> --confirmation-ref <confirmation-ref>`.
 For another node of the same account, omit `--organization-workflow`, preview
