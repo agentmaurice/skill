@@ -18,6 +18,8 @@ Bloc synchronisé depuis `pilote-maurice/workspace/AGENTS-common.md`. Ne pas l'�
 
 **Cycle et preuve.** `WORKFLOW.md` à la racine de chatserver, de l'OS et de la Console.
 
+**Avant le patch.** Pour une règle partagée, pars d’un parcours qui applique déjà la règle, remonte jusqu’au code qui prend la décision et repère les autres parcours qui doivent la suivre. Modifie la règle à cet endroit.
+
 **Carte de code.** Si `ripwire` est dans le `PATH`, l'utiliser d'abord (`wiki/operations/ripwire-code-context.md`). Sinon le MCP `code-review-graph`. S'ils manquent, Grep, Glob ou Read. Vérifiable, sous-agents compris : le compte rendu cite la commande ripwire, ou porte la mention « graphe indisponible, exploration par lecture ».
 
 **Release.** `task release:local` depuis la racine du workspace (`wiki/operations/local-release-gate.md`). Ce n'est pas le cycle d'une feature.
